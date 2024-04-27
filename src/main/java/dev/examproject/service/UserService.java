@@ -22,4 +22,12 @@ public class UserService {
         }
         return null;
     }
+
+    public void addUser(User user) {
+        repository.addUser(user);
+    }
+
+    public User getUser(String name) {
+        return repository.getUser(name);
+    }
 }

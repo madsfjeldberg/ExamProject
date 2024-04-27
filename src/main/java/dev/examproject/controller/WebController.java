@@ -56,6 +56,27 @@ public class WebController {
         return "redirect:/home";
     }
 
+    @GetMapping(path = "register")
+    public String register(Model model) {
+        model.addAttribute("user", new User());
+        return "register";
+    }
+
+    @PostMapping(path = "register")
+    public String register(@ModelAttribute("user") User user, HttpSession session, RedirectAttributes attributes) {
+        User existingUser = userService.getUser(user.getUsername());
+        if (existingUser != null) {
+            attributes.addFlashAttribute("errorMessage", "Username already exists");
+            return "redirect:/register";
+        } else {
+            userService.addUser(user);
+            session.setAttribute("user", user);
+            attributes.addFlashAttribute("successMessage", "User registered successfully");
+            return "redirect:/" + user.getUsername() + "/overview";
+
+        }
+    }
+
     @GetMapping(path = "/{username}/overview")
     public String overview(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
