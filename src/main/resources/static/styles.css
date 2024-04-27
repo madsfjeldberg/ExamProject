@@ -1,0 +1,25 @@
+body {
+    background-color: white;
+}
+
+button {
+    margin-top: 20px;
+}
+
+.container {
+    margin-top: 100px;
+}
+
+form {
+    padding: 20px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.bold-and-cursive {
+    font-weight: bold;
+    font-style: italic;
+}
+
