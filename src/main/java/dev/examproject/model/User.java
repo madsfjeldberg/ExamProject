@@ -2,7 +2,10 @@ package dev.examproject.model;
 
 import lombok.Data;
 
-@Data public class User {
+import java.util.Objects;
+
+@Data
+public class User {
 
     private int userId;
     private String username;
@@ -17,6 +20,12 @@ import lombok.Data;
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    public User(String username, String password) {
+        this.userId = getUserIdAndIncrement();
+        this.username = username;
+        this.password = password;
     }
 
     public int getUserIdAndIncrement() {

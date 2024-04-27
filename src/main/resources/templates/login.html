@@ -5,11 +5,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link href="../styles.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../img/favicon.ico">
-    <title>Home</title>
+    <title>Login</title>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary shadow">
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
         <!-- make the navbar-brand bold and cursive -->
         <a class="navbar-brand bold-and-cursive" href="home">AlphaPlan</a>
@@ -25,17 +25,11 @@
                     <a class="nav-link" aria-current="page" href="about">About</a>
                 </li>
             </ul>
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0" th:object="${user}">
-                <li class="nav-item" th:if="${isLoggedIn}">
-                    <a class="nav-link" th:href="@{'/' + ${user.username} + '/overview'}">Overview</a>
-                </li>
-                <li class="nav-item" th:if="${isLoggedIn}">
-                    <a class="nav-link" href="logout">Logout</a>
-                </li>
-                <li class="nav-item" th:unless="${isLoggedIn}">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
                     <a class="nav-link" href="login">Login</a>
                 </li>
-                <li class="nav-item" th:unless="${isLoggedIn}">
+                <li class="nav-item">
                     <a class="nav-link" href="register">Register</a>
                 </li>
             </ul>
@@ -43,7 +37,28 @@
     </div>
 </nav>
 
-<h1 class="bold-and-cursive text-center display-1">AlphaPlan</h1>
-<h4 class="bold-and-cursive text-center">The last project tool you'll ever use.</h4>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="text-center mb-4 bold-and-cursive">Login</h1>
+            <form action="login" method="post" th:object="${user}" class="form">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username">
+                </div>
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+            </form>
+            <p class="text-center">Don't have an account? <a href="/register">Register here</a></p>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <p th:text="${errorMessage}"></p>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
