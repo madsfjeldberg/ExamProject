@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.nio.file.Path;
+
 @Controller
 @RequestMapping(path = "")
 public class WebController {
@@ -23,6 +25,7 @@ public class WebController {
         return "redirect:/home";
     }
 
+
     @GetMapping(path = "home")
     public String home(Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -30,6 +33,11 @@ public class WebController {
         model.addAttribute("isLoggedIn", isLoggedIn);
         model.addAttribute("user", authenticatedUser);
         return "home";
+    }
+
+    @GetMapping("/About")
+    public String redirectAbout() {
+        return "About";
     }
 
     @GetMapping(path = "login")
