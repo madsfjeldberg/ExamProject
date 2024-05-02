@@ -1,0 +1,53 @@
+body.container {
+    font-family: 'Arial', sans-serif;
+    background: white;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrolling */
+}
+
+.bold-and-cursive {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.container {
+    display: flex;
+    flex-direction: column; /* Change flex direction to column */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow-y: hidden; /* Prevent scrolling */
+}
+
+.text {
+    padding: 20px;
+    color: black; /* Change color to black */
+    font-size: 20px;
+    line-height: 1.5; /* Afstand mellem linjerne */
+    background-color: white; /* Samme farve som body.container */
+    border-radius: 8px; /* Afrundede hjørner */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Skygge */
+    max-width: 600px; /* Maksimal bredde for boksen */
+    width: 80%; /* Sæt bredden af boksen til 80% af containeren */
+    text-align: left; /* Centrer teksten */
+    margin-bottom: 20px; /* Tilføj mellemrum mellem boksen og "Cancel" knappen */
+}
+
+/* Add responsive design */
+@media (max-width: 600px) {
+    .container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-actions {
+        text-align: center;
+    }
+
+    .text {
+        width: 90%; /* Justere bredden for mobilvisning */
+        max-width: 90%; /* Justere maksimal bredde for mobilvisning */
+    }
+}
