@@ -8,8 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.nio.file.Path;
-
 @Controller
 @RequestMapping(path = "")
 public class WebController {
@@ -36,8 +34,12 @@ public class WebController {
     }
 
     @GetMapping("/About")
-    public String redirectAbout() {
-        return "About";
+    public String about(Model model, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        boolean isLoggedIn = authenticatedUser != null;
+        model.addAttribute("isLoggedIn", isLoggedIn);
+        model.addAttribute("user", authenticatedUser);
+        return "about";
     }
 
     @GetMapping(path = "login")
