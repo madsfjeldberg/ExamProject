@@ -96,6 +96,11 @@ public class WebController {
     @GetMapping(path = "/{username}/overview")
     public String overview(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
+        Project selectedProject = (Project) session.getAttribute("selectedProject");
+        if (selectedProject != null) {
+            Project project = projectService.getProject(selectedProject.getName());
+            model.addAttribute("project", project);
+        }
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             model.addAttribute("user", authenticatedUser);
             return "overview";
@@ -134,6 +139,17 @@ public class WebController {
             projectService.addProject(project);
             System.out.println("projekt tilføjet:" + project);
             return "redirect:/" + username + "/projects";
+        }
+        return "redirect:/login";
+    }
+
+    @GetMapping(path = "/selectProject/{projectName}")
+    public String selectProject(@PathVariable("projectName") String projectName, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null) {
+            Project project = projectService.getProject(projectName);
+            session.setAttribute("selectedProject", project);
+            return "redirect:/" + authenticatedUser.getUsername() + "/overview";
         }
         return "redirect:/login";
     }

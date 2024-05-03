@@ -43,7 +43,26 @@
 
 <br>
 <h3 class="bold-and-cursive">Overview</h3>
-<h2>Under construction :)</h2>
+
+<!-- show info about current selected project -->
+<!-- if project is not null, show the following -->
+<div class="container" th:if="${project != null}">
+    <h3 class="bold-and-cursive">Current Project</h3>
+    <ul class="list-group" th:object="${project}">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span th:text="${project.name}"></span>
+            <span th:text="'Projektleder: ' + ${project.admin}"></span>
+            <ul>
+                <li th:each="user : ${project.assignedUsers}" th:text="${user}"></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<!-- if project is null, show "No project selected." -->
+<div class="container" th:unless="${project != null}">
+    <h3 class="bold-and-cursive">No project selected.</h3>
+</div>
 
 </body>
 </html>
