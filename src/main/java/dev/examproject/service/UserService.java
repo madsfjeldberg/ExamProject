@@ -4,8 +4,6 @@ import dev.examproject.model.User;
 import dev.examproject.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class UserService {
 

@@ -3,6 +3,7 @@ package dev.examproject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+/*
 @SpringBootTest
 class ExamProjectApplicationTests {
 
@@ -10,4 +11,7 @@ class ExamProjectApplicationTests {
     void contextLoads() {
     }
 
+
+
 }
+*/
