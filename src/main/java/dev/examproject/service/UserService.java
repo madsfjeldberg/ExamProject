@@ -2,8 +2,9 @@ package dev.examproject.service;
 
 import dev.examproject.model.User;
 import dev.examproject.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -14,20 +15,23 @@ public class UserService {
         this.repository = repository;
     }
 
-    public User authenticateUser(String username, String password) {
-        for (User user : repository.getAllUsers()) {
-            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                return user;
-            }
-        }
-        return null;
-    }
-
     public void addUser(User user) {
         repository.addUser(user);
     }
 
+    public void addUserToProject(String username, int projectId) {
+        repository.addUserToProject(username, projectId);
+    }
+
+    public int getUserId(String username) {
+        return repository.getUserId(username);
+    }
+
     public User getUser(String name) {
         return repository.getUser(name);
+    }
+
+    public User authenticateUser(String username, String password) {
+        return repository.authenticateUser(username, password);
     }
 }
