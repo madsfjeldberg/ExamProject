@@ -1,6 +1,8 @@
 package dev.examproject.controller;
 
+import dev.examproject.model.Project;
 import dev.examproject.model.User;
+import dev.examproject.service.ProjectService;
 import dev.examproject.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -8,14 +10,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
+
 @Controller
 @RequestMapping(path = "")
 public class WebController {
 
     private final UserService userService;
+    private final ProjectService projectService;
 
-    public WebController(UserService userService) {
+    public WebController(UserService userService, ProjectService projectService) {
         this.userService = userService;
+        this.projectService = projectService;
     }
 
     @GetMapping
@@ -90,6 +96,11 @@ public class WebController {
     @GetMapping(path = "/{username}/overview")
     public String overview(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
+        Project selectedProject = (Project) session.getAttribute("selectedProject");
+        if (selectedProject != null) {
+            Project project = projectService.getProject(selectedProject.getName());
+            model.addAttribute("project", project);
+        }
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             model.addAttribute("user", authenticatedUser);
             return "overview";
@@ -97,5 +108,50 @@ public class WebController {
         return "redirect:/login";
     }
 
+    @GetMapping(path = "/{username}/projects")
+    public String projects(@PathVariable("username") String username, Model model, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            model.addAttribute("user", authenticatedUser);
+            model.addAttribute("projects", projectService.getProjectsForUser(username));
+            return "projects";
+        }
+        return "redirect:/login";
+    }
+
+    @GetMapping(path = "/{username}/addProject")
+    public String addProject(@PathVariable("username") String username, Model model, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            model.addAttribute("user", authenticatedUser);
+            model.addAttribute("project", new Project());
+            return "addProject";
+        }
+        return "redirect:/login";
+    }
+
+    @PostMapping(path = "/{username}/addProject")
+    public String addProject(@PathVariable("username") String username, @ModelAttribute("project") Project project, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            project.setAdmin(username);
+            project.setAssignedUsers(new ArrayList<>());
+            projectService.addProject(project);
+            System.out.println("projekt tilføjet:" + project);
+            return "redirect:/" + username + "/projects";
+        }
+        return "redirect:/login";
+    }
+
+    @GetMapping(path = "/selectProject/{projectName}")
+    public String selectProject(@PathVariable("projectName") String projectName, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null) {
+            Project project = projectService.getProject(projectName);
+            session.setAttribute("selectedProject", project);
+            return "redirect:/" + authenticatedUser.getUsername() + "/overview";
+        }
+        return "redirect:/login";
+    }
 
 }
