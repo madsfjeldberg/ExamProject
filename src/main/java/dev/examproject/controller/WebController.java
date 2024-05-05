@@ -10,8 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-
 @Controller
 @RequestMapping(path = "")
 public class WebController {
@@ -113,7 +111,8 @@ public class WebController {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             model.addAttribute("user", authenticatedUser);
-            model.addAttribute("projects", projectService.getProjectsForUser(username));
+            int userId = userService.getUserId(username);
+            model.addAttribute("projects", projectService.getProjectsForUser(userId, username));
             return "projects";
         }
         return "redirect:/login";
@@ -134,9 +133,10 @@ public class WebController {
     public String addProject(@PathVariable("username") String username, @ModelAttribute("project") Project project, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
-            project.setAdmin(username);
-            project.setAssignedUsers(new ArrayList<>());
-            projectService.addProject(project);
+
+            projectService.addProject(project, username);
+            userService.addUserToProject(username, projectService.getProjectId(project.getName()));
+
             System.out.println("projekt tilføjet:" + project);
             return "redirect:/" + username + "/projects";
         }

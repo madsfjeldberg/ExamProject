@@ -48,6 +48,7 @@
     <ul class="list-group" th:object="${projects}">
         <li class="list-group-item d-flex justify-content-between align-items-center" th:each="project : ${projects}">
             <span th:text="${project.name}"></span>
+            <span th:text="${project.description}"></span>
             <span th:text="'Projektleder: ' + ${project.admin}"></span>
             <ul>
                 <li th:each="user : ${project.assignedUsers}" th:text="${user}"></li>

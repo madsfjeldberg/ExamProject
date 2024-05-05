@@ -15,30 +15,20 @@ public class ProjectService {
         this.repository = repository;
     }
 
-    public void addProject(Project project) {
+    public void addProject(Project project, String username) {
         repository.addProject(project);
     }
 
-    public void deleteProject(String projectName) {
-        repository.deleteProject(projectName);
+    public int getProjectId(String projectName) {
+        return repository.getId(projectName);
     }
 
     public Project getProject(String projectName) {
         return repository.getProject(projectName);
     }
 
-    public void setProjects(List<Project> projects) {
-        repository.setProjects(projects);
-    }
-
-    public List<Project> getAllProjects() {
-        return repository.getAllProjects();
-    }
-
-    public List<Project> getProjectsForUser(String username) {
-        return repository.getAllProjects().stream()
-                .filter(project -> project.getAssignedUsers().contains(username) || project.getAdmin().equals(username))
-                .toList();
+    public List<Project> getProjectsForUser(int userId, String username) {
+        return repository.getProjectsForUser(userId, username);
     }
 
 }
