@@ -87,7 +87,6 @@ public class WebController {
             session.setAttribute("user", user);
             attributes.addFlashAttribute("successMessage", "User registered successfully");
             return "redirect:/" + user.getUsername() + "/overview";
-
         }
     }
 
