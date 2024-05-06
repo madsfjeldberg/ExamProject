@@ -15,8 +15,6 @@ import java.util.List;
 @Repository
 public class ProjectRepository {
 
-    private List<Project> projects;
-
     @Value("${spring.datasource.url}")
     private String dbUrl;
     @Value("${spring.datasource.username}")
@@ -26,16 +24,17 @@ public class ProjectRepository {
 
     public ProjectRepository() {}
 
-    public void addProject(Project project) {
+    public int addProject(Project project) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO PROJECTS (name, description) VALUES (?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, project.getName());
             ps.setString(2, project.getDescription());
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return -1;
     }
 
     public int getId(String projectName) {
@@ -51,11 +50,6 @@ public class ProjectRepository {
             e.printStackTrace();
         }
         return -1;
-    }
-
-    public void deleteProject(String projectName) {
-        projects.removeIf
-                (project -> project.getName().equals(projectName));
     }
 
     public String getAdminForProject(int project_id) {
@@ -94,6 +88,8 @@ public class ProjectRepository {
         return null;
     }
 
+    // TODO: der er noget der ikke virker her.
+    // TODO: hvis man ikke er admin, sætter den en bruger til at være admin alligevel?
     public List<Project> getProjectsForUser(int userId, String username) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         // TODO: skriv om så den også henter projekter hvor man er medlem/assigned
