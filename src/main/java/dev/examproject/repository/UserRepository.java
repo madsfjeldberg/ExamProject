@@ -70,17 +70,30 @@ public class UserRepository {
         return -1;
     }
 
-    public void addUserToProject(String username, int projectId) {
+    public int addUserToProject(String username, int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "INSERT INTO project_users (user_id, project_id, is_admin) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO project_users (user_id, project_id, is_admin) VALUES (?, ?, false)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, getUserId(username));
             ps.setInt(2, projectId);
-            ps.setBoolean(3, true);
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return -1;
+    }
+
+    public int setUserToAdmin(String username, int projectId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "UPDATE project_users SET is_admin = true WHERE user_id = ? AND project_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, getUserId(username));
+            ps.setInt(2, projectId);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public String getUsername(int userId) {
@@ -127,5 +140,4 @@ public class UserRepository {
         }
         return users;
     }
-
 }

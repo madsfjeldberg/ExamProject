@@ -135,7 +135,8 @@ public class WebController {
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
 
             projectService.addProject(project, username);
-            userService.addUserToProject(username, projectService.getProjectId(project.getName()));
+            System.out.println(projectService.getProjectId(project.getName()));
+            userService.setUserToAdmin(username, projectService.getProjectId(project.getName()));
 
             System.out.println("projekt tilføjet:" + project);
             return "redirect:/" + username + "/projects";

@@ -44,10 +44,35 @@ public class UserRepositoryTest {
     void addUser() {
         // Test that the repository adds a user
         User user = new User("test2", "test2", "test2@mail.dk");
-        System.out.println(repository.addUser(user));
-        assertEquals(user, repository.getUser("test2"));
+        int expected = 1;
+        int actual = repository.addUser(user);
+        assertEquals(expected, actual);
     }
 
-    // Helper method so as not to use "getUser" from repo.
+    @Test
+    void getUsername() {
+        // Test that the repository returns the correct username
+        String expected = "test";
+        String actual = repository.getUsername(1);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void addUserToProject() {
+        // Test that the repository adds the user to the project
+        // "test2" user is not a member of project 1
+        int expected = 1;
+        int actual = repository.addUserToProject("test2", 1);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void setUserToAdmin() {
+        // Test that the repository sets the user to admin
+        // "test2" user is not a admin for project 2
+        int expected = 1;
+        int actual = repository.setUserToAdmin("test2", 2);
+        assertEquals(expected, actual);
+    }
 
 }

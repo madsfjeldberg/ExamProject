@@ -17,8 +17,8 @@ public class UserService {
         repository.addUser(user);
     }
 
-    public void addUserToProject(String username, int projectId) {
-        repository.addUserToProject(username, projectId);
+    public void setUserToAdmin(String username, int projectId) {
+        repository.setUserToAdmin(username, projectId);
     }
 
     public int getUserId(String username) {

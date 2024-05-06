@@ -45,7 +45,18 @@ CREATE TABLE task_users (
 
 INSERT INTO users (username, email, password) VALUES
     ('test', 'test@mail.dk', 'test'),
+    ('test2', 'test2@mail.dk', 'test2'),
     ('mads', 'mafj0001@stud.kea.dk', 'mads'),
     ('yusef', 'yuay0001@stud.kea.dk', 'yusef'),
     ('mohamed', 'moom0001@stud.kea.dk', 'mohamed'),
     ('sina', 'sija0001@stud.kea.dk', 'sina');
+
+INSERT INTO projects (name, description) VALUES
+    ('test 1', 'test 1'),
+    ('test 2', 'test 2'),
+    ('test 3', 'test 3');
+
+INSERT INTO project_users (user_id, project_id, is_admin) VALUES
+    (1, 1, 1),
+    (2, 2, 0),
+    (1, 3, 1);
