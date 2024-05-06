@@ -5,10 +5,7 @@ import dev.examproject.repository.util.ConnectionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,17 +23,30 @@ public class ProjectRepository {
 
     public ProjectRepository() {}
 
-    public void addProject(Project project) {
+    public int addProject(Project project) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO PROJECTS (name, description) VALUES (?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, project.getName());
             ps.setString(2, project.getDescription());
             ps.executeUpdate();
+
+            // Retrieve the auto-generated project ID
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int projectId = rs.getInt(1);
+                    project.setProjectId(projectId); // Set the generated ID in the Task object
+                } else {
+                    // Handle the case where the auto-generated key couldn't be retrieved
+                    throw new SQLException("Failed to retrieve auto-generated key for project");
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return -1; // Return a default value indicating failure
     }
+
 
     public int getId(String projectName) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);

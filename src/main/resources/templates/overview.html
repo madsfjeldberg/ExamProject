@@ -57,6 +57,15 @@
                 <li th:each="user : ${project.assignedUsers}" th:text="${user}"></li>
             </ul>
         </li>
+        <a th:href="@{'/' + ${user.username} + '/addTask'}" class="btn btn-primary">Add Task</a>
+    </ul>
+    <h3 class="bold-and-cursive">Tasks</h3>
+    <ul class="list-group" th:each="task : ${tasks}">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span th:text="${task.taskName}"></span>
+            <span th:text="${task.taskDescription}"></span>
+            <span th:text="'Required Hours: ' + ${task.requiredHours}"></span>
+        </li>
     </ul>
 </div>
 
