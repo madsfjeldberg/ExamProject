@@ -15,8 +15,6 @@ import java.util.List;
 @Repository
 public class ProjectRepository {
 
-    private List<Project> projects;
-
     @Value("${spring.datasource.url}")
     private String dbUrl;
     @Value("${spring.datasource.username}")
@@ -51,11 +49,6 @@ public class ProjectRepository {
             e.printStackTrace();
         }
         return -1;
-    }
-
-    public void deleteProject(String projectName) {
-        projects.removeIf
-                (project -> project.getName().equals(projectName));
     }
 
     public String getAdminForProject(int project_id) {

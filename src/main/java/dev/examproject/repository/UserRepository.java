@@ -56,17 +56,18 @@ public class UserRepository {
         return -1;
     }
 
-    public void addUser(User user) {
+    public int addUser(User user) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO USERS (username, email, password) VALUES (?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPassword());
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return -1;
     }
 
     public void addUserToProject(String username, int projectId) {
@@ -104,7 +105,7 @@ public class UserRepository {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new User(rs.getString("username"), rs.getString("email"), rs.getString("password"));
+                return new User(rs.getString("username"), rs.getString("password"), rs.getString("email"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
