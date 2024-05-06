@@ -2,6 +2,8 @@ package dev.examproject.repository;
 
 import dev.examproject.model.Project;
 import dev.examproject.repository.util.ConnectionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +16,8 @@ import java.util.List;
 
 @Repository
 public class ProjectRepository {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProjectRepository.class);
 
     @Value("${spring.datasource.url}")
     private String dbUrl;
@@ -32,7 +36,7 @@ public class ProjectRepository {
             ps.setString(2, project.getDescription());
             return ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error adding project", e);
         }
         return -1;
     }
@@ -47,7 +51,7 @@ public class ProjectRepository {
                 return rs.getInt("id");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error getting project id", e);
         }
         return -1;
     }
@@ -64,7 +68,7 @@ public class ProjectRepository {
                 return rs.getString("username");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error getting project admin for projectId: " + project_id, e);
         }
         return null;
     }
@@ -83,7 +87,7 @@ public class ProjectRepository {
                 return project;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error getting project: " + name, e);
         }
         return null;
     }
@@ -107,7 +111,7 @@ public class ProjectRepository {
             }
             return projects;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error getting projects for user: " + username + "userId: " + userId, e);
         }
         return null;
     }

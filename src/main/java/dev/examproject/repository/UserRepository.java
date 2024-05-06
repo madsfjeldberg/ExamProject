@@ -2,6 +2,8 @@ package dev.examproject.repository;
 
 import dev.examproject.model.User;
 import dev.examproject.repository.util.ConnectionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +16,8 @@ import java.util.List;
 
 @Repository
 public class UserRepository {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserRepository.class);
 
     @Value("${spring.datasource.url}")
     private String dbUrl;
@@ -36,7 +40,7 @@ public class UserRepository {
                 return new User(rs.getString("username"), rs.getString("password"), rs.getString("email"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while authenticating user", e);
         }
         return null;
     }
@@ -51,7 +55,7 @@ public class UserRepository {
                 return rs.getInt("id");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while getting user id", e);
         }
         return -1;
     }
@@ -65,7 +69,7 @@ public class UserRepository {
             ps.setString(3, user.getPassword());
             return ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while adding user", e);
         }
         return -1;
     }
@@ -78,7 +82,7 @@ public class UserRepository {
             ps.setInt(2, projectId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while adding user to project", e);
         }
         return -1;
     }
@@ -91,7 +95,7 @@ public class UserRepository {
             ps.setInt(2, projectId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while setting user to admin", e);
         }
         return -1;
     }
@@ -106,7 +110,7 @@ public class UserRepository {
                 return rs.getString("username");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while getting username", e);
         }
         return null;
     }
@@ -121,7 +125,7 @@ public class UserRepository {
                 return new User(rs.getString("username"), rs.getString("password"), rs.getString("email"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while getting user", e);
         }
         return null;
     }
@@ -136,7 +140,7 @@ public class UserRepository {
                 users.add(new User(rs.getString("username"), rs.getString("email"), rs.getString("password")));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while getting users", e);
         }
         return users;
     }
