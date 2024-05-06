@@ -57,6 +57,7 @@ public class WebController {
         User authenticatedUser = userService.authenticateUser(user.getUsername(), user.getPassword());
         if (authenticatedUser != null) {
             session.setAttribute("user", authenticatedUser);
+            System.out.println(authenticatedUser);
             return "redirect:/" + authenticatedUser.getUsername() + "/overview";
         } else {
             attributes.addFlashAttribute("errorMessage", "Incorrect username or password");

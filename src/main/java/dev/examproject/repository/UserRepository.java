@@ -33,7 +33,7 @@ public class UserRepository {
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new User(rs.getString("username"), rs.getString("email"), rs.getString("password"));
+                return new User(rs.getString("username"), rs.getString("password"), rs.getString("email"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
