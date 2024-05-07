@@ -93,7 +93,7 @@ public class ProjectRepository {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
-                project.setAdmin(getAdminForProject(getId(name)));
+                project.setAdmin(getAdminForProject(getId(name))); // det her er pis, find en løsning
                 return project;
             }
         } catch (SQLException e) {

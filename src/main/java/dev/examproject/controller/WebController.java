@@ -144,7 +144,7 @@ public class WebController {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
 
-            projectService.addProject(project, username);
+            projectService.addProject(project);
             System.out.println(projectService.getProjectId(project.getName()));
             userService.setUserToAdmin(username, projectService.getProjectId(project.getName()));
 

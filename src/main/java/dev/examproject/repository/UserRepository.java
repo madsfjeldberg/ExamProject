@@ -129,19 +129,4 @@ public class UserRepository {
         }
         return null;
     }
-
-    public List<User> getUsers () {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT * FROM USERS";
-        List<User> users = new ArrayList<>();
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                users.add(new User(rs.getString("username"), rs.getString("email"), rs.getString("password")));
-            }
-        } catch (SQLException e) {
-            logger.error("Error while getting users", e);
-        }
-        return users;
-    }
 }

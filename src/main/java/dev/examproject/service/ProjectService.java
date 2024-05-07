@@ -15,7 +15,7 @@ public class ProjectService {
         this.repository = repository;
     }
 
-    public void addProject(Project project, String username) {
+    public void addProject(Project project) {
         repository.addProject(project);
     }
 
