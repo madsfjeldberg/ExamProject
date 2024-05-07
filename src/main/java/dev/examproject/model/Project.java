@@ -47,10 +47,11 @@ import java.util.List;
         this.assignedUsers =new ArrayList<>();
     }
 
-    public Project(String projectName, String projectDescription) {
+    public Project(int projectId, String projectName, String projectDescription) {
         this.name = projectName;
         this.description = projectDescription;
         this.assignedUsers = new ArrayList<>();
+        this.projectId = projectId;
     }
 
 }

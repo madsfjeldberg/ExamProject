@@ -94,7 +94,7 @@ public class ProjectRepository {
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Project project = new Project(rs.getString("name"), rs.getString("description"));
+                Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
                 project.setAdmin(getAdminForProject(getId(name)));
                 return project;
             }
@@ -115,7 +115,7 @@ public class ProjectRepository {
             ResultSet rs = ps.executeQuery();
             List<Project> projects = new ArrayList<>();
             while (rs.next()) {
-                Project project = new Project(rs.getString("name"), rs.getString("description"));
+                Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
                 project.setAdmin(username);
                 projects.add(project);
             }
