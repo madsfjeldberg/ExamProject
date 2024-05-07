@@ -2,6 +2,8 @@ package dev.examproject.repository;
 
 import dev.examproject.model.User;
 import dev.examproject.repository.util.ConnectionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +16,8 @@ import java.util.List;
 
 @Repository
 public class UserRepository {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserRepository.class);
 
     @Value("${spring.datasource.url}")
     private String dbUrl;
@@ -33,10 +37,10 @@ public class UserRepository {
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new User(rs.getString("username"), rs.getString("email"), rs.getString("password"));
+                return new User(rs.getString("username"), rs.getString("password"), rs.getString("email"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while authenticating user", e);
         }
         return null;
     }
@@ -51,35 +55,49 @@ public class UserRepository {
                 return rs.getInt("id");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while getting user id", e);
         }
         return -1;
     }
 
-    public void addUser(User user) {
+    public int addUser(User user) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO USERS (username, email, password) VALUES (?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPassword());
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while adding user", e);
         }
+        return -1;
     }
 
-    public void addUserToProject(String username, int projectId) {
+    public int addUserToProject(String username, int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "INSERT INTO project_users (user_id, project_id, is_admin) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO project_users (user_id, project_id, is_admin) VALUES (?, ?, false)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, getUserId(username));
             ps.setInt(2, projectId);
-            ps.setBoolean(3, true);
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while adding user to project", e);
         }
+        return -1;
+    }
+
+    public int setUserToAdmin(String username, int projectId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "UPDATE project_users SET is_admin = true WHERE user_id = ? AND project_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, getUserId(username));
+            ps.setInt(2, projectId);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error while setting user to admin", e);
+        }
+        return -1;
     }
 
     public String getUsername(int userId) {
@@ -92,7 +110,7 @@ public class UserRepository {
                 return rs.getString("username");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while getting username", e);
         }
         return null;
     }
@@ -104,10 +122,10 @@ public class UserRepository {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new User(rs.getString("username"), rs.getString("email"), rs.getString("password"));
+                return new User(rs.getString("username"), rs.getString("password"), rs.getString("email"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while getting user", e);
         }
         return null;
     }
@@ -122,9 +140,8 @@ public class UserRepository {
                 users.add(new User(rs.getString("username"), rs.getString("email"), rs.getString("password")));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error while getting users", e);
         }
         return users;
     }
-
 }

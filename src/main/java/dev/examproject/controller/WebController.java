@@ -64,6 +64,7 @@ public class WebController {
         User authenticatedUser = userService.authenticateUser(user.getUsername(), user.getPassword());
         if (authenticatedUser != null) {
             session.setAttribute("user", authenticatedUser);
+            System.out.println(authenticatedUser);
             return "redirect:/" + authenticatedUser.getUsername() + "/overview";
         } else {
             attributes.addFlashAttribute("errorMessage", "Incorrect username or password");
@@ -144,7 +145,8 @@ public class WebController {
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
 
             projectService.addProject(project, username);
-            userService.addUserToProject(username, projectService.getProjectId(project.getName()));
+            System.out.println(projectService.getProjectId(project.getName()));
+            userService.setUserToAdmin(username, projectService.getProjectId(project.getName()));
 
             System.out.println("projekt tilføjet:" + project);
             return "redirect:/" + username + "/projects";

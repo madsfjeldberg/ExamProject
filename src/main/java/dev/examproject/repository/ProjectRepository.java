@@ -2,6 +2,8 @@ package dev.examproject.repository;
 
 import dev.examproject.model.Project;
 import dev.examproject.repository.util.ConnectionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +14,7 @@ import java.util.List;
 @Repository
 public class ProjectRepository {
 
-    private List<Project> projects;
+    private static final Logger logger = LoggerFactory.getLogger(ProjectRepository.class);
 
     @Value("${spring.datasource.url}")
     private String dbUrl;
@@ -36,13 +38,14 @@ public class ProjectRepository {
                 if (rs.next()) {
                     int projectId = rs.getInt(1);
                     project.setProjectId(projectId); // Set the generated ID in the Task object
+                    return 1;
                 } else {
                     // Handle the case where the auto-generated key couldn't be retrieved
                     throw new SQLException("Failed to retrieve auto-generated key for project");
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error adding project", e);
         }
         return -1; // Return a default value indicating failure
     }
@@ -58,14 +61,9 @@ public class ProjectRepository {
                 return rs.getInt("id");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error getting project id", e);
         }
         return -1;
-    }
-
-    public void deleteProject(String projectName) {
-        projects.removeIf
-                (project -> project.getName().equals(projectName));
     }
 
     public String getAdminForProject(int project_id) {
@@ -80,7 +78,7 @@ public class ProjectRepository {
                 return rs.getString("username");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error getting project admin for projectId: " + project_id, e);
         }
         return null;
     }
@@ -99,11 +97,13 @@ public class ProjectRepository {
                 return project;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error getting project: " + name, e);
         }
         return null;
     }
 
+    // TODO: der er noget der ikke virker her.
+    // TODO: hvis man ikke er admin, sætter den en bruger til at være admin alligevel?
     public List<Project> getProjectsForUser(int userId, String username) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         // TODO: skriv om så den også henter projekter hvor man er medlem/assigned
@@ -121,7 +121,7 @@ public class ProjectRepository {
             }
             return projects;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error getting projects for user: " + username + "userId: " + userId, e);
         }
         return null;
     }
