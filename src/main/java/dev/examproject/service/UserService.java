@@ -32,4 +32,8 @@ public class UserService {
     public User authenticateUser(String username, String password) {
         return repository.authenticateUser(username, password);
     }
+
+    public int addUserToProject(User user, int projectId) {
+        return repository.addUserToProject(user, projectId);
+    }
 }

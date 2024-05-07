@@ -41,37 +41,49 @@
     </div>
 </nav>
 
-<br>
-<h3 class="bold-and-cursive">Overview</h3>
-
-<!-- show info about current selected project -->
-<!-- if project is not null, show the following -->
-<div class="container" th:if="${project != null}">
-    <h3 class="bold-and-cursive">Current Project</h3>
-    <ul class="list-group" th:object="${project}">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span th:text="${project.name}"></span>
-            <span th:text="${project.description}"></span>
-            <span th:text="'Projektleder: ' + ${project.admin}"></span>
-            <ul>
-                <li th:each="user : ${project.assignedUsers}" th:text="${user}"></li>
-            </ul>
-        </li>
-        <a th:href="@{'/' + ${user.username} + '/addTask'}" class="btn btn-primary">Add Task</a>
-    </ul>
-    <h3 class="bold-and-cursive">Tasks</h3>
-    <ul class="list-group" th:each="task : ${tasks}">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span th:text="${task.taskName}"></span>
-            <span th:text="${task.taskDescription}"></span>
-            <span th:text="'Required Hours: ' + ${task.requiredHours}"></span>
-        </li>
-    </ul>
+<div class="jumbotron text-center">
+    <h1 class="display-4 bold-and-cursive">Overview</h1>
 </div>
 
-<!-- if project is null, show "No project selected." -->
+<div class="container" th:if="${project != null}">
+    <h3 class="bold-and-cursive">Nuværende Projekt</h3>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${project.name}"></h5>
+            <p class="card-text" th:text="${project.description}"></p>
+            <p class="card-text"><small class="text-muted" th:text="'Projektleder: ' + ${project.admin}"></small></p>
+            <ul>
+                <li th:each="user : ${project.assignedUsers}" th:text="${user.username}"></li>
+            </ul>
+            <a th:href="@{'/' + ${user.username} + '/addTask'}" class="btn btn-primary">Add Task</a>
+        </div>
+    </div>
+
+    <!-- Form code remains the same -->
+
+    <h3 class="bold-and-cursive mt-4">Tasks</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Task Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Required Hours</th>
+        </tr>
+        </thead>
+        <tbody th:each="task : ${tasks}">
+        <tr>
+            <td th:text="${task.taskName}"></td>
+            <td th:text="${task.taskDescription}"></td>
+            <td th:text="${task.requiredHours}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
 <div class="container" th:unless="${project != null}">
-    <h3 class="bold-and-cursive">No project selected.</h3>
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">No project selected.</h4>
+    </div>
 </div>
 
 </body>

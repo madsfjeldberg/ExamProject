@@ -59,7 +59,7 @@ public class UserRepositoryTest {
         // Test that the repository adds the user to the project
         // "test2" user is not a member of project 1
         int expected = 1;
-        int actual = repository.addUserToProject("test2", 1);
+        int actual = repository.addUserToProject(repository.getUser("test2"), 1);
         assertEquals(expected, actual);
     }
 

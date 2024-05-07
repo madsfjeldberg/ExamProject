@@ -62,5 +62,4 @@ public class ProjectRepositoryTest {
         List<Project> actual = repository.getProjectsForUser(1, "test");
         assertEquals(expected, actual);
     }
-
 }
