@@ -54,6 +54,15 @@ import java.util.List;
         this.projectId = projectId;
     }
 
+    public Project(int id, String name, String description, String admin) {
+        this.projectId = id;
+        this.name = name;
+        this.description = description;
+        this.admin = admin;
+        this.assignedUsers = new ArrayList<>();
+
+    }
+
     public Project(String projectName, String projectDescription) {
         this.name = projectName;
         this.description = projectDescription;
