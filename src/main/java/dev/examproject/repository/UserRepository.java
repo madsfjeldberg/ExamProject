@@ -11,8 +11,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository
 public class UserRepository {
@@ -74,11 +72,11 @@ public class UserRepository {
         return -1;
     }
 
-    public int addUserToProject(String username, int projectId) {
+    public int addUserToProject(User user, int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO project_users (user_id, project_id, is_admin) VALUES (?, ?, false)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, getUserId(username));
+            ps.setInt(1, getUserId(user.getUsername()));
             ps.setInt(2, projectId);
             return ps.executeUpdate();
         } catch (SQLException e) {
@@ -129,4 +127,5 @@ public class UserRepository {
         }
         return null;
     }
+
 }

@@ -116,6 +116,18 @@ public class WebController {
         return "redirect:/login";
     }
 
+    @PostMapping(path = "/{username}/addUser")
+    public String addUserToProject(@PathVariable("username") String username, @ModelAttribute("user") User user, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        Project selectedProject = (Project) session.getAttribute("selectedProject");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            userService.addUserToProject(user, selectedProject.getProjectId());
+            System.out.println("bruger tilføjet:" + user);
+            return "redirect:/" + username + "/overview";
+        }
+        return "redirect:/login";
+    }
+
     @GetMapping(path = "/{username}/projects")
     public String projects(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -146,6 +158,7 @@ public class WebController {
 
             projectService.addProject(project);
             System.out.println(projectService.getProjectId(project.getName()));
+            userService.addUserToProject(authenticatedUser, project.getProjectId());
             userService.setUserToAdmin(username, projectService.getProjectId(project.getName()));
 
             System.out.println("projekt tilføjet:" + project);

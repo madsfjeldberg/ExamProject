@@ -1,6 +1,7 @@
 package dev.examproject.repository;
 
 import dev.examproject.model.Project;
+import dev.examproject.model.User;
 import dev.examproject.repository.util.ConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +95,7 @@ public class ProjectRepository {
             if (rs.next()) {
                 Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
                 project.setAdmin(getAdminForProject(getId(name))); // det her er pis, find en løsning
+                project.setAssignedUsers(getAssignedUsers(rs.getInt("id")));
                 return project;
             }
         } catch (SQLException e) {
@@ -102,27 +104,48 @@ public class ProjectRepository {
         return null;
     }
 
-    // TODO: der er noget der ikke virker her.
-    // TODO: hvis man ikke er admin, sætter den en bruger til at være admin alligevel?
     public List<Project> getProjectsForUser(int userId, String username) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        // TODO: skriv om så den også henter projekter hvor man er medlem/assigned
         String sql = "SELECT PROJECTS.*, project_users.is_admin FROM PROJECTS " +
                 "JOIN project_users ON PROJECTS.id = project_users.project_id " +
-                "WHERE project_users.user_id = ? ";
+                "WHERE project_users.user_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             List<Project> projects = new ArrayList<>();
             while (rs.next()) {
                 Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
-                project.setAdmin(username);
+                project.setAssignedUsers(getAssignedUsers(rs.getInt("id")));
+                if (project.getAssignedUsers() == null) {
+                    project.setAssignedUsers(new ArrayList<>());
+                }
+                if (rs.getBoolean("is_admin")) {
+                    project.setAdmin(username);
+                }
                 projects.add(project);
             }
+            System.out.println(projects);
             return projects;
         } catch (SQLException e) {
             logger.error("Error getting projects for user: " + username + "userId: " + userId, e);
         }
+        System.out.println("not returning anything");
         return null;
+    }
+
+    private List<User> getAssignedUsers(int projectId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "SELECT * FROM users WHERE id IN (SELECT user_id FROM project_users WHERE project_id = ?)";
+        List<User> users = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, projectId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                users.add(new User(rs.getString("username"), rs.getString("password"), rs.getString("email")));
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting users for project", e);
+        }
+        return users;
     }
 }
