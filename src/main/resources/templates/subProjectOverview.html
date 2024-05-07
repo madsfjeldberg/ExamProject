@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Overview</title>
+    <title>Subproject Overview</title>
     <link href="../styles.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="icon" type="image/x-icon" href="../img/favicon.ico">
-
 </head>
 <body>
 
@@ -20,16 +19,16 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="overview">Overview</a>
+                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/overview'}">Overview</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="projects">Projects</a>
+                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/projects'}">Projects</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="tasks">Tasks</a>
+                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/tasks'}">Tasks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="members">Members</a>
+                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/members'}">Members</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -42,37 +41,24 @@
 </nav>
 
 <br>
-<h3 class="bold-and-cursive">Overview</h3>
+<h3 class="bold-and-cursive">Subproject Overview</h3>
 
 <!-- show info about current selected project -->
 <!-- if project is not null, show the following -->
-<div class="container" th:if="${project != null}">
-    <h3 class="bold-and-cursive">Current Project</h3>
-    <ul class="list-group" th:object="${project}">
+<div class="container" th:if="${selectedSubProject != null}">
+    <h3 class="bold-and-cursive">Current Subproject</h3>
+    <ul class="list-group" th:object="${selectedSubProject}">
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span th:text="${project.name}"></span>
-            <span th:text="${project.description}"></span>
-            <span th:text="'Projektleder: ' + ${project.admin}"></span>
+            <span th:text="${selectedSubProject.name}"></span>
+            <span th:text="${selectedSubProject.description}"></span>
+            <span th:text="'Projektleder: ' + ${selectedSubProject.admin}"></span>
             <ul>
-                <li th:each="user : ${project.assignedUsers}" th:text="${user}"></li>
+                <li th:each="user : ${selectedSubProject.assignedUsers}" th:text="${user}"></li>
             </ul>
-        </li>
-        <a th:href="@{'/' + ${user.username} + '/addTask'}" class="btn btn-primary">Add Task</a>
-        <a th:href="@{'/' + ${user.username} + '/addSubProject'}" class="btn btn-primary">Add Subproject</a>
-    </ul>
-    <h3 class="bold-and-cursive">Sub-Projects</h3>
-    <ul class="list-group" th:each="subProject : ${subProjects}">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span th:text="${subProject.name}"></span>
-            <span th:text="${subProject.description}"></span>
-            <span th:text="'Projektleder: ' + ${subProject.admin}"></span>
-            <ul>
-                <li th:each="user : ${subProject.assignedUsers}" th:text="${user}"></li>
-            </ul>
-            <a th:href="@{'/selectSubProject/' + ${subProject.name}}" class="btn btn-primary">Select</a>
         </li>
     </ul>
     <h3 class="bold-and-cursive">Tasks</h3>
+    <a th:href="@{'/' + ${user.username} + '/addSubProjectTask'}" class="btn btn-primary">Add Task</a>
     <ul class="list-group" th:each="task : ${tasks}">
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <span th:text="${task.taskName}"></span>
@@ -82,11 +68,9 @@
     </ul>
 </div>
 
-
-
 <!-- if project is null, show "No project selected." -->
-<div class="container" th:unless="${project != null}">
-    <h3 class="bold-and-cursive">No project selected.</h3>
+<div class="container" th:unless="${selectedSubProject != null}">
+    <h3 class="bold-and-cursive">No subproject selected.</h3>
 </div>
 
 </body>

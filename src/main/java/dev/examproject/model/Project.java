@@ -11,17 +11,17 @@ import java.util.List;
     private String name;
     private String description;
     private String admin;
-    private String parentProject;
+    private int parentProjectID;
     private List<String> assignedUsers;
 
     // No-args constructor so spring boot can create a new instance of this object
     public Project() {}
 
-    public Project(String projectName, String projectDescription, String admin, String parentProject, List<String> assignedUsers) {
+    public Project(String projectName, String projectDescription, String admin, int parentProjectID, List<String> assignedUsers) {
         this.name = projectName;
         this.description = projectDescription;
         this.admin = admin;
-        this.parentProject = parentProject;
+        this.parentProjectID = parentProjectID;
         this.assignedUsers = assignedUsers;
     }
 
@@ -32,11 +32,11 @@ import java.util.List;
         this.assignedUsers = assignedUsers;
     }
 
-    public Project(String projectName, String projectDescription, String admin, String parentProject) {
+    public Project(String projectName, String projectDescription, String admin, int parentProjectID) {
         this.name = projectName;
         this.description = projectDescription;
         this.admin = admin;
-        this.parentProject = parentProject;
+        this.parentProjectID = parentProjectID;
         this.assignedUsers = new ArrayList<>();
     }
 
@@ -57,6 +57,12 @@ import java.util.List;
     public Project(String projectName, String projectDescription) {
         this.name = projectName;
         this.description = projectDescription;
+        this.assignedUsers = new ArrayList<>();
+    }
+    public Project(String projectName, String projectDescription, int parentProjectID) {
+        this.name = projectName;
+        this.description = projectDescription;
+        this.parentProjectID = parentProjectID;
         this.assignedUsers = new ArrayList<>();
     }
 
