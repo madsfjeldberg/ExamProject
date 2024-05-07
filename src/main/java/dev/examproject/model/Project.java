@@ -18,7 +18,6 @@ import java.util.List;
     public Project() {}
 
     public Project(String projectName, String projectDescription, String admin, String parentProject, List<String> assignedUsers) {
-        this.projectId = getProjectIdAndIncrement();
         this.name = projectName;
         this.description = projectDescription;
         this.admin = admin;
@@ -27,7 +26,6 @@ import java.util.List;
     }
 
     public Project(String projectName, String projectDescription, String admin, List<String> assignedUsers) {
-        this.projectId = getProjectIdAndIncrement();
         this.name = projectName;
         this.description = projectDescription;
         this.admin = admin;
@@ -35,7 +33,6 @@ import java.util.List;
     }
 
     public Project(String projectName, String projectDescription, String admin, String parentProject) {
-        this.projectId = getProjectIdAndIncrement();
         this.name = projectName;
         this.description = projectDescription;
         this.admin = admin;
@@ -44,21 +41,17 @@ import java.util.List;
     }
 
     public Project(String projectName, String projectDescription, String admin) {
-        this.projectId = getProjectIdAndIncrement();
         this.name = projectName;
         this.description = projectDescription;
         this.admin = admin;
         this.assignedUsers =new ArrayList<>();
     }
 
-    public Project(String projectName, String projectDescription) {
-        this.projectId = getProjectIdAndIncrement();
+    public Project(int projectId, String projectName, String projectDescription) {
         this.name = projectName;
         this.description = projectDescription;
         this.assignedUsers = new ArrayList<>();
+        this.projectId = projectId;
     }
 
-    public int getProjectIdAndIncrement() {
-        return projectId++;
-    }
 }

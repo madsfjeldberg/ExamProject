@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Add Task</title>
+</head>
+<body>
+<h1>Add Task</h1>
+<form action="#" th:action="@{'/' + ${user.username} + '/addTask'}" th:object="${task}" method="post">
+  <label for="taskName">Task Name:</label><br>
+  <input type="text" id="taskName" name="taskName" th:field="*{taskName}" required><br>
+  <label for="taskDescription">Task Description:</label><br>
+  <textarea id="taskDescription" name="taskDescription" th:field="*{taskDescription}" required></textarea><br>
+  <label for="requiredHours">Required Hours:</label><br>
+  <input type="number" id="requiredHours" name="requiredHours" th:field="*{requiredHours}" required><br>
+  <input type="submit" value="Add Task">
+</form>
+</body>
+</html>

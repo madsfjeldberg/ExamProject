@@ -7,10 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,15 +28,28 @@ public class ProjectRepository {
     public int addProject(Project project) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO PROJECTS (name, description) VALUES (?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, project.getName());
             ps.setString(2, project.getDescription());
-            return ps.executeUpdate();
+            ps.executeUpdate();
+
+            // Retrieve the auto-generated project ID
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int projectId = rs.getInt(1);
+                    project.setProjectId(projectId); // Set the generated ID in the Task object
+                    return 1;
+                } else {
+                    // Handle the case where the auto-generated key couldn't be retrieved
+                    throw new SQLException("Failed to retrieve auto-generated key for project");
+                }
+            }
         } catch (SQLException e) {
             logger.error("Error adding project", e);
         }
-        return -1;
+        return -1; // Return a default value indicating failure
     }
+
 
     public int getId(String projectName) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
@@ -82,7 +92,7 @@ public class ProjectRepository {
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Project project = new Project(rs.getString("name"), rs.getString("description"));
+                Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
                 project.setAdmin(getAdminForProject(getId(name)));
                 return project;
             }
@@ -105,7 +115,7 @@ public class ProjectRepository {
             ResultSet rs = ps.executeQuery();
             List<Project> projects = new ArrayList<>();
             while (rs.next()) {
-                Project project = new Project(rs.getString("name"), rs.getString("description"));
+                Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
                 project.setAdmin(username);
                 projects.add(project);
             }
