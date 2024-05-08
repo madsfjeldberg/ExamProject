@@ -2,10 +2,17 @@ package dev.examproject;
 
 import dev.examproject.model.Project;
 import dev.examproject.repository.ProjectRepository;
+import dev.examproject.service.ProjectService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +25,17 @@ public class ProjectRepositoryTest {
 
     @Autowired
     private ProjectRepository repository;
+
+    @Mock
+    private ProjectRepository projectRepository;
+
+    @InjectMocks
+    private ProjectService projectService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     void addProject() {
@@ -66,4 +84,27 @@ public class ProjectRepositoryTest {
     }
 
      */
-}
+
+        @Test
+        void testUpdateProject() {
+            Project project = new Project(1, "Updated Project", "Updated Description");
+            when(projectRepository.updateProject(project)).thenReturn(true);
+
+            boolean result = projectService.updateProject(project);
+
+            assertTrue(result, "Project should be updated successfully");
+            verify(projectRepository).updateProject(project);
+        }
+
+        @Test
+        void testUpdateProjectFailure() {
+            Project project = new Project(1, "Failed Update", "Failed Description");
+            when(projectRepository.updateProject(project)).thenReturn(false);
+
+            boolean result = projectService.updateProject(project);
+
+            assertFalse(result, "Project should fail to update");
+            verify(projectRepository).updateProject(project);
+        }
+    }
+

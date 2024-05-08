@@ -177,6 +177,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping(path = "/{username}/addTask")
     public String addTask(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -188,6 +189,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @PostMapping(path = "/{username}/addTask")
     public String addTask(@PathVariable("username") String username, @ModelAttribute("task") Task task, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -202,5 +204,14 @@ public class WebController {
         }
         return "redirect:/login";
     }
-
+//-----------------------edit-----------------------
+    @PostMapping("/{username}/updateProject")
+    public String updateProject(@ModelAttribute("project") Project project, HttpSession session, @PathVariable String username) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(project.getAdmin())) {
+            projectService.updateProject(project);
+            return "redirect:/" + authenticatedUser.getUsername() + "/projects";
+        }
+        return "redirect:/login";
+    }
 }

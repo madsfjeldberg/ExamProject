@@ -148,4 +148,21 @@ public class ProjectRepository {
         }
         return users;
     }
+//-------------------------edit-----------------------------
+    public boolean updateProject(Project project) {
+        String sql = "UPDATE PROJECTS SET name = ?, description = ? WHERE id = ?";
+        try (Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, project.getName());
+            ps.setString(2, project.getDescription());
+            ps.setInt(3, project.getProjectId());
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            logger.error("Error updating project", e);
+            return false;
+        }
+    }
+
 }
+

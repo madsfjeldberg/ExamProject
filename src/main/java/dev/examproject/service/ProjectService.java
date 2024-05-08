@@ -30,5 +30,8 @@ public class ProjectService {
     public List<Project> getProjectsForUser(int userId, String username) {
         return repository.getProjectsForUser(userId, username);
     }
-
+//---------------------------edit-------------------------
+    public boolean updateProject(Project project) {
+        return repository.updateProject(project);
+    }
 }
