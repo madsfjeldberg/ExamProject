@@ -8,7 +8,6 @@
     <link rel="icon" type="image/x-icon" href="../img/favicon.ico">
 </head>
 <body>
-<h1>Add Task</h1>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary shadow">
   <div class="container-fluid">
@@ -41,14 +40,23 @@
   </div>
 </nav>
 
-<form action="#" th:action="@{'/' + ${user.username} + '/addTask'}" th:object="${task}" method="post">
-  <label for="taskName">Task Name:</label><br>
-  <input type="text" id="taskName" name="taskName" th:field="*{taskName}" required><br>
-  <label for="taskDescription">Task Description:</label><br>
-  <textarea id="taskDescription" name="taskDescription" th:field="*{taskDescription}" required></textarea><br>
-  <label for="requiredHours">Required Hours:</label><br>
-  <input type="number" id="requiredHours" name="requiredHours" th:field="*{requiredHours}" required><br>
-  <input type="submit" value="Add Task">
-</form>
+<div class="container">
+  <h3 class="bold-and-cursive">Add Task</h3>
+  <form action="#" th:action="@{'/' + ${user.username} + '/addTask'}" th:object="${task}" method="post" class="mt-4">
+    <div class="mb-3">
+      <label for="taskName" class="form-label">Task Name:</label>
+      <input type="text" id="taskName" name="taskName" th:field="*{taskName}" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="taskDescription" class="form-label">Task Description:</label>
+      <textarea id="taskDescription" name="taskDescription" th:field="*{taskDescription}" class="form-control" required></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="requiredHours" class="form-label">Required Hours:</label>
+      <input type="number" id="requiredHours" name="requiredHours" th:field="*{requiredHours}" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Task</button>
+  </form>
+</div>
 </body>
 </html>

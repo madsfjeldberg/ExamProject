@@ -11,7 +11,6 @@
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary shadow">
     <div class="container-fluid">
-        <!-- make the navbar-brand bold and cursive -->
         <a class="navbar-brand bold-and-cursive" href="../home">AlphaPlan</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -40,36 +39,68 @@
     </div>
 </nav>
 
-<br>
-<h3 class="bold-and-cursive">Subproject Overview</h3>
-
-<!-- show info about current selected project -->
-<!-- if project is not null, show the following -->
-<div class="container" th:if="${selectedSubProject != null}">
-    <h3 class="bold-and-cursive">Current Subproject</h3>
-    <ul class="list-group" th:object="${selectedSubProject}">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span th:text="${selectedSubProject.name}"></span>
-            <span th:text="${selectedSubProject.description}"></span>
-            <span th:text="'Projektleder: ' + ${selectedSubProject.admin}"></span>
+<div class="container" th:if="${project != null}">
+    <h3 class="bold-and-cursive">Subprojekt Overview</h3>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${project.name}"></h5>
+            <p class="card-text" th:text="${project.description}"></p>
+            <h6 class="card-subtitle mb-2 text-muted">Medlemmer:</h6>
             <ul>
-                <li th:each="user : ${selectedSubProject.assignedUsers}" th:text="${user}"></li>
+                <li th:each="user : ${project.assignedUsers}" th:if="${user.username != project.admin}" th:text="${user.username}"></li>
+                <li th:if="${project.assignedUsers.size() == 0}">Ingen medlemmer tilføjet.</li>
             </ul>
-        </li>
-    </ul>
-    <h3 class="bold-and-cursive">Tasks</h3>
-    <a th:href="@{'/' + ${user.username} + '/addSubProjectTask'}" class="btn btn-primary">Add Task</a>
-    <ul class="list-group" th:each="task : ${tasks}">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span th:text="${task.taskName}"></span>
-            <span th:text="${task.taskDescription}"></span>
-            <span th:text="'Required Hours: ' + ${task.requiredHours}"></span>
-        </li>
-    </ul>
+        </div>
+    </div>
 </div>
 
+
+<div class="container" th:if="${selectedProject.admin == user.username}">
+    <div class="row justify-content-left">
+        <div class="col-4">
+            <form th:action="@{'/' + ${user.username} + '/addUserToSubProject'}" method="post">
+                <div class="mb-3">
+                    <h4 class="bold-and-cursive">Add User</h4>
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username">
+                </div>
+                <button type="submit" class="btn btn-primary">Add User</button>
+            </form>
+        </div>
+        </div>
+</div>
+
+
+<h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
+    <a th:href="@{'/' + ${user.username} + '/addTask'}" class="btn btn-primary">Add Task</a>
+</h3>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Task Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Required Hours</th>
+                    </tr>
+                    </thead>
+                    <tbody th:each="task : ${tasks}">
+                    <tr>
+                        <td th:text="${task.taskName}"></td>
+                        <td th:text="${task.taskDescription}"></td>
+                        <td th:text="${task.requiredHours}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
 <!-- if project is null, show "No project selected." -->
-<div class="container" th:unless="${selectedSubProject != null}">
+<div class="container" th:unless="${project != null}">
     <h3 class="bold-and-cursive">No subproject selected.</h3>
 </div>
 

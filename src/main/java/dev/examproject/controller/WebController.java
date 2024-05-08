@@ -130,6 +130,18 @@ public class WebController {
         return "redirect:/login";
     }
 
+    @PostMapping(path = "/{username}/addUserToSubProject")
+    public String addUserToSubProject(@PathVariable("username") String username, @ModelAttribute("user") User user, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        Project selectedSubProject = (Project) session.getAttribute("selectedSubProject");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            userService.addUserToProject(user, selectedSubProject.getProjectId());
+            System.out.println("bruger tilføjet:" + user);
+            return "redirect:/subProjectOverview";
+        }
+        return "redirect:/login";
+    }
+
     @GetMapping(path = "/{username}/projects")
     public String projects(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -179,6 +191,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping(path = "/{username}/addTask")
     public String addTask(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -190,6 +203,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping(path = "/{username}/addSubProjectTask")
     public String addSubProjectTask(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -201,6 +215,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @PostMapping(path = "/{username}/addTask")
     public String addTask(@PathVariable("username") String username, @ModelAttribute("task") Task task, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -215,6 +230,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @PostMapping(path = "/{username}/addSubProjectTask")
     public String addSubProjectTask(@PathVariable("username") String username, @ModelAttribute("task") Task task, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -230,6 +246,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping(path = "/{username}/addSubProject")
     public String addSubProject(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -254,6 +271,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping(path = "/selectSubProject/{subProjectName}")
     public String selectSubProject(@PathVariable("subProjectName") String subProjectName, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -264,15 +282,18 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping(path = "/subProjectOverview")
     public String subProjectOverview(HttpSession session, Model model) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null) {
             Project selectedSubProject = (Project) session.getAttribute("selectedSubProject");
+            Project selectedProject = (Project) session.getAttribute("selectedProject");
             if (selectedSubProject != null) {
                 List<Task> tasks = taskService.getProjectTasks(selectedSubProject.getProjectId());
+                model.addAttribute("selectedProject", selectedProject);
                 model.addAttribute("tasks", tasks);
-                model.addAttribute("selectedSubProject", selectedSubProject);
+                model.addAttribute("project", selectedSubProject);
                 model.addAttribute("user", authenticatedUser);
                 return "subProjectOverview";
             }
