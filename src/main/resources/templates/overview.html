@@ -58,13 +58,26 @@
             <ul>
                 <li th:each="user : ${project.assignedUsers}" th:text="${user.username}"></li>
             </ul>
-            <a th:href="@{'/' + ${user.username} + '/addTask'}" class="btn btn-primary">Add Task</a>
         </div>
     </div>
-
+    </ul>
+    <h3 class="bold-and-cursive">Sub-Projects</h3>
+    <a th:href="@{'/' + ${user.username} + '/addSubProject'}" class="btn btn-primary">Add Subproject</a>
+    <ul class="list-group" th:each="subProject : ${subProjects}">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span th:text="${subProject.name}"></span>
+            <span th:text="${subProject.description}"></span>
+            <span th:text="'Projektleder: ' + ${subProject.admin}"></span>
+            <ul>
+                <li th:each="user : ${subProject.assignedUsers}" th:text="${user}"></li>
+            </ul>
+            <a th:href="@{'/selectSubProject/' + ${subProject.name}}" class="btn btn-primary">Select</a>
+        </li>
+    </ul>
     <!-- Form code remains the same -->
 
     <h3 class="bold-and-cursive mt-4">Tasks</h3>
+    <a th:href="@{'/' + ${user.username} + '/addTask'}" class="btn btn-primary">Add Task</a>
     <table class="table table-striped">
         <thead>
         <tr>
@@ -83,6 +96,9 @@
     </table>
 </div>
 
+
+
+<!-- if project is null, show "No project selected." -->
 <div class="container" th:unless="${project != null}">
     <div class="alert alert-info" role="alert">
         <h4 class="alert-heading">No project selected.</h4>

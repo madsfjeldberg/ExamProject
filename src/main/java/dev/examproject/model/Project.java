@@ -11,7 +11,7 @@ import java.util.List;
     private String name;
     private String description;
     private String admin;
-    private String parentProject;
+    private int parentProjectID;
     private List<User> assignedUsers;
 
     // No-args constructor so spring boot can create a new instance of this object
@@ -37,5 +37,17 @@ import java.util.List;
         this.description = projectDescription;
         this.assignedUsers = new ArrayList<>();
     }
-
+    public Project(String projectName, String projectDescription, int parentProjectID) {
+        this.name = projectName;
+        this.description = projectDescription;
+        this.parentProjectID = parentProjectID;
+        this.assignedUsers = new ArrayList<>();
+    }
+    public Project(int projectId, String projectName, String projectDescription, int parentProjectID) {
+        this.projectId = projectId;
+        this.name = projectName;
+        this.description = projectDescription;
+        this.parentProjectID = parentProjectID;
+        this.assignedUsers = new ArrayList<>();
+    }
 }
