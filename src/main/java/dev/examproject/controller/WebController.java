@@ -20,7 +20,6 @@ public class WebController {
 
     private final UserService userService;
     private final ProjectService projectService;
-
     private final TaskService taskService;
 
     public WebController(UserService userService, ProjectService projectService, TaskService taskService) {
@@ -104,11 +103,11 @@ public class WebController {
         Project selectedProject = (Project) session.getAttribute("selectedProject");
         if (selectedProject != null) {
             Project project = projectService.getProject(selectedProject.getProjectId());
-         //   List<Task> tasks = taskService.getProjectTasks(selectedProject.getProjectId());
+            //   List<Task> tasks = taskService.getProjectTasks(selectedProject.getProjectId());
             List<Project> subProjects = projectService.getSubProjectsForProject(selectedProject.getProjectId());
 
             model.addAttribute("project", project);
-           // model.addAttribute("tasks", tasks);
+            // model.addAttribute("tasks", tasks);
             model.addAttribute("subProjects", subProjects);
             model.addAttribute("totalHoursForProject", projectService.getTotalRequiredHoursForAllSubProjects(selectedProject.getProjectId()));
 
@@ -195,7 +194,6 @@ public class WebController {
     }
 
 
-    }
     @GetMapping(path = "/{username}/addSubProjectTask")
     public String addSubProjectTask(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -222,8 +220,6 @@ public class WebController {
         }
         return "redirect:/login";
     }
-}
-
 
     @PostMapping(path = "/{username}/addSubProjectTask")
     public String addSubProjectTask(@PathVariable("username") String username, @ModelAttribute("task") Task task, HttpSession session) {
@@ -266,7 +262,6 @@ public class WebController {
         return "redirect:/login";
     }
 
-
     @GetMapping(path = "/selectSubProject/{projectId}")
     public String selectSubProject(@PathVariable("projectId") int projectId, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -294,24 +289,8 @@ public class WebController {
         }
         return "redirect:/login";
     }
-//-----------------------------------------------------------------EDIT--------------------------
-    //Måske skal der være en pathvariable
-   /* @PostMapping("/editProject")
-    public String updateProject(@ModelAttribute("project") Project project, HttpSession session) {
-        User authenticatedUser = (User) session.getAttribute("user");
-        if (authenticatedUser != null && authenticatedUser.getUsername().equals(project.getAdmin())) {
-            projectService.updateProject(project);
-            return "redirect:/" + authenticatedUser.getUsername() + "/projects";
-        }
-        return "redirect:/login";
 
-    }
-    @GetMapping("/editProject")
-    public String showEditProjectForm(Model model) {
-        Project project = new Project();
-        model.addAttribute("project", project);
-        return "edit";
-    } */
+    //-----------------------------------------------------------------EDIT--------------------------
 @GetMapping("/{username}/editProject/{projectId}")
 public String showEditProjectForm(@PathVariable("username") String username, @PathVariable("projectId") int projectId, Model model, HttpSession session) {
     User authenticatedUser = (User) session.getAttribute("user");
