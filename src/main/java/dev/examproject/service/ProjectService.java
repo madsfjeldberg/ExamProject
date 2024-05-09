@@ -28,8 +28,8 @@ public class ProjectService {
         return repository.getId(projectName);
     }
 
-    public Project getProject(String projectName) {
-        return repository.getProject(projectName);
+    public Project getProject(int projectid) {
+        return repository.getProject(projectid);
     }
 
     public List<Project> getProjectsForUser(int userId, String username) {
@@ -38,8 +38,22 @@ public class ProjectService {
     public List<Project> getSubProjectsForProject(int projectId) {
         return repository.getSubProjectsForProject(projectId);
     }
-    public Project getSubProject(String subProjectName) {
-        return repository.getSubProject(subProjectName);
+    public Project getSubProject(int projectId) {
+        return repository.getSubProject(projectId);
+    }
+
+    public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
+        return repository.getTotalRequiredHoursForAllSubProjects(parentProjectId);
+    }
+
+    //--------------------------------------------EDIT---------------------------------------
+
+    public Project getProjectById(int projectId) {
+        return repository.getProjectById(projectId);
+    }
+
+    public boolean updateProject(Project project) {
+        return repository.updateProject(project);
     }
 
 }

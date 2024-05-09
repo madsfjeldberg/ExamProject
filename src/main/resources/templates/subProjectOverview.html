@@ -73,6 +73,7 @@
 
 <h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
     <a th:href="@{'/' + ${user.username} + '/addSubProjectTask'}" class="btn btn-primary">Add Task</a>
+  
 </h3>
     <div class="container">
         <div class="row justify-content-center">
@@ -130,8 +131,9 @@
 </div>
 
 
-<!-- if project is null, show "No project selected." -->
-<div class="container" th:unless="${project != null}">
+
+
+<div class="container" th:unless="${selectedSubProject != null}">
     <h3 class="bold-and-cursive">No subproject selected.</h3>
 </div>
 

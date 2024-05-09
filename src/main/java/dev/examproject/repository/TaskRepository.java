@@ -3,6 +3,8 @@ package dev.examproject.repository;
 import dev.examproject.model.Task;
 import dev.examproject.model.User;
 import dev.examproject.repository.util.ConnectionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +14,9 @@ import java.util.List;
 
 @Repository
 public class TaskRepository {
+
+    private static final Logger logger = LoggerFactory.getLogger(TaskRepository.class);
+
 
     @Value("${spring.datasource.url}")
     private String dbUrl;
@@ -68,6 +73,20 @@ public class TaskRepository {
             e.printStackTrace();
         }
         return tasks;
+    }
+    public int getTotalRequiredHoursForSubproject(int projectId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "SELECT SUM(required_hours) FROM tasks WHERE project_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, projectId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting total required hours for project", e);
+        }
+        return 0;
     }
 
     public List<User> getAssignedUsers(int taskId) {

@@ -68,6 +68,25 @@
             </div>
         </div>
     </div>
+
+    <h3 class="bold-and-cursive">Projects</h3>
+    <!-- add a "Add Project" button -->
+    <a class="btn btn-primary" href="addProject">Add Project</a>
+    <ul class="list-group" th:object="${projects}">
+        <li class="list-group-item d-flex justify-content-between align-items-center" th:each="project : ${projects}">
+            <span th:text="${project.name}"></span>
+            <span th:text="${project.description}"></span>
+            <span th:text="'Projektleder: ' + ${project.admin}"></span>
+            <ul>
+                <li th:each="user : ${project.assignedUsers}" th:text="${user.username}"></li>
+            </ul>
+           <!---------------------------edit--------------------------------->
+            <a class="btn btn-secondary" th:href="@{'/' + ${user.username} + '/editProject/' + ${project.projectId}}">Edit</a>
+            <a class="btn btn-primary" th:href="@{'/selectProject/' + ${project.projectId}}">Select</a>
+
+        </li>
+    </ul>
+
 </div>
 
 </body>

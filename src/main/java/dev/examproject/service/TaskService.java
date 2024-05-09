@@ -11,6 +11,7 @@ public class TaskService {
 
     private final TaskRepository repository;
 
+
     public TaskService(TaskRepository repository) {
         this.repository = repository;
     }
@@ -29,4 +30,9 @@ public class TaskService {
     public void assignUserToTask(int taskId, int userId) {
         repository.assignUserToTask(taskId, userId);
     }
+
+    public int getTotalRequiredHoursForProject(int projectId) {
+        return repository.getTotalRequiredHoursForSubproject(projectId);
+    }
+
 }
