@@ -72,7 +72,7 @@
             <ul>
                 <li th:each="user : ${subProject.assignedUsers}" th:text="${user}"></li>
             </ul>
-            <a th:href="@{'/selectSubProject/' + ${subProject.name}}" class="btn btn-primary">Select</a>
+            <a th:href="@{'/selectSubProject/' + ${subProject.projectId}}" class="btn btn-primary">Select</a>
         </li>
     </ul>
     <!-- Form code remains the same -->

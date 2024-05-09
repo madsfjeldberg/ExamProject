@@ -103,7 +103,7 @@ public class WebController {
         User authenticatedUser = (User) session.getAttribute("user");
         Project selectedProject = (Project) session.getAttribute("selectedProject");
         if (selectedProject != null) {
-            Project project = projectService.getProject(selectedProject.getName());
+            Project project = projectService.getProject(selectedProject.getProjectId());
          //   List<Task> tasks = taskService.getProjectTasks(selectedProject.getProjectId());
             List<Project> subProjects = projectService.getSubProjectsForProject(selectedProject.getProjectId());
 
@@ -171,11 +171,11 @@ public class WebController {
         return "redirect:/login";
     }
 
-    @GetMapping(path = "/selectProject/{projectName}")
-    public String selectProject(@PathVariable("projectName") String projectName, HttpSession session) {
+    @GetMapping(path = "/selectProject/{projectId}")
+    public String selectProject(@PathVariable("projectId") int projectId, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null) {
-            Project project = projectService.getProject(projectName);
+            Project project = projectService.getProject(projectId);
             session.setAttribute("selectedProject", project);
             return "redirect:/" + authenticatedUser.getUsername() + "/overview";
         }
@@ -256,11 +256,11 @@ public class WebController {
         }
         return "redirect:/login";
     }
-    @GetMapping(path = "/selectSubProject/{subProjectName}")
-    public String selectSubProject(@PathVariable("subProjectName") String subProjectName, HttpSession session) {
+    @GetMapping(path = "/selectSubProject/{projectId}")
+    public String selectSubProject(@PathVariable("projectId") int projectId, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null) {
-            Project subProject = projectService.getSubProject(subProjectName);
+            Project subProject = projectService.getSubProject(projectId);
             session.setAttribute("selectedSubProject", subProject);
             return "redirect:/subProjectOverview";
         }

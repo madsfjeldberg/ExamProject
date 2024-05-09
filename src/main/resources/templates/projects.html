@@ -53,7 +53,7 @@
             <ul>
                 <li th:each="user : ${project.assignedUsers}" th:text="${user.username}"></li>
             </ul>
-            <a class="btn btn-primary" th:href="@{'/selectProject/' + ${project.name}}">Select</a>
+            <a class="btn btn-primary" th:href="@{'/selectProject/' + ${project.projectId}}">Select</a>
         </li>
     </ul>
 </div>
