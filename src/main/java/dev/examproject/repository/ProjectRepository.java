@@ -112,22 +112,20 @@ public class ProjectRepository {
         return null;
     }
 
-    public Project getProject(String name) {
+    public Project getProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT PROJECTS.*, project_users.is_admin FROM PROJECTS " +
-                "JOIN project_users ON PROJECTS.id = project_users.project_id " +
-                "WHERE PROJECTS.name = ? ";
+        String sql = "SELECT * FROM PROJECTS WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, name);
+            ps.setInt(1, projectId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
-                project.setAdmin(getAdminForProject(getId(name))); // det her er pis, find en løsning
+                project.setAdmin(getAdminForProject(projectId));
                 project.setAssignedUsers(getAssignedUsers(rs.getInt("id")));
                 return project;
             }
         } catch (SQLException e) {
-            logger.error("Error getting project: " + name, e);
+            logger.error("Error getting project: " + projectId, e);
         }
         return null;
     }
@@ -197,11 +195,11 @@ public class ProjectRepository {
         return null;
     }
 
-    public Project getSubProject(String subProjectName) {
+    public Project getSubProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT * FROM projects WHERE name = ?";
+        String sql = "SELECT * FROM projects WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, subProjectName);
+            ps.setInt(1, projectId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
@@ -210,7 +208,7 @@ public class ProjectRepository {
                 return project;
             }
         } catch (SQLException e) {
-            logger.error("Error getting sub-project with name: " + subProjectName, e);
+            logger.error("Error getting sub-project with ID: " + projectId, e);
         }
         return null;
     }
@@ -245,5 +243,21 @@ public class ProjectRepository {
         return null;
     }
 
+
+    public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
+        int totalHours = 0;
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "SELECT SUM(required_hours) FROM tasks WHERE project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, parentProjectId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                totalHours = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting total required hours for all sub-projects", e);
+        }
+        return totalHours;
+    }
 }
 

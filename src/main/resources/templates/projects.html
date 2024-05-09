@@ -53,9 +53,10 @@
             <ul>
                 <li th:each="user : ${project.assignedUsers}" th:text="${user.username}"></li>
             </ul>
-            <!---------------------------edit--------------------------------->
+           <!---------------------------edit--------------------------------->
             <a class="btn btn-secondary" th:href="@{'/' + ${user.username} + '/editProject/' + ${project.projectId}}">Edit</a>
-            <a class="btn btn-primary" th:href="@{'/selectProject/' + ${project.name}}">Select</a>
+            <a class="btn btn-primary" th:href="@{'/selectProject/' + ${project.projectId}}">Select</a>
+
         </li>
     </ul>
 </div>
