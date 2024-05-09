@@ -49,8 +49,8 @@ public class ProjectRepositoryTest {
     @Test
     void getProject() {
         // Test that the repository returns the correct project
-        Project expected = repository.getProject("test 1");
-        assertEquals("test 1", expected.getName());
+        Project expected = repository.getProject(1);
+        assertEquals(1, expected.getProjectId());
     }
 
     // skal skrives om senere, magter ikke lige nu

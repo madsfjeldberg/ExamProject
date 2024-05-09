@@ -64,6 +64,7 @@
             <span th:text="'Required Hours: ' + ${task.requiredHours}"></span>
         </li>
     </ul>
+    <a class="btn btn-primary" th:href="@{'/' + ${user.username} + '/overview'}">Return to Overview</a>
 </div>
 
 <div class="container" th:unless="${selectedSubProject != null}">
