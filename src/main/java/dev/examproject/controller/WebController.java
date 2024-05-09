@@ -179,6 +179,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping(path = "/{username}/addTask")
     public String addTask(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -190,6 +191,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping(path = "/{username}/addSubProjectTask")
     public String addSubProjectTask(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -201,6 +203,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @PostMapping(path = "/{username}/addTask")
     public String addTask(@PathVariable("username") String username, @ModelAttribute("task") Task task, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -215,6 +218,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @PostMapping(path = "/{username}/addSubProjectTask")
     public String addSubProjectTask(@PathVariable("username") String username, @ModelAttribute("task") Task task, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -230,6 +234,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping(path = "/{username}/addSubProject")
     public String addSubProject(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -254,6 +259,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping(path = "/selectSubProject/{subProjectName}")
     public String selectSubProject(@PathVariable("subProjectName") String subProjectName, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -264,6 +270,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping(path = "/subProjectOverview")
     public String subProjectOverview(HttpSession session, Model model) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -279,5 +286,56 @@ public class WebController {
         }
         return "redirect:/login";
     }
+//-----------------------------------------------------------------EDIT--------------------------
+    //Måske skal der være en pathvariable
+   /* @PostMapping("/editProject")
+    public String updateProject(@ModelAttribute("project") Project project, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(project.getAdmin())) {
+            projectService.updateProject(project);
+            return "redirect:/" + authenticatedUser.getUsername() + "/projects";
+        }
+        return "redirect:/login";
 
+    }
+    @GetMapping("/editProject")
+    public String showEditProjectForm(Model model) {
+        Project project = new Project();
+        model.addAttribute("project", project);
+        return "edit";
+    } */
+@GetMapping("/{username}/editProject/{projectId}")
+public String showEditProjectForm(@PathVariable("username") String username, @PathVariable("projectId") int projectId, Model model, HttpSession session) {
+    User authenticatedUser = (User) session.getAttribute("user");
+    System.out.println("Attempting to edit project with ID: " + projectId + " for user: " + username);
+    if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+        Project project = projectService.getProjectById(projectId);
+        if (project != null) {
+            model.addAttribute("project", project);
+            model.addAttribute("user",authenticatedUser);
+            return "editProject";
+        } else {
+            return "redirect:/" + username + "/projects";
+        }
+    }
+    return "redirect:/login";
 }
+
+    @PostMapping("/{username}/updateProject/{projectId}")
+    public String updateProject(@PathVariable("username") String username, @PathVariable("projectId") int projectId, @ModelAttribute("project") Project project, RedirectAttributes redirectAttributes, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            project.setProjectId(projectId);
+            boolean updateSuccessful = projectService.updateProject(project);
+            if (updateSuccessful) {
+                redirectAttributes.addFlashAttribute("successMessage", "Project updated successfully!");
+                return "redirect:/" + username + "/projects";
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Failed to update project");
+                return "redirect:/" + username + "/editProject/" + projectId;
+            }
+        }
+        return "redirect:/login";
+    }
+}
+

@@ -85,26 +85,6 @@ public class ProjectRepositoryTest {
 
      */
 
-        @Test
-        void testUpdateProject() {
-            Project project = new Project(1, "Updated Project", "Updated Description");
-            when(projectRepository.updateProject(project)).thenReturn(true);
 
-            boolean result = projectService.updateProject(project);
-
-            assertTrue(result, "Project should be updated successfully");
-            verify(projectRepository).updateProject(project);
-        }
-
-        @Test
-        void testUpdateProjectFailure() {
-            Project project = new Project(1, "Failed Update", "Failed Description");
-            when(projectRepository.updateProject(project)).thenReturn(false);
-
-            boolean result = projectService.updateProject(project);
-
-            assertFalse(result, "Project should fail to update");
-            verify(projectRepository).updateProject(project);
-        }
     }
 

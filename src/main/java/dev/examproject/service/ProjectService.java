@@ -42,4 +42,14 @@ public class ProjectService {
         return repository.getSubProject(subProjectName);
     }
 
+    //--------------------------------------------EDIT---------------------------------------
+
+    public Project getProjectById(int projectId) {
+        return repository.getProjectById(projectId);
+    }
+
+    public boolean updateProject(Project project) {
+        return repository.updateProject(project);
+    }
+
 }
