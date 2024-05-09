@@ -310,4 +310,17 @@ public class WebController {
         return "redirect:/login";
     }
 
+    @GetMapping(path = "/{username}/addUserToTask/{taskId}")
+    public String addUserToTask(@PathVariable("username") String username,
+                                @PathVariable("taskId") int taskId,
+                                @ModelAttribute("user") User user, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            int userId = userService.getUserId(user.getUsername());
+            taskService.addUserToTask(taskId, userId);
+            return "redirect:/subProjectOverview";
+        }
+        return "redirect:/login";
+    }
+
 }

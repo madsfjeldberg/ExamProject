@@ -60,11 +60,11 @@
         <div class="col-4">
             <form th:action="@{'/' + ${user.username} + '/addUserToSubProject'}" method="post">
                 <div class="mb-3">
-                    <h4 class="bold-and-cursive">Add User</h4>
-                    <label for="username" class="form-label">Username</label>
+                    <h4 class="bold-and-cursive">Tilføj medlem</h4>
+                    <label for="username" class="form-label">Brugernavn</label>
                     <input type="text" class="form-control" id="username" name="username">
                 </div>
-                <button type="submit" class="btn btn-primary">Add User</button>
+                <button type="submit" class="btn btn-primary">Tilføj</button>
             </form>
         </div>
         </div>
@@ -80,9 +80,11 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th scope="col">Task Name</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Required Hours</th>
+                        <th scope="col">Task Navn</th>
+                        <th scope="col">Beskrivelse</th>
+                        <th scope="col">Timer</th>
+                        <th scope="col">Medlemmer</th>
+                        <th scope="col">Actions</th>
                     </tr>
                     </thead>
                     <tbody th:each="task : ${tasks}">
@@ -90,6 +92,9 @@
                         <td th:text="${task.taskName}"></td>
                         <td th:text="${task.taskDescription}"></td>
                         <td th:text="${task.requiredHours}"></td>
+                        <td th:text="${task.assignedUsers.size()}"></td>
+                        <td class="btn-group" role="group">
+                            <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/addUserToTask/' + ${task.taskId}}">Assign</a>
                     </tr>
                     </tbody>
                 </table>

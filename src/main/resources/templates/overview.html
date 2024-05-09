@@ -92,29 +92,7 @@
             </div>
         </div>
     </div>
-
-
-
-    <h3 class="bold-and-cursive mt-4">Tasks</h3>
-    <a th:href="@{'/' + ${user.username} + '/addTask'}" class="btn btn-primary">Add Task</a>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">Task Name</th>
-            <th scope="col">Description</th>
-            <th scope="col">Required Hours</th>
-        </tr>
-        </thead>
-        <tbody th:each="task : ${tasks}">
-        <tr>
-            <td th:text="${task.taskName}"></td>
-            <td th:text="${task.taskDescription}"></td>
-            <td th:text="${task.requiredHours}"></td>
-        </tr>
-        </tbody>
-    </table>
 </div>
-
 
 
 <div class="container" th:unless="${project != null}">

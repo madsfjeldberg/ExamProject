@@ -1,13 +1,16 @@
 package dev.examproject.repository;
 
 import dev.examproject.model.Task;
+import dev.examproject.model.User;
 import dev.examproject.repository.util.ConnectionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class TaskRepository {
@@ -60,6 +63,7 @@ public class TaskRepository {
                 task.setTaskDescription(rs.getString("description"));
                 task.setRequiredHours(rs.getInt("required_hours"));
                 task.setProjectId(rs.getInt("project_id"));
+                task.setAssignedUsers(getAssignedUsers(task.getTaskId()));
                 tasks.add(task);
             }
         } catch (SQLException e) {
@@ -68,4 +72,33 @@ public class TaskRepository {
         return tasks;
     }
 
+    public List<User> getAssignedUsers(int taskId) {
+        List<User> users = new ArrayList<>();
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "SELECT * FROM users WHERE id IN (SELECT user_id FROM task_users WHERE task_id = ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, taskId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User user = new User(rs.getString("username"), rs.getString("password"), rs.getString("email"));
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
     }
+
+    public void addUserToTask(int taskId, int userId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "INSERT INTO task_users (task_id, user_id) VALUES (?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, taskId);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
