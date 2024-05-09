@@ -11,7 +11,6 @@
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary shadow">
     <div class="container-fluid">
-        <!-- make the navbar-brand bold and cursive -->
         <a class="navbar-brand bold-and-cursive" href="../home">AlphaPlan</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -43,11 +42,10 @@
 <br>
 <h3 class="bold-and-cursive">Subproject Overview</h3>
 
-<!-- show info about current selected project -->
-<!-- if project is not null, show the following -->
 <div class="container" th:if="${selectedSubProject != null}">
     <h3 class="bold-and-cursive">Current Subproject</h3>
     <ul class="list-group" th:object="${selectedSubProject}">
+        <p>Total required hours for subproject: <span th:text="${totalHoursForProject}"></span></p>
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <span th:text="${selectedSubProject.name}"></span>
             <span th:text="${selectedSubProject.description}"></span>
@@ -68,7 +66,6 @@
     </ul>
 </div>
 
-<!-- if project is null, show "No project selected." -->
 <div class="container" th:unless="${selectedSubProject != null}">
     <h3 class="bold-and-cursive">No subproject selected.</h3>
 </div>

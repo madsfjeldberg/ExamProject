@@ -42,4 +42,8 @@ public class ProjectService {
         return repository.getSubProject(subProjectName);
     }
 
+    public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
+        return repository.getTotalRequiredHoursForAllSubProjects(parentProjectId);
+    }
+
 }

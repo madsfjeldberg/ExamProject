@@ -210,5 +210,20 @@ public class ProjectRepository {
         }
         return null;
     }
+    public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
+        int totalHours = 0;
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "SELECT SUM(required_hours) FROM tasks WHERE project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, parentProjectId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                totalHours = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting total required hours for all sub-projects", e);
+        }
+        return totalHours;
+    }
 }
 

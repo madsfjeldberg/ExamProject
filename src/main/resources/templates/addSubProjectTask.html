@@ -11,7 +11,7 @@
     <label for="taskDescription">Task Description:</label><br>
     <textarea id="taskDescription" name="taskDescription" th:field="*{taskDescription}" required></textarea><br>
     <label for="requiredHours">Required Hours:</label><br>
-    <input type="number" id="requiredHours" name="requiredHours" th:field="*{requiredHours}" required><br>
+    <input type="number" id="requiredHours" name="requiredHours" th:field="*{requiredHours}" min="0" step="1" required>
     <input type="submit" value="Add Task">
 </form>
 </body>
