@@ -23,9 +23,16 @@ public class TaskService {
         return repository.getProjectTasks(projectId);
     }
 
+    public void assignSelfToTask(int taskId, int userId) {
+        repository.assignUserToTask(taskId, userId);
+    }
+
+    public void assignUserToTask(int taskId, int userId) {
+        repository.assignUserToTask(taskId, userId);
+    }
+
     public int getTotalRequiredHoursForProject(int projectId) {
         return repository.getTotalRequiredHoursForSubproject(projectId);
     }
-
 
 }

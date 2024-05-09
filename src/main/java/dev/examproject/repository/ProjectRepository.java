@@ -134,7 +134,7 @@ public class ProjectRepository {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "SELECT PROJECTS.*, project_users.is_admin FROM PROJECTS " +
                 "JOIN project_users ON PROJECTS.id = project_users.project_id " +
-                "WHERE project_users.user_id = ?";
+                "WHERE project_users.user_id = ? AND PROJECTS.parent_project_id IS NULL";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -185,6 +185,7 @@ public class ProjectRepository {
             while (rs.next()) {
                 Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
                 project.setAdmin(getAdminForProject(projectId));
+                project.setAssignedUsers(getAssignedUsers(rs.getInt("id")));
                 project.setParentProjectID(rs.getInt("parent_project_id"));
                 projects.add(project);
             }
@@ -204,6 +205,7 @@ public class ProjectRepository {
             if (rs.next()) {
                 Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
                 project.setAdmin(getAdminForProject(rs.getInt("id")));
+                project.setAssignedUsers(getAssignedUsers(rs.getInt("id")));
                 project.setParentProjectID(rs.getInt("parent_project_id"));
                 return project;
             }

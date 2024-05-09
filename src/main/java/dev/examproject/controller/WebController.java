@@ -3,6 +3,7 @@ package dev.examproject.controller;
 import dev.examproject.model.Project;
 import dev.examproject.model.Task;
 import dev.examproject.model.User;
+import dev.examproject.repository.util.ColoredLogger;
 import dev.examproject.service.ProjectService;
 import dev.examproject.service.TaskService;
 import dev.examproject.service.UserService;
@@ -18,6 +19,8 @@ import java.util.List;
 @RequestMapping(path = "")
 public class WebController {
 
+    ColoredLogger logger = new ColoredLogger(WebController.class);
+
     private final UserService userService;
     private final ProjectService projectService;
     private final TaskService taskService;
@@ -32,7 +35,6 @@ public class WebController {
     public String redirectHome() {
         return "redirect:/home";
     }
-
 
     @GetMapping(path = "home")
     public String home(Model model, HttpSession session) {
@@ -105,6 +107,10 @@ public class WebController {
             Project project = projectService.getProject(selectedProject.getProjectId());
             //   List<Task> tasks = taskService.getProjectTasks(selectedProject.getProjectId());
             List<Project> subProjects = projectService.getSubProjectsForProject(selectedProject.getProjectId());
+            // TODO: det her skal skrives om når task og project er merget i samme repo.
+            for (Project subProject : subProjects) {
+                subProject.setTasks(taskService.getProjectTasks(subProject.getProjectId()));
+            }
 
             model.addAttribute("project", project);
             // model.addAttribute("tasks", tasks);
@@ -127,6 +133,18 @@ public class WebController {
             userService.addUserToProject(user, selectedProject.getProjectId());
             System.out.println("bruger tilføjet:" + user);
             return "redirect:/" + username + "/overview";
+        }
+        return "redirect:/login";
+    }
+
+    @PostMapping(path = "/{username}/addUserToSubProject")
+    public String addUserToSubProject(@PathVariable("username") String username, @ModelAttribute("user") User user, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        Project selectedSubProject = (Project) session.getAttribute("selectedSubProject");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            userService.addUserToProject(user, selectedSubProject.getProjectId());
+            System.out.println("bruger tilføjet:" + user);
+            return "redirect:/subProjectOverview";
         }
         return "redirect:/login";
     }
@@ -193,7 +211,6 @@ public class WebController {
         return "redirect:/login";
     }
 
-
     @GetMapping(path = "/{username}/addSubProjectTask")
     public String addSubProjectTask(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -228,6 +245,9 @@ public class WebController {
             Project selectedSubProject = (Project) session.getAttribute("selectedSubProject");
             if (selectedSubProject != null) {
                 task.setProjectId(selectedSubProject.getProjectId());
+                // debugging
+                logger.info("Selected subproject: " + session.getAttribute("selectedSubProject"));
+                logger.info("Selected project: " + session.getAttribute("selectedProject"));
                 taskService.addTask(task);
             }
             System.out.println("task tilføjet:" + task);
@@ -262,6 +282,7 @@ public class WebController {
         return "redirect:/login";
     }
 
+
     @GetMapping(path = "/selectSubProject/{projectId}")
     public String selectSubProject(@PathVariable("projectId") int projectId, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -278,10 +299,12 @@ public class WebController {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null) {
             Project selectedSubProject = (Project) session.getAttribute("selectedSubProject");
+            Project selectedProject = (Project) session.getAttribute("selectedProject");
             if (selectedSubProject != null) {
                 List<Task> tasks = taskService.getProjectTasks(selectedSubProject.getProjectId());
+                model.addAttribute("selectedProject", selectedProject);
                 model.addAttribute("tasks", tasks);
-                model.addAttribute("selectedSubProject", selectedSubProject);
+                model.addAttribute("project", selectedSubProject);
                 model.addAttribute("user", authenticatedUser);
                 model.addAttribute("totalHoursForProject", taskService.getTotalRequiredHoursForProject(selectedSubProject.getProjectId()));
                 return "subProjectOverview";
@@ -289,6 +312,51 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
+    @GetMapping(path = "/{username}/assignSelfToTask/{taskId}")
+    public String assignSelfToTask(@PathVariable("username") String username,
+                                   @PathVariable("taskId") int taskId,
+                                   @ModelAttribute("user") User user, HttpSession session) {
+        Project mainProject = (Project) session.getAttribute("selectedProject");
+        Project subProject = (Project) session.getAttribute("selectedSubProject");
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            int userId = userService.getUserId(user.getUsername());
+            System.out.println(mainProject);
+            System.out.println(authenticatedUser);
+            // check at bruger er medlem af main project
+            if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))
+                && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))) {
+                taskService.assignSelfToTask(taskId, userId);
+            } else if (mainProject.getAdmin().equals(authenticatedUser.getUsername())) {
+                taskService.assignSelfToTask(taskId, userId);
+            } else logger.info("User not assigned to project.");
+            return "redirect:/subProjectOverview";
+        }
+        return "redirect:/login";
+    }
+
+    @PostMapping(path = "/{username}/assignUserToTask/{taskId}")
+    public String assignUserToTask(@PathVariable("username") String username,
+                                   @PathVariable("taskId") int taskId,
+                                   @ModelAttribute("user") User user,
+                                   @RequestParam("assignedUsername") String assignedUsername, HttpSession session) {
+        Project mainProject = (Project) session.getAttribute("selectedProject");
+        Project subProject = (Project) session.getAttribute("selectedSubProject");
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            int userId = userService.getUserId(assignedUsername);
+            if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))
+                && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
+                taskService.assignUserToTask(taskId, userId);
+            } else if (mainProject.getAdmin().equals(authenticatedUser.getUsername())) {
+                taskService.assignUserToTask(taskId, userId);
+            } else logger.info("User not assigned to project.");
+            return "redirect:/subProjectOverview";
+        }
+        return "redirect:/login";
+    }
+
 
     //-----------------------------------------------------------------EDIT--------------------------
 @GetMapping("/{username}/editProject/{projectId}")
@@ -324,5 +392,6 @@ public String showEditProjectForm(@PathVariable("username") String username, @Pa
         }
         return "redirect:/login";
     }
+
 }
 

@@ -2,6 +2,8 @@ package dev.examproject.model;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data public class Task {
 
     private int projectId;
@@ -9,6 +11,7 @@ import lombok.Data;
     private String taskName;
     private String taskDescription;
     private int requiredHours;
+    private List<User> assignedUsers;
 
     // No-args constructor so spring boot can create a new instance of this object
     public Task() {}

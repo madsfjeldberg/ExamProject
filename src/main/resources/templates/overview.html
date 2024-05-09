@@ -55,12 +55,27 @@
             <h5 class="card-title" th:text="${project.name}"></h5>
             <p class="card-text" th:text="${project.description}"></p>
             <p class="card-text"><small class="text-muted" th:text="'Projektleder: ' + ${project.admin}"></small></p>
+            <h6 class="card-subtitle mb-2 text-muted">Medlemmer</h6>
             <p>Total required hours for project: <span th:text="${totalHoursForProject}"></span></p>
+
             <ul>
-                <li th:each="user : ${project.assignedUsers}" th:text="${user.username}"></li>
+                <li th:each="user : ${project.assignedUsers}" th:if="${user.username != project.admin}" th:text="${user.username}"></li>
+                <li th:if="${project.assignedUsers.size() == 1}">Ingen medlemmer tilføjet.</li>
             </ul>
         </div>
     </div>
+
+    <div th:if="${project.admin == user.username}">
+        <form th:action="@{'/' + ${user.username} + '/addUser'}" method="post">
+            <div class="mb-3">
+                <h4 class="bold-and-cursive">Add User</h4>
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username">
+            </div>
+            <button type="submit" class="btn btn-primary">Add User</button>
+        </form>
+    </div>
+
     </ul>
     <h3 class="bold-and-cursive">Sub-Projects</h3>
     <a th:href="@{'/' + ${user.username} + '/addSubProject'}" class="btn btn-primary">Add Subproject</a>
@@ -75,36 +90,34 @@
             <a th:href="@{'/selectSubProject/' + ${subProject.projectId}}" class="btn btn-primary">Select</a>
         </li>
     </ul>
-    <!-- Form code remains the same -->
-
-   <!--  <h3 class="bold-and-cursive mt-4">Tasks</h3>
-    <a th:href="@{'/' + ${user.username} + '/addTask'}" class="btn btn-primary">Add Task</a>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">Task Name</th>
-            <th scope="col">Description</th>
-            <th scope="col">Required Hours</th>
-        </tr>
-        </thead>
-        <tbody th:each="task : ${tasks}">
-        <tr>
-            <td th:text="${task.taskName}"></td>
-            <td th:text="${task.taskDescription}"></td>
-            <td th:text="${task.requiredHours}"></td>
-        </tr>
-        </tbody>
-    </table> -->
 </div>
 
 
+    <div class="container" th:if="${project != null}">
+        <h3 class="bold-and-cursive mt-4">Sub-Projects</h3>
+        <a th:href="@{'/' + ${user.username} + '/addSubProject'}" class="btn btn-primary mb-3">Add Subproject</a>
+        <div class="row row-cols-1 row-cols-md-3 g-4" th:each="subProject : ${subProjects}">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${subProject.name}"></h5>
+                        <p class="card-text" th:text="${subProject.description}"></p>
+                        <p class="card-text text-muted" th:text="'Tasks: ' + ${subProject.tasks.size()}"></p>
+                        <h6 class="card-subtitle mb-2 text-muted" th:text="'Medlemmer: ' + ${subProject.assignedUsers.size()} ">Medlemmer</h6>
+                        <a th:href="@{'/selectSubProject/' + ${subProject.name}}" class="btn btn-primary btn-sm">Select</a>
 
-<!-- if project is null, show "No project selected." -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="container" th:unless="${project != null}">
     <div class="alert alert-info" role="alert">
         <h4 class="alert-heading">No project selected.</h4>
     </div>
 </div>
-
 </body>
 </html>

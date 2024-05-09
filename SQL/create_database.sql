@@ -30,7 +30,7 @@ CREATE TABLE tasks (
                        description TEXT,
                        required_hours INT,
                        project_id INT,
-                       FOREIGN KEY (project_id) REFERENCES projects(id),
+                       FOREIGN KEY (project_id) REFERENCES projects(id)
 );
 
 CREATE TABLE project_users (

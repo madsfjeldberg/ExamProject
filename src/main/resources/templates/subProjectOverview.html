@@ -39,37 +39,114 @@
     </div>
 </nav>
 
-<br>
-<h3 class="bold-and-cursive">Subproject Overview</h3>
-
-<div class="container" th:if="${selectedSubProject != null}">
-    <h3 class="bold-and-cursive">Current Subproject</h3>
-    <ul class="list-group" th:object="${selectedSubProject}">
-        <p>Total required hours for subproject: <span th:text="${totalHoursForProject}"></span></p>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span th:text="${selectedSubProject.name}"></span>
-            <span th:text="${selectedSubProject.description}"></span>
-            <span th:text="'Projektleder: ' + ${selectedSubProject.admin}"></span>
+<div class="container" th:if="${project != null}">
+    <h3 class="bold-and-cursive">Subprojekt Overview</h3>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${project.name}"></h5>
+            <p class="card-text" th:text="${project.description}"></p>
+            <h6 class="card-subtitle mb-2 text-muted">Medlemmer:</h6>
             <ul>
-                <li th:each="user : ${selectedSubProject.assignedUsers}" th:text="${user}"></li>
+                <li th:each="user : ${project.assignedUsers}" th:if="${user.username != project.admin}" th:text="${user.username}"></li>
+                <li th:if="${project.assignedUsers.size() == 0}">Ingen medlemmer tilføjet.</li>
             </ul>
-        </li>
-    </ul>
-    <h3 class="bold-and-cursive">Tasks</h3>
-    <a th:href="@{'/' + ${user.username} + '/addSubProjectTask'}" class="btn btn-primary">Add Task</a>
-    <ul class="list-group" th:each="task : ${tasks}">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span th:text="${task.taskName}"></span>
-            <span th:text="${task.taskDescription}"></span>
-            <span th:text="'Required Hours: ' + ${task.requiredHours}"></span>
-        </li>
-    </ul>
-    <a class="btn btn-primary" th:href="@{'/' + ${user.username} + '/overview'}">Return to Overview</a>
+        </div>
+    </div>
 </div>
+
+
+<div class="container" th:if="${selectedProject.admin == user.username}">
+    <div class="row justify-content-left">
+        <div class="col-4">
+            <form th:action="@{'/' + ${user.username} + '/addUserToSubProject'}" method="post">
+                <div class="mb-3">
+                    <h4 class="bold-and-cursive">Tilføj medlem</h4>
+                    <label for="username" class="form-label">Brugernavn</label>
+                    <input type="text" class="form-control" id="username" name="username">
+                </div>
+                <button type="submit" class="btn btn-primary">Tilføj</button>
+            </form>
+        </div>
+        </div>
+</div>
+
+
+<h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
+    <a th:href="@{'/' + ${user.username} + '/addSubProjectTask'}" class="btn btn-primary">Add Task</a>
+  
+</h3>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Task Navn</th>
+                        <th scope="col">Beskrivelse</th>
+                        <th scope="col">Timer</th>
+                        <th scope="col">Medlemmer</th>
+                        <th scope="col">Actions</th>
+                        <th scope="col">Admin</th>
+                    </tr>
+                    </thead>
+                    <tbody th:each="task : ${tasks}">
+                    <tr>
+                        <td th:text="${task.taskName}"></td>
+                        <td th:text="${task.taskDescription}"></td>
+                        <td th:text="${task.requiredHours}"></td>
+                        <td th:text="${task.assignedUsers.size()}"></td>
+                        <td class="btn-group" role="group">
+                            <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignSelfToTask/' + ${task.taskId}}">Assign</a>
+                        </td>
+                        <td th:if="${selectedProject.admin == user.username}">
+                            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editSubProjectTask/' + ${task.taskId}}">Edit</a>
+                            <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/deleteSubProjectTask/' + ${task.taskId}}">Delete</a>
+                            <a href="#" class="btn btn-primary assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Assign User</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="assignUserModal" tabindex="-1" aria-labelledby="assignUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignUserModalLabel">Assign User to Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="assignUserForm" method="post">
+                    <div class="mb-3">
+                        <label for="assignedUsername" class="form-label">Username of user to assign</label>
+                        <input type="text" class="form-control" id="assignedUsername" name="assignedUsername">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Assign User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
 <div class="container" th:unless="${selectedSubProject != null}">
     <h3 class="bold-and-cursive">No subproject selected.</h3>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.assign-user-btn').click(function() {
+            var taskId = $(this).data('task-id');
+            var username = $(this).data('username');
+            $('#assignUserForm').attr('action', '/' + username + '/assignUserToTask/' + taskId);
+        });
+    });
+</script>
 </body>
 </html>
