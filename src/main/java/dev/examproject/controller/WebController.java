@@ -3,6 +3,7 @@ package dev.examproject.controller;
 import dev.examproject.model.Project;
 import dev.examproject.model.Task;
 import dev.examproject.model.User;
+import dev.examproject.repository.util.ColoredLogger;
 import dev.examproject.service.ProjectService;
 import dev.examproject.service.TaskService;
 import dev.examproject.service.UserService;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequestMapping(path = "")
 public class WebController {
 
-    Logger logger = org.slf4j.LoggerFactory.getLogger(WebController.class);
+    ColoredLogger logger = new ColoredLogger(WebController.class);
 
     private final UserService userService;
     private final ProjectService projectService;
@@ -310,14 +311,24 @@ public class WebController {
         return "redirect:/login";
     }
 
-    @GetMapping(path = "/{username}/addUserToTask/{taskId}")
-    public String addUserToTask(@PathVariable("username") String username,
-                                @PathVariable("taskId") int taskId,
-                                @ModelAttribute("user") User user, HttpSession session) {
+    @GetMapping(path = "/{username}/assignSelfToTask/{taskId}")
+    public String assignSelfToTask(@PathVariable("username") String username,
+                                   @PathVariable("taskId") int taskId,
+                                   @ModelAttribute("user") User user, HttpSession session) {
+        Project mainProject = (Project) session.getAttribute("selectedProject");
+        Project subProject = (Project) session.getAttribute("selectedSubProject");
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             int userId = userService.getUserId(user.getUsername());
-            taskService.addUserToTask(taskId, userId);
+            System.out.println(mainProject);
+            System.out.println(authenticatedUser);
+            // check at bruger er medlem af main project
+            if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))
+                && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))) {
+                taskService.assignSelfToTask(taskId, userId);
+            } else if (mainProject.getAdmin().equals(authenticatedUser.getUsername())) {
+                taskService.assignSelfToTask(taskId, userId);
+            } else logger.info("User not assigned to project.");
             return "redirect:/subProjectOverview";
         }
         return "redirect:/login";

@@ -85,6 +85,7 @@
                         <th scope="col">Timer</th>
                         <th scope="col">Medlemmer</th>
                         <th scope="col">Actions</th>
+                        <th scope="col">Admin</th>
                     </tr>
                     </thead>
                     <tbody th:each="task : ${tasks}">
@@ -94,7 +95,12 @@
                         <td th:text="${task.requiredHours}"></td>
                         <td th:text="${task.assignedUsers.size()}"></td>
                         <td class="btn-group" role="group">
-                            <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/addUserToTask/' + ${task.taskId}}">Assign</a>
+                            <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignSelfToTask/' + ${task.taskId}}">Assign</a>
+                        </td>
+                        <td th:if="${selectedProject.admin == user.username}">
+                            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editSubProjectTask/' + ${task.taskId}}">Edit</a>
+                            <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/deleteSubProjectTask/' + ${task.taskId}}">Delete</a>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

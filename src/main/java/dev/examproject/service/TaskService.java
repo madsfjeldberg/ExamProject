@@ -22,7 +22,7 @@ public class TaskService {
         return repository.getProjectTasks(projectId);
     }
 
-    public void addUserToTask(int taskId, int userId) {
+    public void assignSelfToTask(int taskId, int userId) {
         repository.addUserToTask(taskId, userId);
     }
 }
