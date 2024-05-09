@@ -8,7 +8,6 @@ import dev.examproject.service.ProjectService;
 import dev.examproject.service.TaskService;
 import dev.examproject.service.UserService;
 import jakarta.servlet.http.HttpSession;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +35,6 @@ public class WebController {
     public String redirectHome() {
         return "redirect:/home";
     }
-
 
     @GetMapping(path = "home")
     public String home(Model model, HttpSession session) {
@@ -328,6 +326,27 @@ public class WebController {
                 taskService.assignSelfToTask(taskId, userId);
             } else if (mainProject.getAdmin().equals(authenticatedUser.getUsername())) {
                 taskService.assignSelfToTask(taskId, userId);
+            } else logger.info("User not assigned to project.");
+            return "redirect:/subProjectOverview";
+        }
+        return "redirect:/login";
+    }
+
+    @PostMapping(path = "/{username}/assignUserToTask/{taskId}")
+    public String assignUserToTask(@PathVariable("username") String username,
+                                   @PathVariable("taskId") int taskId,
+                                   @ModelAttribute("user") User user,
+                                   @RequestParam("assignedUsername") String assignedUsername, HttpSession session) {
+        Project mainProject = (Project) session.getAttribute("selectedProject");
+        Project subProject = (Project) session.getAttribute("selectedSubProject");
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            int userId = userService.getUserId(assignedUsername);
+            if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))
+                && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
+                taskService.assignUserToTask(taskId, userId);
+            } else if (mainProject.getAdmin().equals(authenticatedUser.getUsername())) {
+                taskService.assignUserToTask(taskId, userId);
             } else logger.info("User not assigned to project.");
             return "redirect:/subProjectOverview";
         }

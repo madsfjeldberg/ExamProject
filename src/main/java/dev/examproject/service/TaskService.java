@@ -23,6 +23,10 @@ public class TaskService {
     }
 
     public void assignSelfToTask(int taskId, int userId) {
-        repository.addUserToTask(taskId, userId);
+        repository.assignUserToTask(taskId, userId);
+    }
+
+    public void assignUserToTask(int taskId, int userId) {
+        repository.assignUserToTask(taskId, userId);
     }
 }

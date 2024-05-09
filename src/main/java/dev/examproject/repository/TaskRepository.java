@@ -8,9 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class TaskRepository {
@@ -89,7 +87,7 @@ public class TaskRepository {
         return users;
     }
 
-    public void addUserToTask(int taskId, int userId) {
+    public void assignUserToTask(int taskId, int userId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO task_users (task_id, user_id) VALUES (?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
