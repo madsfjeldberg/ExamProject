@@ -13,6 +13,7 @@ import java.util.List;
     private String admin;
     private int parentProjectID;
     private List<User> assignedUsers;
+    private List<Task> tasks;
 
     // No-args constructor so spring boot can create a new instance of this object
     public Project() {}

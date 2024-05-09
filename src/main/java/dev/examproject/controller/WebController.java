@@ -7,6 +7,7 @@ import dev.examproject.service.ProjectService;
 import dev.examproject.service.TaskService;
 import dev.examproject.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,10 @@ import java.util.List;
 @RequestMapping(path = "")
 public class WebController {
 
+    Logger logger = org.slf4j.LoggerFactory.getLogger(WebController.class);
+
     private final UserService userService;
     private final ProjectService projectService;
-
     private final TaskService taskService;
 
     public WebController(UserService userService, ProjectService projectService, TaskService taskService) {
@@ -106,6 +108,10 @@ public class WebController {
             Project project = projectService.getProject(selectedProject.getName());
             List<Task> tasks = taskService.getProjectTasks(selectedProject.getProjectId());
             List<Project> subProjects = projectService.getSubProjectsForProject(selectedProject.getProjectId());
+            // TODO: det her skal skrives om når task og project er merget i samme repo.
+            for (Project subProject : subProjects) {
+                subProject.setTasks(taskService.getProjectTasks(subProject.getProjectId()));
+            }
 
             model.addAttribute("project", project);
             model.addAttribute("tasks", tasks);
@@ -238,6 +244,9 @@ public class WebController {
             Project selectedSubProject = (Project) session.getAttribute("selectedSubProject");
             if (selectedSubProject != null) {
                 task.setProjectId(selectedSubProject.getProjectId());
+                // debugging
+                logger.info("Selected subproject: " + session.getAttribute("selectedSubProject"));
+                logger.info("Selected project: " + session.getAttribute("selectedProject"));
                 taskService.addTask(task);
             }
             System.out.println("task tilføjet:" + task);

@@ -83,7 +83,7 @@
                     <div class="card-body">
                         <h5 class="card-title" th:text="${subProject.name}"></h5>
                         <p class="card-text" th:text="${subProject.description}"></p>
-                        <p class="card-text text-muted" th:text="'Tasks: ' + ${tasks.size()}"></p>
+                        <p class="card-text text-muted" th:text="'Tasks: ' + ${subProject.tasks.size()}"></p>
                         <h6 class="card-subtitle mb-2 text-muted" th:text="'Medlemmer: ' + ${subProject.assignedUsers.size()} ">Medlemmer</h6>
                         <a th:href="@{'/selectSubProject/' + ${subProject.name}}" class="btn btn-primary btn-sm">Select</a>
 
