@@ -25,7 +25,8 @@ public class ProjectRepository {
     @Value("${spring.datasource.password}")
     private String dbPassword;
 
-    public ProjectRepository() {}
+    public ProjectRepository() {
+    }
 
     public int addProject(Project project) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
@@ -51,6 +52,7 @@ public class ProjectRepository {
         }
         return -1; // Return a default value indicating failure
     }
+
     public int addSubProject(Project project) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO PROJECTS (name, description, parent_project_id) VALUES (?, ?, ?)";
@@ -172,6 +174,7 @@ public class ProjectRepository {
         }
         return users;
     }
+
     public List<Project> getSubProjectsForProject(int projectId) {
         List<Project> projects = new ArrayList<>();
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
@@ -191,6 +194,7 @@ public class ProjectRepository {
         }
         return null;
     }
+
     public Project getSubProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "SELECT * FROM projects WHERE id = ?";
@@ -208,6 +212,38 @@ public class ProjectRepository {
         }
         return null;
     }
+
+    //--------------------------------------------------------------EDIT-----------------------------------------
+    public boolean updateProject(Project project) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "UPDATE PROJECTS SET name = ?, description = ? WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, project.getName());
+            ps.setString(2, project.getDescription());
+            ps.setInt(3, project.getProjectId());
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            logger.error("Error updating project", e);
+            return false;
+        }
+    }
+    public Project getProjectById(int projectId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "SELECT * FROM PROJECTS WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, projectId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting project with ID: " + projectId, e);
+        }
+        return null;
+    }
+
+
     public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
         int totalHours = 0;
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);

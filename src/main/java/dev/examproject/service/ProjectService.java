@@ -46,4 +46,14 @@ public class ProjectService {
         return repository.getTotalRequiredHoursForAllSubProjects(parentProjectId);
     }
 
+    //--------------------------------------------EDIT---------------------------------------
+
+    public Project getProjectById(int projectId) {
+        return repository.getProjectById(projectId);
+    }
+
+    public boolean updateProject(Project project) {
+        return repository.updateProject(project);
+    }
+
 }
