@@ -41,5 +41,8 @@ public class TaskService {
     public Task getTask(int taskId) {
         return repository.getTask(taskId);
     }
+    public int updateTask(Task task) {
+        return repository.updateTask(task);
+    }
 
 }

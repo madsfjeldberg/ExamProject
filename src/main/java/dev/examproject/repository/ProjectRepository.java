@@ -36,21 +36,19 @@ public class ProjectRepository {
             ps.setString(2, project.getDescription());
             ps.executeUpdate();
 
-            // Retrieve the auto-generated project ID
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     int projectId = rs.getInt(1);
                     project.setProjectId(projectId); // Set the generated ID in the Task object
                     return 1;
                 } else {
-                    // Handle the case where the auto-generated key couldn't be retrieved
                     throw new SQLException("Failed to retrieve auto-generated key for project");
                 }
             }
         } catch (SQLException e) {
             logger.error("Error adding project", e);
         }
-        return -1; // Return a default value indicating failure
+        return -1;
     }
 
     public int addSubProject(Project project) {
@@ -62,21 +60,19 @@ public class ProjectRepository {
             ps.setInt(3, project.getParentProjectID());
             ps.executeUpdate();
 
-            // Retrieve the auto-generated project ID
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     int projectId = rs.getInt(1);
                     project.setProjectId(projectId); // Set the generated ID in the Task object
                     return 1;
                 } else {
-                    // Handle the case where the auto-generated key couldn't be retrieved
                     throw new SQLException("Failed to retrieve auto-generated key for project");
                 }
             }
         } catch (SQLException e) {
             logger.error("Error adding subproject", e);
         }
-        return -1; // Return a default value indicating failure
+        return -1;
     }
 
 
