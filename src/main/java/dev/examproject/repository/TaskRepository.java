@@ -117,5 +117,47 @@ public class TaskRepository {
             e.printStackTrace();
         }
     }
+    public Task getTask(int taskId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "SELECT * FROM tasks WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, taskId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Task task = new Task();
+                task.setTaskId(rs.getInt("id"));
+                task.setTaskName(rs.getString("name"));
+                task.setTaskDescription(rs.getString("description"));
+                task.setRequiredHours(rs.getInt("required_hours"));
+                task.setProjectId(rs.getInt("project_id"));
+                task.setAssignedUsers(getAssignedUsers(task.getTaskId()));
+                return task;
+            }
+        } catch (SQLException e) {
+            logger.error("Error getting task with ID: " + taskId, e);
+        }
+        return null;
+    }
+    public void removeTaskUsers(int taskId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "DELETE FROM task_users WHERE task_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, taskId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error removing users from task with ID: " + taskId, e);
+        }
+    }
+    public int deleteTask(int taskId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "DELETE FROM tasks WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, taskId);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error deleting task with ID: " + taskId, e);
+        }
+        return -1;
+    }
 
 }

@@ -392,6 +392,29 @@ public String showEditProjectForm(@PathVariable("username") String username, @Pa
         }
         return "redirect:/login";
     }
+    @GetMapping("/{username}/confirmDeleteTask/{taskId}")
+    public String confirmDeleteTask(@PathVariable("username") String username, @PathVariable("taskId") int taskId, Model model, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            Task task = taskService.getTask(taskId);
+            if (task != null) {
+                model.addAttribute("task", task);
+                model.addAttribute("user", authenticatedUser);
+                return "confirmDeleteTask";
+            }
+        }
+        return "redirect:/login";
+    }
+
+    @PostMapping("/{username}/deleteTask/{taskId}")
+    public String deleteTask(@PathVariable("username") String username, @PathVariable("taskId") int taskId, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            taskService.deleteTask(taskId);
+            return "redirect:/subProjectOverview";
+        }
+        return "redirect:/login";
+    }
 
 }
 
