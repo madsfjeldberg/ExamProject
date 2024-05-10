@@ -98,14 +98,16 @@
                         <td class="btn-group" role="group">
                             <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignSelfToTask/' + ${task.taskId}}">Assign</a>
                         </td>
+
                         <td th:if="${selectedProject.admin == user.username}">
                             <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editSubProjectTask/' + ${task.taskId}}">Edit</a>
-                            <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/deleteSubProjectTask/' + ${task.taskId}}">Delete</a>
+                            <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/confirmDeleteTask/' + ${task.taskId}}">Delete</a>
                             <a href="#" class="btn btn-primary btn-sm assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Assign User</a>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+                <a class="btn btn-primary" th:href="@{'/' + ${user.username} + '/overview'}">Return to Overview</a>
             </div>
         </div>
     </div>
