@@ -17,7 +17,6 @@ public class TaskRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskRepository.class);
 
-
     @Value("${spring.datasource.url}")
     private String dbUrl;
     @Value("${spring.datasource.username}")

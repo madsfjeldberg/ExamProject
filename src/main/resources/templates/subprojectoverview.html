@@ -72,12 +72,14 @@
         </div>
 </div>
 
+
+<h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
+    <a th:href="@{'/' + ${user.username} + '/addtask'}" class="btn btn-primary">Add Task</a>
+
+</h3>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
-                    <a th:href="@{'/' + ${user.username} + '/addSubProjectTask'}" class="btn btn-primary btn-sm">Add Task</a>
-                </h3>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -144,8 +146,8 @@
 <script>
     $(document).ready(function() {
         $('.assign-user-btn').click(function() {
-            var taskId = $(this).data('task-id');
-            var username = $(this).data('username');
+            let taskId = $(this).data('task-id');
+            let username = $(this).data('username');
             $('#assignUserForm').attr('action', '/' + username + '/assignUserToTask/' + taskId);
         });
     });

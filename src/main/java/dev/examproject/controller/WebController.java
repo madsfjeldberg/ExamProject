@@ -3,7 +3,7 @@ package dev.examproject.controller;
 import dev.examproject.model.Project;
 import dev.examproject.model.Task;
 import dev.examproject.model.User;
-import dev.examproject.repository.util.ColoredLogger;
+import dev.examproject.repository.util.TurboLogger;
 import dev.examproject.service.ProjectService;
 import dev.examproject.service.TaskService;
 import dev.examproject.service.UserService;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping(path = "")
 public class WebController {
 
-    ColoredLogger logger = new ColoredLogger(WebController.class);
+    TurboLogger log = new TurboLogger(WebController.class);
 
     private final UserService userService;
     private final ProjectService projectService;
@@ -45,7 +45,7 @@ public class WebController {
         return "home";
     }
 
-    @GetMapping("/About")
+    @GetMapping("about")
     public String about(Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         boolean isLoggedIn = authenticatedUser != null;
@@ -102,21 +102,16 @@ public class WebController {
     @GetMapping(path = "/{username}/overview")
     public String overview(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
-        Project selectedProject = (Project) session.getAttribute("selectedProject");
-        if (selectedProject != null) {
-            Project project = projectService.getProject(selectedProject.getProjectId());
-            //   List<Task> tasks = taskService.getProjectTasks(selectedProject.getProjectId());
-            List<Project> subProjects = projectService.getSubProjectsForProject(selectedProject.getProjectId());
+        Project mainProject = (Project) session.getAttribute("selectedProject");
+        if (mainProject != null) {
             // TODO: det her skal skrives om når task og project er merget i samme repo.
+            List<Project> subProjects = projectService.getSubProjectsForProject(mainProject.getProjectId());
             for (Project subProject : subProjects) {
                 subProject.setTasks(taskService.getProjectTasks(subProject.getProjectId()));
             }
-
-            model.addAttribute("project", project);
-            // model.addAttribute("tasks", tasks);
+            model.addAttribute("project", mainProject);
             model.addAttribute("subProjects", subProjects);
-            model.addAttribute("totalHoursForProject", projectService.getTotalRequiredHoursForAllSubProjects(selectedProject.getProjectId()));
-
+            model.addAttribute("totalHoursForProject", projectService.getTotalRequiredHoursForAllSubProjects(mainProject.getProjectId()));
         }
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             model.addAttribute("user", authenticatedUser);
@@ -125,26 +120,70 @@ public class WebController {
         return "redirect:/login";
     }
 
-    @PostMapping(path = "/{username}/addUser")
-    public String addUserToProject(@PathVariable("username") String username, @ModelAttribute("user") User user, HttpSession session) {
+    // Metode til både at adde en bruger til project eller subproject
+    // alt efter hvilken type der er valgt.
+    // hold kæft hvor er den lang. ser senere om den kan forkortes lidt :)
+    // /mads
+    @PostMapping(path = "/{username}/adduserto{type}")
+    public String addUserToProject(@PathVariable("username") String username,
+                                   @PathVariable("type") String type,
+                                   @ModelAttribute("user") User user, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
-        Project selectedProject = (Project) session.getAttribute("selectedProject");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            Project selectedProject;
+            // check hvilken "type" der er valgt
+            if ("Project".equalsIgnoreCase(type)) {
+                selectedProject = (Project) session.getAttribute("selectedProject");
+            } else if ("SubProject".equalsIgnoreCase(type)) {
+                selectedProject = (Project) session.getAttribute("selectedSubProject");
+                Project parentProject = projectService.getProject(selectedProject.getParentProjectID());
+                if (parentProject.getAssignedUsers().stream().noneMatch(u -> u.getUsername().equals(user.getUsername()))) { // check om bruger er medlem af main project
+                    log.info("User is not a member of main project.");
+                    return "redirect:/" + username + "/subprojectoverview";
+                }
+            } else {
+                return "redirect:/login";
+            }
             userService.addUserToProject(user, selectedProject.getProjectId());
-            System.out.println("bruger tilføjet:" + user);
-            return "redirect:/" + username + "/overview";
+            log.info("User added to " + type.toLowerCase() + ": " + user);
+
+            // Hent opdateret projekt eller subprojekt
+            if ("Project".equalsIgnoreCase(type)) {
+                selectedProject = projectService.getProject(selectedProject.getProjectId());
+            } else if ("SubProject".equalsIgnoreCase(type)) {
+                selectedProject = projectService.getProject(selectedProject.getProjectId());
+            }
+
+            // Opdater session med det nye projekt eller subprojekt
+            if ("Project".equalsIgnoreCase(type)) {
+                session.setAttribute("selectedProject", selectedProject);
+            } else if ("SubProject".equalsIgnoreCase(type)) {
+                session.setAttribute("selectedSubProject", selectedProject);
+            }
+
+            return "redirect:/" + username + (type.equalsIgnoreCase("Project") ? "/overview" : "/subprojectoverview"); // redirecter til den korrekte "type"'s side.
         }
         return "redirect:/login";
     }
 
-    @PostMapping(path = "/{username}/addUserToSubProject")
-    public String addUserToSubProject(@PathVariable("username") String username, @ModelAttribute("user") User user, HttpSession session) {
+    // samme som ovenover.
+    // /mads
+    @GetMapping(path = "/{username}/select{type}/{projectId}")
+    public String selectProject(@PathVariable("type") String type,
+                                @PathVariable("username") String username,
+                                @PathVariable("projectId") int projectId,
+                                HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
-        Project selectedSubProject = (Project) session.getAttribute("selectedSubProject");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
-            userService.addUserToProject(user, selectedSubProject.getProjectId());
-            System.out.println("bruger tilføjet:" + user);
-            return "redirect:/subProjectOverview";
+            Project project;
+            if ("Project".equalsIgnoreCase(type)) {
+                project = projectService.getProject(projectId);
+                session.setAttribute("selectedProject", project);
+            } else if ("SubProject".equalsIgnoreCase(type)) {
+                project = projectService.getProject(projectId);
+                session.setAttribute("selectedSubProject", project);
+            }
+            return "redirect:/" + authenticatedUser.getUsername() + (type.equalsIgnoreCase("Project") ? "/overview" : "/subprojectoverview");
         }
         return "redirect:/login";
     }
@@ -161,143 +200,80 @@ public class WebController {
         return "redirect:/login";
     }
 
-    @GetMapping(path = "/{username}/addProject")
-    public String addProject(@PathVariable("username") String username, Model model, HttpSession session) {
+    @GetMapping(path = "/{username}/add{type}project")
+    public String addProject(@PathVariable("username") String username,
+                             @PathVariable("type") String type,
+                             Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             model.addAttribute("user", authenticatedUser);
-            model.addAttribute("project", new Project());
-            return "addProject";
+            if ("sub".equalsIgnoreCase(type)) {
+                model.addAttribute("subProject", new Project());
+            } else {
+                model.addAttribute("project", new Project());
+            }
+            return "add" + type + "project";
         }
         return "redirect:/login";
     }
 
-    @PostMapping(path = "/{username}/addProject")
-    public String addProject(@PathVariable("username") String username, @ModelAttribute("project") Project project, HttpSession session) {
+    @PostMapping(path = "/{username}/add{type}project")
+    public String addProject(@PathVariable("username") String username,
+                             @PathVariable("type") String type,
+                             @ModelAttribute("project") Project project, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
-
-            projectService.addProject(project);
-            System.out.println(projectService.getProjectId(project.getName()));
+            if ("Sub".equalsIgnoreCase(type)) {
+                Project selectedProject = (Project) session.getAttribute("selectedProject");
+                if (selectedProject != null) {
+                    project.setParentProjectID(selectedProject.getProjectId());
+                    projectService.addProject(project);
+                    return "redirect:/" + username + "/overview";
+                }
+            } else {
+                projectService.addProject(project);
+            }
             userService.addUserToProject(authenticatedUser, project.getProjectId());
-            userService.setUserToAdmin(username, projectService.getProjectId(project.getName()));
-
-            System.out.println("projekt tilføjet:" + project);
+            userService.setUserToAdmin(username, project.getProjectId());
             return "redirect:/" + username + "/projects";
         }
         return "redirect:/login";
     }
 
-    @GetMapping(path = "/selectProject/{projectId}")
-    public String selectProject(@PathVariable("projectId") int projectId, HttpSession session) {
-        User authenticatedUser = (User) session.getAttribute("user");
-        if (authenticatedUser != null) {
-            Project project = projectService.getProject(projectId);
-            session.setAttribute("selectedProject", project);
-            return "redirect:/" + authenticatedUser.getUsername() + "/overview";
-        }
-        return "redirect:/login";
-    }
-
-    @GetMapping(path = "/{username}/addTask")
+    @GetMapping(path = "/{username}/addtask")
     public String addTask(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             model.addAttribute("user", authenticatedUser);
             model.addAttribute("task", new Task());
             model.addAttribute("project", session.getAttribute("selectedProject"));
-            return "addTask";
+            return "addtask";
         }
         return "redirect:/login";
     }
 
-    @GetMapping(path = "/{username}/addSubProjectTask")
-    public String addSubProjectTask(@PathVariable("username") String username, Model model, HttpSession session) {
-        User authenticatedUser = (User) session.getAttribute("user");
-        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
-            model.addAttribute("user", authenticatedUser);
-            model.addAttribute("task", new Task());
-            model.addAttribute("project", session.getAttribute("selectedProject"));
-            return "addSubProjectTask";
-        }
-        return "redirect:/login";
-    }
-
-    @PostMapping(path = "/{username}/addTask")
-    public String addTask(@PathVariable("username") String username, @ModelAttribute("task") Task task, HttpSession session) {
-        User authenticatedUser = (User) session.getAttribute("user");
-        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
-            Project selectedProject = (Project) session.getAttribute("selectedProject");
-            if (selectedProject != null) {
-                task.setProjectId(selectedProject.getProjectId());
-                taskService.addTask(task);
-            }
-            System.out.println("task tilføjet:" + task);
-            return "redirect:/" + username + "/overview";
-        }
-        return "redirect:/login";
-    }
-
-    @PostMapping(path = "/{username}/addSubProjectTask")
-    public String addSubProjectTask(@PathVariable("username") String username, @ModelAttribute("task") Task task, HttpSession session) {
+    @PostMapping(path = "/{username}/addtask")
+    public String addTask(@PathVariable("username") String username,
+                                    @ModelAttribute("task") Task task, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             Project selectedSubProject = (Project) session.getAttribute("selectedSubProject");
             if (selectedSubProject != null) {
                 task.setProjectId(selectedSubProject.getProjectId());
-                // debugging
-                logger.info("Selected subproject: " + session.getAttribute("selectedSubProject"));
-                logger.info("Selected project: " + session.getAttribute("selectedProject"));
                 taskService.addTask(task);
             }
             System.out.println("task tilføjet:" + task);
-            return "redirect:/subProjectOverview";
+            return "redirect:/" + username + "/subprojectoverview";
 
         }
         return "redirect:/login";
     }
 
-    @GetMapping(path = "/{username}/addSubProject")
-    public String addSubProject(@PathVariable("username") String username, Model model, HttpSession session) {
+    @GetMapping(path = "/{username}/subprojectoverview")
+    public String subProjectOverview(@PathVariable("username") String username,
+                                     HttpSession session, Model model) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
-            model.addAttribute("user", authenticatedUser);
-            model.addAttribute("subProject", new Project());
-            return "addSubProject";
-        }
-        return "redirect:/login";
-    }
-
-    @PostMapping(path = "/{username}/addSubProject")
-    public String addSubProject(@PathVariable("username") String username, @ModelAttribute("subProject") Project subProject, HttpSession session) {
-        User authenticatedUser = (User) session.getAttribute("user");
-        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
-            Project selectedProject = (Project) session.getAttribute("selectedProject");
-            if (selectedProject != null) {
-                subProject.setParentProjectID(selectedProject.getProjectId());
-                projectService.addSubProject(subProject);
-            }
-            return "redirect:/" + username + "/overview";
-        }
-        return "redirect:/login";
-    }
-
-
-    @GetMapping(path = "/selectSubProject/{projectId}")
-    public String selectSubProject(@PathVariable("projectId") int projectId, HttpSession session) {
-        User authenticatedUser = (User) session.getAttribute("user");
-        if (authenticatedUser != null) {
-            Project subProject = projectService.getSubProject(projectId);
-            session.setAttribute("selectedSubProject", subProject);
-            return "redirect:/subProjectOverview";
-        }
-        return "redirect:/login";
-    }
-
-    @GetMapping(path = "/subProjectOverview")
-    public String subProjectOverview(HttpSession session, Model model) {
-        User authenticatedUser = (User) session.getAttribute("user");
-        if (authenticatedUser != null) {
             Project selectedSubProject = (Project) session.getAttribute("selectedSubProject");
             Project selectedProject = (Project) session.getAttribute("selectedProject");
             if (selectedSubProject != null) {
@@ -307,13 +283,13 @@ public class WebController {
                 model.addAttribute("project", selectedSubProject);
                 model.addAttribute("user", authenticatedUser);
                 model.addAttribute("totalHoursForProject", taskService.getTotalRequiredHoursForProject(selectedSubProject.getProjectId()));
-                return "subProjectOverview";
+                return "subprojectoverview";
             }
         }
         return "redirect:/login";
     }
 
-    @GetMapping(path = "/{username}/assignSelfToTask/{taskId}")
+    @GetMapping(path = "/{username}/assignselftotask/{taskId}")
     public String assignSelfToTask(@PathVariable("username") String username,
                                    @PathVariable("taskId") int taskId,
                                    @ModelAttribute("user") User user, HttpSession session) {
@@ -330,13 +306,13 @@ public class WebController {
                 taskService.assignSelfToTask(taskId, userId);
             } else if (mainProject.getAdmin().equals(authenticatedUser.getUsername())) {
                 taskService.assignSelfToTask(taskId, userId);
-            } else logger.info("User not assigned to project.");
-            return "redirect:/subProjectOverview";
+            } else log.info("User not assigned to project.");
+            return "redirect:/" + username + "/subprojectoverview";
         }
         return "redirect:/login";
     }
 
-    @PostMapping(path = "/{username}/assignUserToTask/{taskId}")
+    @PostMapping(path = "/{username}/assignusertotask/{taskId}")
     public String assignUserToTask(@PathVariable("username") String username,
                                    @PathVariable("taskId") int taskId,
                                    @ModelAttribute("user") User user,
@@ -351,33 +327,34 @@ public class WebController {
                 taskService.assignUserToTask(taskId, userId);
             } else if (mainProject.getAdmin().equals(authenticatedUser.getUsername())) {
                 taskService.assignUserToTask(taskId, userId);
-            } else logger.info("User not assigned to project.");
-            return "redirect:/subProjectOverview";
+            } else log.info("User not assigned to project.");
+            return "redirect:/" + username + "/subprojectoverview";
         }
         return "redirect:/login";
     }
 
-
-    //-----------------------------------------------------------------EDIT--------------------------
-@GetMapping("/{username}/editProject/{projectId}")
-public String showEditProjectForm(@PathVariable("username") String username, @PathVariable("projectId") int projectId, Model model, HttpSession session) {
-    User authenticatedUser = (User) session.getAttribute("user");
-    System.out.println("Attempting to edit project with ID: " + projectId + " for user: " + username);
-    if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
-        Project project = projectService.getProjectById(projectId);
-        if (project != null) {
-            model.addAttribute("project", project);
-            model.addAttribute("user",authenticatedUser);
-            return "editProject";
-        } else {
-            return "redirect:/" + username + "/projects";
+    @GetMapping("/{username}/editproject/{projectId}")
+    public String showEditProjectForm(@PathVariable("username") String username,
+                                      @PathVariable("projectId") int projectId, Model model, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        System.out.println("Attempting to edit project with ID: " + projectId + " for user: " + username);
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            Project project = projectService.getProjectById(projectId);
+            if (project != null) {
+                model.addAttribute("project", project);
+                model.addAttribute("user",authenticatedUser);
+                return "editproject";
+            } else {
+                return "redirect:/" + username + "/projects";
+            }
         }
+        return "redirect:/login";
     }
-    return "redirect:/login";
-}
 
-    @PostMapping("/{username}/updateProject/{projectId}")
-    public String updateProject(@PathVariable("username") String username, @PathVariable("projectId") int projectId, @ModelAttribute("project") Project project, RedirectAttributes redirectAttributes, HttpSession session) {
+    @PostMapping("/{username}/updateproject/{projectId}")
+    public String updateProject(@PathVariable("username") String username,
+                                @PathVariable("projectId") int projectId,
+                                @ModelAttribute("project") Project project, RedirectAttributes redirectAttributes, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             project.setProjectId(projectId);
@@ -387,7 +364,7 @@ public String showEditProjectForm(@PathVariable("username") String username, @Pa
                 return "redirect:/" + username + "/projects";
             } else {
                 redirectAttributes.addFlashAttribute("errorMessage", "Failed to update project");
-                return "redirect:/" + username + "/editProject/" + projectId;
+                return "redirect:/" + username + "/editproject" + projectId;
             }
         }
         return "redirect:/login";

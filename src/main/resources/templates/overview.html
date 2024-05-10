@@ -20,16 +20,16 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="overview">Overview</a>
+                    <a class="nav-link active" aria-current="page" th:href="overview">Overview</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="projects">Projects</a>
+                    <a class="nav-link active" aria-current="page" th:href="projects">Projects</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="tasks">Tasks</a>
+                    <a class="nav-link active" aria-current="page" th:href="tasks">Tasks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="members">Members</a>
+                    <a class="nav-link active" aria-current="page" th:href="members">Members</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -65,7 +65,7 @@
     </div>
 
     <div th:if="${project.admin == user.username}">
-        <form th:action="@{'/' + ${user.username} + '/addUser'}" method="post">
+        <form th:action="@{'/' + ${user.username} + '/addUserToProject'}" method="post">
             <div class="mb-3">
                 <h4 class="bold-and-cursive">Add User</h4>
                 <label for="username" class="form-label">Username</label>
@@ -87,13 +87,13 @@
                         <p class="card-text" th:text="${subProject.description}"></p>
                         <p class="card-text text-muted" th:text="'Tasks: ' + ${subProject.tasks.size()}"></p>
                         <h6 class="card-subtitle mb-2 text-muted" th:text="'Medlemmer: ' + ${subProject.assignedUsers.size()} ">Medlemmer</h6>
-                        <a th:href="@{'/selectSubProject/' + ${subProject.projectId}}" class="btn btn-primary btn-sm">Select</a>
+                        <a th:href="@{'/' + ${user.username} + '/selectSubProject/' + ${subProject.projectId}}" class="btn btn-primary btn-sm">Select</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
 
 
 <div class="container" th:unless="${project != null}">

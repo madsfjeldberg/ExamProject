@@ -3,8 +3,8 @@ package dev.examproject.repository.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ColoredLogger {
-    // ANSI escape codes
+// pretty much just a logger with colors
+public class TurboLogger {
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -17,7 +17,7 @@ public class ColoredLogger {
 
     private Logger logger;
 
-    public ColoredLogger(Class<?> clazz) {
+    public TurboLogger(Class<?> clazz) {
         this.logger = LoggerFactory.getLogger(clazz);
     }
 
@@ -29,5 +29,10 @@ public class ColoredLogger {
     public void error(String message) {
         String coloredMessage = ANSI_RED + message + ANSI_RESET;
         logger.error(coloredMessage);
+    }
+
+    public void debug(String message) {
+        String coloredMessage = ANSI_BLUE + message + ANSI_RESET;
+        logger.debug(coloredMessage);
     }
 }

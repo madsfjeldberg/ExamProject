@@ -33,7 +33,7 @@ public class UserService {
         return repository.authenticateUser(username, password);
     }
 
-    public int addUserToProject(User user, int projectId) {
-        return repository.addUserToProject(user, projectId);
+    public void addUserToProject(User user, int projectId) {
+        repository.addUserToProject(user, projectId);
     }
 }

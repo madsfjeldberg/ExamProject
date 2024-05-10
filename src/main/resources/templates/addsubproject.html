@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
+    <title>Add Sub-Project</title>
     <meta charset="UTF-8">
-    <title>Edit Project</title>
-    <link href="../styles.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="../styles.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../img/favicon.ico">
 </head>
 <body>
@@ -18,16 +18,16 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="../overview">Overview</a>
+                    <a class="nav-link active" aria-current="page" th:href="overview">Overview</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="../projects">Projects</a>
+                    <a class="nav-link active" aria-current="page" th:href="projects">Projects</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="../tasks">Tasks</a>
+                    <a class="nav-link active" aria-current="page" th:href="tasks">Tasks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="../members">Members</a>
+                    <a class="nav-link active" aria-current="page" th:href="members">Members</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -40,23 +40,18 @@
 </nav>
 
 <div class="container">
-    <h3 class="bold-and-cursive">Edit Project</h3>
-    <form th:action="@{'/' + ${user.username} + '/updateProject/' + ${project.projectId}}" th:object="${project}" method="post">
-       <!-- <input type="hidden" th:field="*{projectId}"> -->
+    <h3 class="bold-and-cursive">Add Sub-Project</h3>
+    <form th:action="@{'/' + ${user.username} + '/addsubproject'}" th:object="${subProject}" method="post">
         <div class="mb-3">
             <label for="name" class="form-label">Project Name</label>
             <input type="text" class="form-control" id="name" th:field="*{name}" required>
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
+            <label for="description" class="form-label">Project Description</label>
             <textarea class="form-control" id="description" th:field="*{description}" required></textarea>
         </div>
-        <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Update</button>
-            <a class="btn btn-secondary" href="../projects">Cancel</a>
-        </div>
+        <button type="submit" class="btn btn-primary">Add Sub-Project</button>
     </form>
 </div>
-
 </body>
 </html>

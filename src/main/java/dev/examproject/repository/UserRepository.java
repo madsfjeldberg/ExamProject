@@ -24,7 +24,6 @@ public class UserRepository {
     @Value("${spring.datasource.password}")
     private String dbPassword;
 
-
     public UserRepository() {}
 
     public User authenticateUser(String username, String password) {

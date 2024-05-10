@@ -18,7 +18,6 @@ public class ConnectionManager {
             conn = DriverManager.getConnection(db_url, uid, pwd);
 
         } catch (SQLException e) {
-            System.out.println("Couldn't connect to db");
             e.printStackTrace();
         }
         return conn;
