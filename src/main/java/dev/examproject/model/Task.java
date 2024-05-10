@@ -23,16 +23,4 @@ import java.util.List;
         this.taskDescription = taskDescription;
         this.requiredHours = requiredHours;
     }
-
-    // overloading for creating basic tasks
-    // can set hours, parent task at a later time
-    /*public Task(int projectId, String taskName, String taskDescription) {
-        this.projectId = projectId;
-        this.taskId = getTaskIdAndIncrement();
-        this.taskName = taskName;
-        this.taskDescription = taskDescription;
-    }*/
-
-
-
 }

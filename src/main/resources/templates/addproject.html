@@ -11,7 +11,6 @@
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary shadow">
     <div class="container-fluid">
-        <!-- make the navbar-brand bold and cursive -->
         <a class="navbar-brand bold-and-cursive" href="../home">AlphaPlan</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -19,16 +18,16 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="overview">Overview</a>
+                    <a class="nav-link active" aria-current="page" th:href="overview">Overview</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="projects">Projects</a>
+                    <a class="nav-link active" aria-current="page" th:href="projects">Projects</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="tasks">Tasks</a>
+                    <a class="nav-link active" aria-current="page" th:href="tasks">Tasks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="members">Members</a>
+                    <a class="nav-link active" aria-current="page" th:href="members">Members</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -42,7 +41,7 @@
 
 <div class="container">
     <h3 class="bold-and-cursive">Create Project</h3>
-    <form th:action="@{'/' + ${user.username} + '/addProject'}" th:object="${project}" method="post">
+    <form th:action="@{'/' + ${user.username} + '/addproject'}" th:object="${project}" method="post">
         <div class="mb-3">
             <label for="projectName" class="form-label">Project Name</label>
             <input th:field="*{name}" type="text" class="form-control" id="projectName" name="projectName">
@@ -55,8 +54,8 @@
             <label for="admin" class="form-label">Projektleder</label>
             <input type="text" class="form-control" id="admin" name="admin" th:value="${user.username}" readonly>
         </div>
-        <button type="submit" class="btn btn-primary">Add</button>
-        <a class="btn btn-secondary" href="projects">Cancel</a>
+        <button class="btn btn-primary" type="submit">Add</button>
+        <a class="btn btn-secondary" type="button" onclick="history.back()" >Cancel</a>
     </form>
 </div>
 

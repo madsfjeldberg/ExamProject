@@ -9,7 +9,6 @@ import java.util.List;
 @Service
 public class ProjectService {
 
-
     private final ProjectRepository repository;
 
     public ProjectService(ProjectRepository repository) {
@@ -35,8 +34,6 @@ public class ProjectService {
     public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
         return repository.getTotalRequiredHoursForAllSubProjects(parentProjectId);
     }
-
-    //--------------------------------------------EDIT---------------------------------------
 
     public Project getProjectById(int projectId) {
         return repository.getProjectById(projectId);

@@ -1,7 +1,6 @@
 package dev.examproject.repository;
 
 import dev.examproject.model.Project;
-import dev.examproject.model.Task;
 import dev.examproject.model.User;
 import dev.examproject.repository.util.ConnectionManager;
 import org.slf4j.Logger;
@@ -181,7 +180,6 @@ public class ProjectRepository {
         return null;
     }
 
-    //--------------------------------------------------------------EDIT-----------------------------------------
     public boolean updateProject(Project project) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "UPDATE PROJECTS SET name = ?, description = ? WHERE id = ?";
@@ -210,7 +208,6 @@ public class ProjectRepository {
         }
         return null;
     }
-
 
     public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
         int totalHours = 0;

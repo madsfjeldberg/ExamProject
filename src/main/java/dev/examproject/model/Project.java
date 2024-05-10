@@ -25,30 +25,9 @@ import java.util.List;
         this.projectId = projectId;
     }
 
-    public Project(int id, String name, String description, String admin) {
-        this.projectId = id;
-        this.name = name;
-        this.description = description;
-        this.admin = admin;
-        this.assignedUsers = new ArrayList<>();
-    }
-
     public Project(String projectName, String projectDescription) {
         this.name = projectName;
         this.description = projectDescription;
-        this.assignedUsers = new ArrayList<>();
-    }
-    public Project(String projectName, String projectDescription, int parentProjectID) {
-        this.name = projectName;
-        this.description = projectDescription;
-        this.parentProjectID = parentProjectID;
-        this.assignedUsers = new ArrayList<>();
-    }
-    public Project(int projectId, String projectName, String projectDescription, int parentProjectID) {
-        this.projectId = projectId;
-        this.name = projectName;
-        this.description = projectDescription;
-        this.parentProjectID = parentProjectID;
         this.assignedUsers = new ArrayList<>();
     }
 }

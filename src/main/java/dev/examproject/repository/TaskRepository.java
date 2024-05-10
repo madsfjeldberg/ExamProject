@@ -17,7 +17,6 @@ public class TaskRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskRepository.class);
 
-
     @Value("${spring.datasource.url}")
     private String dbUrl;
     @Value("${spring.datasource.username}")
@@ -74,6 +73,7 @@ public class TaskRepository {
         }
         return tasks;
     }
+
     public int getTotalRequiredHoursForSubproject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "SELECT SUM(required_hours) FROM tasks WHERE project_id = ?";
