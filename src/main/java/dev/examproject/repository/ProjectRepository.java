@@ -103,7 +103,7 @@ public class ProjectRepository {
                 if (!rs.wasNull()) {
                     project.setParentProjectID(parentProjectId);
                 }
-                logger.info("Subproject found: " + project.getName() + " with ID: " + project.getProjectId());
+                logger.info("Project found: " + project.getName() + " with ID: " + project.getProjectId() + " and parent project ID: " + project.getParentProjectID());
                 return project;
             }
         } catch (SQLException e) {

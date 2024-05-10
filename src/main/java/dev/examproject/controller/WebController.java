@@ -124,7 +124,7 @@ public class WebController {
     // alt efter hvilken type der er valgt.
     // hold kæft hvor er den lang. ser senere om den kan forkortes lidt :)
     // /mads
-    @PostMapping(path = "/{username}/adduserto{type}")
+    @PostMapping(path = "/{username}/assignuserto{type}")
     public String addUserToProject(@PathVariable("username") String username,
                                    @PathVariable("type") String type,
                                    @ModelAttribute("user") User user, HttpSession session) {
@@ -217,6 +217,7 @@ public class WebController {
         return "redirect:/login";
     }
 
+
     @PostMapping(path = "/{username}/add{type}project")
     public String addProject(@PathVariable("username") String username,
                              @PathVariable("type") String type,
@@ -239,6 +240,8 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
+
 
     @GetMapping(path = "/{username}/addtask")
     public String addTask(@PathVariable("username") String username, Model model, HttpSession session) {
@@ -322,10 +325,8 @@ public class WebController {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             int userId = userService.getUserId(assignedUsername);
-            if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))
-                && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
-                taskService.assignUserToTask(taskId, userId);
-            } else if (mainProject.getAdmin().equals(authenticatedUser.getUsername())) {
+            if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(assignedUsername))
+                && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(assignedUsername))) {
                 taskService.assignUserToTask(taskId, userId);
             } else log.info("User not assigned to project.");
             return "redirect:/" + username + "/subprojectoverview";
@@ -370,7 +371,7 @@ public class WebController {
         return "redirect:/login";
     }
 
-    @GetMapping("/{username}/editTask/{taskId}")
+    @GetMapping("/{username}/edittask/{taskId}")
     public String showEditTaskForm(@PathVariable("username") String username, @PathVariable("taskId") int taskId, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
@@ -378,7 +379,7 @@ public class WebController {
             if (task != null) {
                 model.addAttribute("task", task);
                 model.addAttribute("user",authenticatedUser);
-                return "editTask";
+                return "edittask";
             } else {
                 return "redirect:/subProjectOverview";
             }
@@ -386,7 +387,7 @@ public class WebController {
         return "redirect:/login";
     }
 
-    @PostMapping("/{username}/updateTask/{taskId}")
+    @PostMapping("/{username}/updatetask/{taskId}")
     public String updateTask(@PathVariable("username") String username, @PathVariable("taskId") int taskId, @ModelAttribute("task") Task task, RedirectAttributes redirectAttributes, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
@@ -401,8 +402,9 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     //-----------------------------------------------------------------Delete--------------------------
-    @GetMapping("/{username}/confirmDeleteTask/{taskId}")
+    @GetMapping("/{username}/confirmdeletetask/{taskId}")
     public String confirmDeleteTask(@PathVariable("username") String username, @PathVariable("taskId") int taskId, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
@@ -410,18 +412,18 @@ public class WebController {
             if (task != null) {
                 model.addAttribute("task", task);
                 model.addAttribute("user", authenticatedUser);
-                return "confirmDeleteTask";
+                return "confirmdeletetask";
             }
         }
         return "redirect:/login";
     }
 
-    @PostMapping("/{username}/deleteTask/{taskId}")
+    @PostMapping("/{username}/deletetask/{taskId}")
     public String deleteTask(@PathVariable("username") String username, @PathVariable("taskId") int taskId, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             taskService.deleteTask(taskId);
-            return "redirect:/subProjectOverview";
+            return "redirect:/" + username + "/subprojectoverview";
         }
         return "redirect:/login";
     }

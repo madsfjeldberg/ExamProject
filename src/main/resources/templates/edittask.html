@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Edit Task</h1>
-<form th:action="@{'/' + ${user.username} + '/updateTask/' + ${task.taskId}}" method="post">
+<form th:action="@{'/' + ${user.username} + '/updatetask/' + ${task.taskId}}" method="post">
     <label for="taskName">Task Name:</label><br>
     <input type="text" id="taskName" name="taskName" th:value="${task.taskName}"><br>
     <label for="taskDescription">Task Description:</label><br>

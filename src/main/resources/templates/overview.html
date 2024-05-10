@@ -65,7 +65,7 @@
     </div>
 
     <div th:if="${project.admin == user.username}">
-        <form th:action="@{'/' + ${user.username} + '/addUserToProject'}" method="post">
+        <form th:action="@{'/' + ${user.username} + '/assignusertoproject'}" method="post">
             <div class="mb-3">
                 <h4 class="bold-and-cursive">Add User</h4>
                 <label for="username" class="form-label">Username</label>
@@ -78,7 +78,7 @@
 
     <div class="container" th:if="${project != null}">
         <h3 class="bold-and-cursive mt-4">Sub-Projects</h3>
-        <a th:href="@{'/' + ${user.username} + '/addSubProject'}" class="btn btn-primary mb-3">Add Subproject</a>
+        <a th:href="@{'/' + ${user.username} + '/addsubproject'}" class="btn btn-primary mb-3">Add Subproject</a>
         <div class="row row-cols-1 row-cols-md-3 g-4" th:each="subProject : ${subProjects}">
             <div class="col">
                 <div class="card">
@@ -87,7 +87,7 @@
                         <p class="card-text" th:text="${subProject.description}"></p>
                         <p class="card-text text-muted" th:text="'Tasks: ' + ${subProject.tasks.size()}"></p>
                         <h6 class="card-subtitle mb-2 text-muted" th:text="'Medlemmer: ' + ${subProject.assignedUsers.size()} ">Medlemmer</h6>
-                        <a th:href="@{'/' + ${user.username} + '/selectSubProject/' + ${subProject.projectId}}" class="btn btn-primary btn-sm">Select</a>
+                        <a th:href="@{'/' + ${user.username} + '/selectsubproject/' + ${subProject.projectId}}" class="btn btn-primary btn-sm">Select</a>
                     </div>
                 </div>
             </div>

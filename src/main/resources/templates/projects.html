@@ -59,9 +59,9 @@
             <td th:text="${project.assignedUsers.size()}"></td>
             <td>
                 <div class="btn-group" role="group">
-                    <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/selectProject/' + ${project.projectId}}">Select</a>
-                    <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editProject/' + ${project.projectId}}">Edit</a>
-                    <a class="btn btn-danger btn-sm" th:href="@{'/deleteProject/' + ${project.name}}">Delete</a>
+                    <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/selectproject/' + ${project.projectId}}">Select</a>
+                    <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Edit</a>
+                    <a class="btn btn-danger btn-sm" th:href="@{'/deleteproject/' + ${project.name}}">Delete</a>
                 </div>
             </td>
         </tr>
