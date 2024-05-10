@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Task</title>
+</head>
+<body>
+<h1>Edit Task</h1>
+<form th:action="@{'/' + ${user.username} + '/updateTask/' + ${task.taskId}}" method="post">
+    <label for="taskName">Task Name:</label><br>
+    <input type="text" id="taskName" name="taskName" th:value="${task.taskName}"><br>
+    <label for="taskDescription">Task Description:</label><br>
+    <input type="text" id="taskDescription" name="taskDescription" th:value="${task.taskDescription}"><br>
+    <label for="requiredHours">Required Hours:</label><br>
+    <input type="number" id="requiredHours" name="requiredHours" th:value="${task.requiredHours}"><br>
+    <input type="submit" value="Update Task">
+</form>
+</body>
+</html>

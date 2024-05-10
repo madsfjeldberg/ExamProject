@@ -40,21 +40,19 @@ public class ProjectRepository {
             }
             ps.executeUpdate();
 
-            // Retrieve the auto-generated project ID
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     int projectId = rs.getInt(1);
                     project.setProjectId(projectId); // Set the generated ID in the Task object
                     return 1;
                 } else {
-                    // Handle the case where the auto-generated key couldn't be retrieved
                     throw new SQLException("Failed to retrieve auto-generated key for project");
                 }
             }
         } catch (SQLException e) {
             logger.error("Error adding project", e);
         }
-        return -1; // Return a default value indicating failure
+        return -1;
     }
 
     public int getId(String projectName) {
@@ -93,13 +91,13 @@ public class ProjectRepository {
     // /mads
     public Project getProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT * FROM projects WHERE id = ?";
+        String sql = "SELECT * FROM PROJECTS WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
-                project.setAdmin(getAdminForProject(rs.getInt("id")));
+                project.setAdmin(getAdminForProject(projectId));
                 project.setAssignedUsers(getAssignedUsers(rs.getInt("id")));
                 int parentProjectId = rs.getInt("parent_project_id");
                 if (!rs.wasNull()) {
@@ -109,7 +107,7 @@ public class ProjectRepository {
                 return project;
             }
         } catch (SQLException e) {
-            logger.error("Error getting sub-project with ID: " + projectId, e);
+            logger.error("Error getting project: " + projectId, e);
         }
         return null;
     }

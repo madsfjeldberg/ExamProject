@@ -370,5 +370,61 @@ public class WebController {
         return "redirect:/login";
     }
 
+    @GetMapping("/{username}/editTask/{taskId}")
+    public String showEditTaskForm(@PathVariable("username") String username, @PathVariable("taskId") int taskId, Model model, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            Task task = taskService.getTask(taskId);
+            if (task != null) {
+                model.addAttribute("task", task);
+                model.addAttribute("user",authenticatedUser);
+                return "editTask";
+            } else {
+                return "redirect:/subProjectOverview";
+            }
+        }
+        return "redirect:/login";
+    }
+
+    @PostMapping("/{username}/updateTask/{taskId}")
+    public String updateTask(@PathVariable("username") String username, @PathVariable("taskId") int taskId, @ModelAttribute("task") Task task, RedirectAttributes redirectAttributes, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            task.setTaskId(taskId);
+            int updateResult = taskService.updateTask(task);
+            if (updateResult == 1) {
+                redirectAttributes.addFlashAttribute("successMessage", "Task updated successfully");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Error updating task");
+            }
+            return "redirect:/subProjectOverview";
+        }
+        return "redirect:/login";
+    }
+    //-----------------------------------------------------------------Delete--------------------------
+    @GetMapping("/{username}/confirmDeleteTask/{taskId}")
+    public String confirmDeleteTask(@PathVariable("username") String username, @PathVariable("taskId") int taskId, Model model, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            Task task = taskService.getTask(taskId);
+            if (task != null) {
+                model.addAttribute("task", task);
+                model.addAttribute("user", authenticatedUser);
+                return "confirmDeleteTask";
+            }
+        }
+        return "redirect:/login";
+    }
+
+    @PostMapping("/{username}/deleteTask/{taskId}")
+    public String deleteTask(@PathVariable("username") String username, @PathVariable("taskId") int taskId, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            taskService.deleteTask(taskId);
+            return "redirect:/subProjectOverview";
+        }
+        return "redirect:/login";
+    }
+
 }
 
