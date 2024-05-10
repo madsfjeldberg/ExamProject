@@ -25,7 +25,8 @@ public class TaskRepository {
     @Value("${spring.datasource.password}")
     private String dbPassword;
 
-    public TaskRepository() {}
+    public TaskRepository() {
+    }
 
     public void addTask(Task task) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
@@ -37,13 +38,11 @@ public class TaskRepository {
             ps.setInt(4, task.getProjectId());
             ps.executeUpdate();
 
-            // Retrieve the auto-generated ID
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     int taskId = rs.getInt(1);
                     task.setTaskId(taskId); // Set the generated ID in the Task object
                 } else {
-                    // Handle the case where the auto-generated key couldn't be retrieved
                     throw new SQLException("Failed to retrieve auto-generated key for task");
                 }
             }
@@ -74,6 +73,7 @@ public class TaskRepository {
         }
         return tasks;
     }
+
     public int getTotalRequiredHoursForSubproject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "SELECT SUM(required_hours) FROM tasks WHERE project_id = ?";
@@ -117,6 +117,7 @@ public class TaskRepository {
             e.printStackTrace();
         }
     }
+
     public Task getTask(int taskId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "SELECT * FROM tasks WHERE id = ?";
@@ -138,6 +139,7 @@ public class TaskRepository {
         }
         return null;
     }
+
     public void removeTaskUsers(int taskId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "DELETE FROM task_users WHERE task_id = ?";
@@ -148,6 +150,7 @@ public class TaskRepository {
             logger.error("Error removing users from task with ID: " + taskId, e);
         }
     }
+
     public int deleteTask(int taskId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "DELETE FROM tasks WHERE id = ?";
@@ -160,4 +163,20 @@ public class TaskRepository {
         return -1;
     }
 
+    public int updateTask(Task task) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "UPDATE tasks SET name = ?, description = ?, required_hours = ? WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, task.getTaskName());
+            ps.setString(2, task.getTaskDescription());
+            ps.setInt(3, task.getRequiredHours());
+            ps.setInt(4, task.getTaskId());
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0 ? 1 : -1;
+        } catch (SQLException e) {
+            logger.error("Error updating task", e);
+            return -1;
+        }
+
+    }
 }
