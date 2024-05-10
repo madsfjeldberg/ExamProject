@@ -30,10 +30,15 @@ public class ProjectRepository {
 
     public int addProject(Project project) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "INSERT INTO PROJECTS (name, description) VALUES (?, ?)";
+        String sql = "INSERT INTO PROJECTS (name, description, parent_project_id) VALUES (?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, project.getName());
             ps.setString(2, project.getDescription());
+            if (project.getParentProjectID() != 0) {
+                ps.setInt(3, project.getParentProjectID());
+            } else {
+                ps.setNull(3, Types.INTEGER);
+            }
             ps.executeUpdate();
 
             // Retrieve the auto-generated project ID
@@ -52,33 +57,6 @@ public class ProjectRepository {
         }
         return -1; // Return a default value indicating failure
     }
-
-    public int addSubProject(Project project) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "INSERT INTO PROJECTS (name, description, parent_project_id) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, project.getName());
-            ps.setString(2, project.getDescription());
-            ps.setInt(3, project.getParentProjectID());
-            ps.executeUpdate();
-
-            // Retrieve the auto-generated project ID
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    int projectId = rs.getInt(1);
-                    project.setProjectId(projectId); // Set the generated ID in the Task object
-                    return 1;
-                } else {
-                    // Handle the case where the auto-generated key couldn't be retrieved
-                    throw new SQLException("Failed to retrieve auto-generated key for project");
-                }
-            }
-        } catch (SQLException e) {
-            logger.error("Error adding subproject", e);
-        }
-        return -1; // Return a default value indicating failure
-    }
-
 
     public int getId(String projectName) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
@@ -112,20 +90,27 @@ public class ProjectRepository {
         return null;
     }
 
+    // henter både subproject og project
+    // /mads
     public Project getProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT * FROM PROJECTS WHERE id = ?";
+        String sql = "SELECT * FROM projects WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
-                project.setAdmin(getAdminForProject(projectId));
+                project.setAdmin(getAdminForProject(rs.getInt("id")));
                 project.setAssignedUsers(getAssignedUsers(rs.getInt("id")));
+                int parentProjectId = rs.getInt("parent_project_id");
+                if (!rs.wasNull()) {
+                    project.setParentProjectID(parentProjectId);
+                }
+                logger.info("Subproject found: " + project.getName() + " with ID: " + project.getProjectId());
                 return project;
             }
         } catch (SQLException e) {
-            logger.error("Error getting project: " + projectId, e);
+            logger.error("Error getting sub-project with ID: " + projectId, e);
         }
         return null;
     }
@@ -192,25 +177,6 @@ public class ProjectRepository {
             return projects;
         } catch (SQLException e) {
             logger.error("Error getting sub-projects for project with ID: " + projectId, e);
-        }
-        return null;
-    }
-
-    public Project getSubProject(int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT * FROM projects WHERE id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, projectId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
-                project.setAdmin(getAdminForProject(rs.getInt("id")));
-                project.setAssignedUsers(getAssignedUsers(rs.getInt("id")));
-                project.setParentProjectID(rs.getInt("parent_project_id"));
-                return project;
-            }
-        } catch (SQLException e) {
-            logger.error("Error getting sub-project with ID: " + projectId, e);
         }
         return null;
     }

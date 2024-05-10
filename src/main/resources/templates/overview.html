@@ -65,7 +65,7 @@
     </div>
 
     <div th:if="${project.admin == user.username}">
-        <form th:action="@{'/' + ${user.username} + '/addUser'}" method="post">
+        <form th:action="@{'/' + ${user.username} + '/addUserToProject'}" method="post">
             <div class="mb-3">
                 <h4 class="bold-and-cursive">Add User</h4>
                 <label for="username" class="form-label">Username</label>
