@@ -60,7 +60,7 @@
 <div class="container" th:if="${selectedProject.admin == user.username}">
     <div class="row justify-content-left">
         <div class="col-4">
-            <form th:action="@{'/' + ${user.username} + '/addUserToSubProject'}" method="post">
+            <form th:action="@{'/' + ${user.username} + '/assignusertosubproject'}" method="post">
                 <div class="mb-3">
                     <h4 class="bold-and-cursive">Tilføj medlem</h4>
                     <label for="username" class="form-label">Brugernavn</label>
@@ -98,12 +98,12 @@
                         <td th:text="${task.requiredHours}"></td>
                         <td th:text="${task.assignedUsers.size()}"></td>
                         <td class="btn-group" role="group">
-                            <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignSelfToTask/' + ${task.taskId}}">Assign</a>
+                            <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignselftotask/' + ${task.taskId}}">Assign</a>
                         </td>
 
                         <td th:if="${selectedProject.admin == user.username}">
-                            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editTask/' + ${task.taskId}}">Edit</a>
-                            <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/confirmDeleteTask/' + ${task.taskId}}">Delete</a>
+                            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/edittask/' + ${task.taskId}}">Edit</a>
+                            <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/confirmdeletetask/' + ${task.taskId}}">Delete</a>
                             <a href="#" class="btn btn-primary btn-sm assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Assign User</a>
                         </td>
                     </tr>
@@ -148,7 +148,7 @@
         $('.assign-user-btn').click(function() {
             let taskId = $(this).data('task-id');
             let username = $(this).data('username');
-            $('#assignUserForm').attr('action', '/' + username + '/assignUserToTask/' + taskId);
+            $('#assignUserForm').attr('action', '/' + username + '/assignusertotask/' + taskId);
         });
     });
 </script>

@@ -12,10 +12,10 @@
     <h3 class="bold-and-cursive">Confirm Delete Task</h3>
     <p>Are you sure you want to delete the following task?</p>
     <p th:text="${task.taskName}"></p>
-    <form th:action="@{'/' + ${user.username} + '/deleteTask/' + ${task.taskId}}" method="post">
+    <form th:action="@{'/' + ${user.username} + '/deletetask/' + ${task.taskId}}" method="post">
         <input type="hidden" name="_method" value="delete" />
         <button type="submit" class="btn btn-danger">Delete</button>
-        <a class="btn btn-secondary" href="/subProjectOverview">Cancel</a>
+        <a class="btn btn-secondary" th:href="'/' + ${user.username} + '/subprojectoverview'">Cancel</a>
     </form>
 </div>
 </body>
