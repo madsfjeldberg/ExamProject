@@ -70,14 +70,12 @@
         </div>
 </div>
 
-
-<h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
-    <a th:href="@{'/' + ${user.username} + '/addSubProjectTask'}" class="btn btn-primary">Add Task</a>
-  
-</h3>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
+                <h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
+                    <a th:href="@{'/' + ${user.username} + '/addSubProjectTask'}" class="btn btn-primary btn-sm">Add Task</a>
+                </h3>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -101,7 +99,7 @@
                         <td th:if="${selectedProject.admin == user.username}">
                             <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editSubProjectTask/' + ${task.taskId}}">Edit</a>
                             <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/deleteSubProjectTask/' + ${task.taskId}}">Delete</a>
-                            <a href="#" class="btn btn-primary assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Assign User</a>
+                            <a href="#" class="btn btn-primary btn-sm assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Assign User</a>
                         </td>
                     </tr>
                     </tbody>
@@ -133,7 +131,7 @@
 
 
 
-<div class="container" th:unless="${selectedSubProject != null}">
+<div class="container" th:unless="${selectedProject != null}">
     <h3 class="bold-and-cursive">No subproject selected.</h3>
 </div>
 
