@@ -40,53 +40,33 @@
 </nav>
 
 <div class="container">
-    <h3 class="bold-and-cursive">Projekter</h3>
-    <a class="btn btn-primary" href="addProject">Tilføj Projekt</a>
-    <div class="list-group" th:object="${projects}">
-        <div class="list-group-item">
-            <div class="row">
-                <div class="col" style="max-width: 200px;"><strong>Projekt Navn</strong></div>
-                <div class="col" style="max-width: 200px;"><strong>Beskrivelse</strong></div>
-                <div class="col" style="max-width: 200px;"><strong>Projektleder</strong></div>
-                <div class="col" style="max-width: 200px;"><strong>Medlemmer</strong></div>
-                <div class="col" style="max-width: 200px;"><strong>Action</strong></div>
-            </div>
-        </div>
-        <div class="list-group-item" th:each="project : ${projects}">
-            <div class="row">
-                <div class="col" style="max-width: 200px;" th:text="${project.name}"></div>
-                <div class="col" style="max-width: 200px;" th:text="${project.description}"></div>
-                <div class="col" style="max-width: 200px;" th:text="${project.admin}"></div>
-                <div class="col" style="max-width: 200px;" th:text="${project.assignedUsers.size()}"></div>
-                <div class="col">
-                    <div class="btn-group" role="group">
-                        <a class="btn btn-primary" th:href="@{'/selectProject/' + ${project.name}}">Select</a>
-                        <a class="btn btn-warning" th:href="@{'/editProject/' + ${project.name}}">Edit</a>
-                        <a class="btn btn-danger" th:href="@{'/deleteProject/' + ${project.name}}">Delete</a>
-                    </div>
+    <h3 class="bold-and-cursive">Projekter <a class="btn btn-primary" href="addProject">Tilføj Projekt</a></h3>
+    <table class="table table-hover" th:object="${projects}">
+        <thead>
+        <tr>
+            <th>Projekt Navn</th>
+            <th>Beskrivelse</th>
+            <th>Projektleder</th>
+            <th>Medlemmer</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="project : ${projects}">
+            <td th:text="${project.name}"></td>
+            <td th:text="${project.description}"></td>
+            <td th:text="${project.admin}"></td>
+            <td th:text="${project.assignedUsers.size()}"></td>
+            <td>
+                <div class="btn-group" role="group">
+                    <a class="btn btn-primary btn-sm" th:href="@{'/selectProject/' + ${project.projectId}}">Select</a>
+                    <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editProject/' + ${project.projectId}}">Edit</a>
+                    <a class="btn btn-danger btn-sm" th:href="@{'/deleteProject/' + ${project.name}}">Delete</a>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <h3 class="bold-and-cursive">Projects</h3>
-    <!-- add a "Add Project" button -->
-    <a class="btn btn-primary" href="addProject">Add Project</a>
-    <ul class="list-group" th:object="${projects}">
-        <li class="list-group-item d-flex justify-content-between align-items-center" th:each="project : ${projects}">
-            <span th:text="${project.name}"></span>
-            <span th:text="${project.description}"></span>
-            <span th:text="'Projektleder: ' + ${project.admin}"></span>
-            <ul>
-                <li th:each="user : ${project.assignedUsers}" th:text="${user.username}"></li>
-            </ul>
-           <!---------------------------edit--------------------------------->
-            <a class="btn btn-secondary" th:href="@{'/' + ${user.username} + '/editProject/' + ${project.projectId}}">Edit</a>
-            <a class="btn btn-primary" th:href="@{'/selectProject/' + ${project.projectId}}">Select</a>
-
-        </li>
-    </ul>
-
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 </body>

@@ -56,12 +56,11 @@
             <p class="card-text" th:text="${project.description}"></p>
             <p class="card-text"><small class="text-muted" th:text="'Projektleder: ' + ${project.admin}"></small></p>
             <h6 class="card-subtitle mb-2 text-muted">Medlemmer</h6>
-            <p>Total required hours for project: <span th:text="${totalHoursForProject}"></span></p>
-
             <ul>
                 <li th:each="user : ${project.assignedUsers}" th:if="${user.username != project.admin}" th:text="${user.username}"></li>
                 <li th:if="${project.assignedUsers.size() == 1}">Ingen medlemmer tilføjet.</li>
             </ul>
+            <p>Total required hours for project: <span th:text="${totalHoursForProject}"></span></p>
         </div>
     </div>
 
@@ -75,23 +74,7 @@
             <button type="submit" class="btn btn-primary">Add User</button>
         </form>
     </div>
-
-    </ul>
-    <h3 class="bold-and-cursive">Sub-Projects</h3>
-    <a th:href="@{'/' + ${user.username} + '/addSubProject'}" class="btn btn-primary">Add Subproject</a>
-    <ul class="list-group" th:each="subProject : ${subProjects}">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span th:text="${subProject.name}"></span>
-            <span th:text="${subProject.description}"></span>
-            <span th:text="'Projektleder: ' + ${subProject.admin}"></span>
-            <ul>
-                <li th:each="user : ${subProject.assignedUsers}" th:text="${user}"></li>
-            </ul>
-            <a th:href="@{'/selectSubProject/' + ${subProject.projectId}}" class="btn btn-primary">Select</a>
-        </li>
-    </ul>
 </div>
-
 
     <div class="container" th:if="${project != null}">
         <h3 class="bold-and-cursive mt-4">Sub-Projects</h3>
@@ -104,8 +87,7 @@
                         <p class="card-text" th:text="${subProject.description}"></p>
                         <p class="card-text text-muted" th:text="'Tasks: ' + ${subProject.tasks.size()}"></p>
                         <h6 class="card-subtitle mb-2 text-muted" th:text="'Medlemmer: ' + ${subProject.assignedUsers.size()} ">Medlemmer</h6>
-                        <a th:href="@{'/selectSubProject/' + ${subProject.name}}" class="btn btn-primary btn-sm">Select</a>
-
+                        <a th:href="@{'/selectSubProject/' + ${subProject.projectId}}" class="btn btn-primary btn-sm">Select</a>
                     </div>
                 </div>
             </div>
