@@ -50,6 +50,8 @@
                 <li th:each="user : ${project.assignedUsers}" th:if="${user.username != project.admin}" th:text="${user.username}"></li>
                 <li th:if="${project.assignedUsers.size() == 0}">Ingen medlemmer tilføjet.</li>
             </ul>
+            <p>Total required hours for subproject: <span th:text="${totalHoursForProject}"></span></p>
+
         </div>
     </div>
 </div>
