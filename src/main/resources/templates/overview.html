@@ -9,44 +9,13 @@
 
 </head>
 <body>
-
-<nav class="navbar navbar-expand-lg bg-body-tertiary shadow">
-    <div class="container-fluid">
-        <!-- make the navbar-brand bold and cursive -->
-        <a class="navbar-brand bold-and-cursive" href="../home">AlphaPlan</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="overview">Overview</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="projects">Projects</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="tasks">Tasks</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="members">Members</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="../logout">Logout</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div th:include="NAVBAR2"></div>
 
 <div class="jumbotron-container">
     <div class="jumbotron text-center">
         <h1 class="bold-and-cursive">Overview</h1>
     </div>
 </div>
-
 
 <div class="container" th:if="${project != null}">
     <h3 class="bold-and-cursive">Nuværende Projekt</h3>
@@ -63,38 +32,42 @@
             <p>Total required hours for project: <span th:text="${totalHoursForProject}"></span></p>
         </div>
     </div>
+</div>
 
-    <div th:if="${project.admin == user.username}">
-        <form th:action="@{'/' + ${user.username} + '/assignusertoproject'}" method="post">
-            <div class="mb-3">
-                <h4 class="bold-and-cursive">Add User</h4>
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username">
-            </div>
-            <button type="submit" class="btn btn-primary">Add User</button>
-        </form>
+<div class="container" th:if="${project != null && project.admin == user.username}">
+    <div class="row justify-content-left">
+        <div class="col-4">
+            <form th:action="@{'/' + ${user.username} + '/assignusertoproject'}" method="post">
+                <div class="mb-3">
+                    <h4 class="bold-and-cursive">Tilføj medlem</h4>
+                    <label for="username" class="form-label">Brugernavn</label>
+                    <input type="text" class="form-control" id="username" name="username">
+                </div>
+                <button type="submit" class="btn btn-primary">Tilføj</button>
+            </form>
+        </div>
     </div>
 </div>
 
-    <div class="container" th:if="${project != null}">
-        <h3 class="bold-and-cursive mt-4">Sub-Projects</h3>
-        <a th:href="@{'/' + ${user.username} + '/addsubproject'}" class="btn btn-primary mb-3">Add Subproject</a>
-        <div class="row row-cols-1 row-cols-md-3 g-4" th:each="subProject : ${subProjects}">
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${subProject.name}"></h5>
-                        <p class="card-text" th:text="${subProject.description}"></p>
-                        <p class="card-text text-muted" th:text="'Tasks: ' + ${subProject.tasks.size()}"></p>
-                        <h6 class="card-subtitle mb-2 text-muted" th:text="'Medlemmer: ' + ${subProject.assignedUsers.size()} ">Medlemmer</h6>
-                        <a th:href="@{'/' + ${user.username} + '/selectsubproject/' + ${subProject.projectId}}" class="btn btn-primary btn-sm">Select</a>
-                    </div>
+<div class="container" th:if="${project != null}">
+    <h3 class="bold-and-cursive mt-4">Sub-Projects
+        <a th:href="@{'/' + ${user.username} + '/addsubproject'}" class="btn btn-primary btn-sm">Add</a>
+    </h3>
+    <div class="row">
+        <div class="col-md-4 col-lg-4" th:each="subProject : ${subProjects}">
+            <div class="card m-2">
+                <div class="card-body">
+                    <h5>
+                        <a class="card-title project-link" th:text="${subProject.name}" th:href="@{'/' + ${user.username} + '/selectsubproject/' + ${subProject.projectId}}"></a>
+                    </h5>
+                    <p class="card-text" th:text="${subProject.description}"></p>
+                    <p class="card-text text-muted" th:text="'Tasks: ' + ${subProject.tasks.size()}"></p>
+                    <h6 class="card-subtitle mb-2 text-muted" th:text="'Medlemmer: ' + ${subProject.assignedUsers.size()} ">Medlemmer</h6>
                 </div>
             </div>
         </div>
     </div>
-
-
+</div>
 
 <div class="container" th:unless="${project != null}">
     <div class="alert alert-info" role="alert">

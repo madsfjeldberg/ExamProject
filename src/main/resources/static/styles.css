@@ -44,7 +44,17 @@ body.container {
 }
 
 .jumbotron {
+}
 
+.project-link {
+    color: inherit;
+    text-decoration: none;
+    font-weight: bold; /* Makes the text bold */
+    transition: color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.project-link:hover {
+    color: #007BFF; /* Change the color to whatever you prefer when hovered */
 }
 
 /* Add responsive design */

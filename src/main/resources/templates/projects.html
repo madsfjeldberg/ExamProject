@@ -8,39 +8,10 @@
     <link rel="icon" type="image/x-icon" href="../img/favicon.ico">
 </head>
 <body>
-
-<nav class="navbar navbar-expand-lg bg-body-tertiary shadow">
-    <div class="container-fluid">
-        <a class="navbar-brand bold-and-cursive" href="../home">AlphaPlan</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="overview">Overview</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="projects">Projects</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="tasks">Tasks</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="members">Members</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="../logout">Logout</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div th:include="NAVBAR2"></div>
 
 <div class="container">
-    <h3 class="bold-and-cursive">Projekter <a class="btn btn-primary" th:href="addproject">Tilføj Projekt</a></h3>
+    <h3 class="bold-and-cursive">Projekter <a class="btn btn-primary" th:href="addproject">Tilføj</a></h3>
     <table class="table table-hover" th:object="${projects}">
         <thead>
         <tr>
@@ -53,13 +24,14 @@
         </thead>
         <tbody>
         <tr th:each="project : ${projects}">
-            <td th:text="${project.name}"></td>
+            <td>
+                <a class="project-link" th:text="${project.name}" th:href="@{'/' + ${user.username} + '/selectproject/' + ${project.projectId}}"></a>
+            </td>
             <td th:text="${project.description}"></td>
             <td th:text="${project.admin}"></td>
             <td th:text="${project.assignedUsers.size()}"></td>
             <td>
                 <div class="btn-group" role="group">
-                    <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/selectproject/' + ${project.projectId}}">Select</a>
                     <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Edit</a>
                     <a class="btn btn-danger btn-sm" th:href="@{'/deleteproject/' + ${project.name}}">Delete</a>
                 </div>

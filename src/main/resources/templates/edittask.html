@@ -5,6 +5,8 @@
     <title>Edit Task</title>
 </head>
 <body>
+<div th:include="NAVBAR2"></div>
+
 <h1>Edit Task</h1>
 <form th:action="@{'/' + ${user.username} + '/updatetask/' + ${task.taskId}}" method="post">
     <label for="taskName">Task Name:</label><br>
