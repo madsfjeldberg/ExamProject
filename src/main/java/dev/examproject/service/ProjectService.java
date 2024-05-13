@@ -31,6 +31,14 @@ public class ProjectService {
         return repository.getSubProjectsForProject(projectId);
     }
 
+    public void deleteProject(int projectId) {
+        repository.deleteProject(projectId);
+    }
+
+    public void deleteSubProjects(int projectId) {
+        repository.deleteSubProjects(projectId);
+    }
+
     public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
         return repository.getTotalRequiredHoursForAllSubProjects(parentProjectId);
     }

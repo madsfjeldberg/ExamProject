@@ -36,4 +36,8 @@ public class UserService {
     public void addUserToProject(User user, int projectId) {
         repository.addUserToProject(user, projectId);
     }
+
+    public void removeUsersFromProject(int projectId) {
+        repository.removeUsersFromProject(projectId);
+    }
 }

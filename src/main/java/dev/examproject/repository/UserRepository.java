@@ -84,6 +84,18 @@ public class UserRepository {
         return -1;
     }
 
+    public void removeUsersFromProject(int projectId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "DELETE FROM project_users WHERE project_id = ? OR project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, projectId);
+            ps.setInt(2, projectId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error while removing users from project", e);
+        }
+    }
+
     public int setUserToAdmin(String username, int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "UPDATE project_users SET is_admin = true WHERE user_id = ? AND project_id = ?";

@@ -162,6 +162,29 @@ public class TaskRepository {
         return -1;
     }
 
+    public void removeTaskUsersForProject(int projectId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "DELETE FROM task_users WHERE " +
+                     "task_id IN (SELECT id FROM tasks WHERE project_id IN (SELECT id FROM projects WHERE parent_project_id = ?))";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, projectId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error removing users from tasks for project with ID: " + projectId, e);
+        }
+    }
+
+    public void deleteTasksForProject(int projectId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "DELETE FROM tasks WHERE project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, projectId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error deleting tasks for project with ID: " + projectId, e);
+        }
+    }
+
     public int updateTask(Task task) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "UPDATE tasks SET name = ?, description = ?, required_hours = ? WHERE id = ?";
