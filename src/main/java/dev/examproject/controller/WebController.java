@@ -307,8 +307,6 @@ public class WebController {
             if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))
                 && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))) {
                 taskService.assignSelfToTask(taskId, userId);
-            } else if (mainProject.getAdmin().equals(authenticatedUser.getUsername())) {
-                taskService.assignSelfToTask(taskId, userId);
             } else log.info("User not assigned to project.");
             return "redirect:/" + username + "/subprojectoverview";
         }
