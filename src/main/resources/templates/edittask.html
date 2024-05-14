@@ -5,7 +5,7 @@
     <title>Edit Task</title>
 </head>
 <body>
-<div th:include="NAVBAR2"></div>
+<div th:include="common/NAVBAR2"></div>
 
 <h1>Edit Task</h1>
 <form th:action="@{'/' + ${user.username} + '/updatetask/' + ${task.taskId}}" method="post">
@@ -17,5 +17,7 @@
     <input type="number" id="requiredHours" name="requiredHours" th:value="${task.requiredHours}"><br>
     <input type="submit" value="Update Task">
 </form>
+
+<div th:include="common/FOOTER"></div>
 </body>
 </html>
