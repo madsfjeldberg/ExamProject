@@ -33,10 +33,20 @@ public class TaskService {
     public int getTotalRequiredHoursForProject(int projectId) {
         return repository.getTotalRequiredHoursForSubproject(projectId);
     }
+
+    public void removeTaskUsersForProject(int projectId) {
+        repository.removeTaskUsersForProject(projectId);
+    }
+
+    public void deleteTasksForProject(int projectId) {
+        repository.deleteTasksForProject(projectId);
+    }
+
     public void deleteTask(int taskId) {
         repository.removeTaskUsers(taskId);
         repository.deleteTask(taskId);
     }
+
     public Task getTask(int taskId) {
         return repository.getTask(taskId);
     }

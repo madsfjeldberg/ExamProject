@@ -241,8 +241,6 @@ public class WebController {
         return "redirect:/login";
     }
 
-
-
     @GetMapping(path = "/{username}/addtask")
     public String addTask(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -267,7 +265,6 @@ public class WebController {
             }
             System.out.println("task tilføjet:" + task);
             return "redirect:/" + username + "/subprojectoverview";
-
         }
         return "redirect:/login";
     }
@@ -422,6 +419,25 @@ public class WebController {
         if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
             taskService.deleteTask(taskId);
             return "redirect:/" + username + "/subprojectoverview";
+        }
+        return "redirect:/login";
+    }
+
+    // måske ikke den mest optimale måde at gøre det her på. ikke helt sikker.
+    // men tænker ikke det er så tit man sletter et projekt, så hvis det tager et sekund
+    // eller to længere er det nok ikke det største performance hit.
+    // /mads
+    @GetMapping("/{username}/deleteproject/{projectId}")
+    public String deleteProject(@PathVariable("username") String username,
+                                @PathVariable("projectId") int projectId, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(username)) {
+            taskService.removeTaskUsersForProject(projectId); // removes assigned users from tasks
+            taskService.deleteTasksForProject(projectId); // removes tasks
+            userService.removeUsersFromProject(projectId); // removes users from project
+            projectService.deleteSubProjects(projectId); // deletes subprojects
+            projectService.deleteProject(projectId); // deletes the main project
+            return "redirect:/" + username + "/projects";
         }
         return "redirect:/login";
     }

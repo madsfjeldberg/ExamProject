@@ -87,6 +87,28 @@ public class ProjectRepository {
         return null;
     }
 
+    public void deleteProject(int projectId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "DELETE FROM PROJECTS WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, projectId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error deleting project with ID: " + projectId, e);
+        }
+    }
+
+    public void deleteSubProjects(int parentProjectId) {
+        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        String sql = "DELETE FROM PROJECTS WHERE parent_project_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, parentProjectId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error deleting sub-projects for project with ID: " + parentProjectId, e);
+        }
+    }
+
     // henter både subproject og project
     // /mads
     public Project getProject(int projectId) {
