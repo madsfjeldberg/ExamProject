@@ -134,7 +134,7 @@ public class ProjectRepository {
         return null;
     }
 
-    public List<Project> getProjectsForUser(int userId, String username) {
+    public List<Project> getProjectsForUser(int userId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "SELECT PROJECTS.*, project_users.is_admin FROM PROJECTS " +
                 "JOIN project_users ON PROJECTS.id = project_users.project_id " +
@@ -149,15 +149,15 @@ public class ProjectRepository {
                 if (project.getAssignedUsers() == null) {
                     project.setAssignedUsers(new ArrayList<>());
                 }
-                if (rs.getBoolean("is_admin")) {
-                    project.setAdmin(username);
-                }
+
+                String adminUsername = getAdminForProject(project.getProjectId());
+                project.setAdmin(adminUsername);
+
                 projects.add(project);
             }
-            System.out.println(projects);
             return projects;
         } catch (SQLException e) {
-            logger.error("Error getting projects for user: " + username + "userId: " + userId, e);
+            logger.error("Error getting projects for userId: " + userId, e);
         }
         System.out.println("not returning anything");
         return null;

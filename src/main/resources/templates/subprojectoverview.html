@@ -88,7 +88,7 @@
                         <th scope="col">Timer</th>
                         <th scope="col">Medlemmer</th>
                         <th scope="col">Actions</th>
-                        <th scope="col">Admin</th>
+                        <th th:if="${selectedProject.admin == user.username}" scope="col">Admin</th>
                     </tr>
                     </thead>
                     <tbody th:each="task : ${tasks}">

@@ -23,8 +23,8 @@ public class ProjectService {
         return repository.getProject(projectId);
     }
 
-    public List<Project> getProjectsForUser(int userId, String username) {
-        return repository.getProjectsForUser(userId, username);
+    public List<Project> getProjectsForUser(int userId) {
+        return repository.getProjectsForUser(userId);
     }
 
     public List<Project> getSubProjectsForProject(int projectId) {
