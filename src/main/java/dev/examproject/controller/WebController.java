@@ -442,6 +442,7 @@ public class WebController {
         }
         return "redirect:/login";
     }
+
     @GetMapping("/{username}/deleteSubproject/{projectId}")
     public String deleteSubProject(@PathVariable("username") String username,
                                    @PathVariable("projectId") int projectId, HttpSession session) {

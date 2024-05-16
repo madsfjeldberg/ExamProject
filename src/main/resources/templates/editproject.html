@@ -13,7 +13,6 @@
 <div class="container">
     <h3 class="bold-and-cursive">Edit Project</h3>
     <form th:action="@{'/' + ${user.username} + '/updateproject/' + ${project.projectId}}" th:object="${project}" method="post">
-       <!-- <input type="hidden" th:field="*{projectId}"> -->
         <div class="mb-3">
             <label for="name" class="form-label">Project Name</label>
             <input type="text" class="form-control" id="name" th:field="*{name}" required>

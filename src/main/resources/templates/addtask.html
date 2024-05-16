@@ -12,7 +12,7 @@
 
 <div class="container">
     <h3 class="bold-and-cursive">Add Task</h3>
-    <form action="#" th:action="@{'/' + ${user.username} + '/addtask'}" th:object="${task}" method="post" class="mt-4">
+    <form th:action="@{'/' + ${user.username} + '/addtask'}" th:object="${task}" method="post" class="mt-4">
         <div class="mb-3">
             <label for="taskName" class="form-label">Task Name:</label>
             <input type="text" id="taskName" name="taskName" th:field="*{taskName}" class="form-control" required>
