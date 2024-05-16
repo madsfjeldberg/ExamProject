@@ -178,9 +178,10 @@ public class TaskRepository {
 
     public void deleteTasksForProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "DELETE FROM tasks WHERE project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
+        String sql = "DELETE FROM tasks WHERE project_id = ? OR project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
+            ps.setInt(2, projectId);
             ps.executeUpdate();
         } catch (SQLException e) {
             logger.error("Error deleting tasks for project with ID: {}", projectId, e);
