@@ -379,7 +379,7 @@ public class WebController {
                 model.addAttribute("user",authenticatedUser);
                 return "edittask";
             } else {
-                return "redirect:/subProjectOverview";
+                return "redirect:/" + username + "/subprojectoverview";
             }
         }
         return "redirect:/login";
@@ -395,7 +395,7 @@ public class WebController {
             } else {
                 redirectAttributes.addFlashAttribute("errorMessage", "Error updating task");
             }
-            return "redirect:/subProjectOverview";
+            return "redirect:/" + username + "/subprojectoverview";
         }
         return "redirect:/login";
     }
@@ -439,6 +439,18 @@ public class WebController {
             projectService.deleteSubProjects(projectId); // deletes subprojects
             projectService.deleteProject(projectId); // deletes the main project
             return "redirect:/" + username + "/projects";
+        }
+        return "redirect:/login";
+    }
+    @GetMapping("/{username}/deleteSubproject/{projectId}")
+    public String deleteSubProject(@PathVariable("username") String username,
+                                   @PathVariable("projectId") int projectId, HttpSession session) {
+        if (isLoggedIn(session, username)) {
+            taskService.removeTaskUsersForProject(projectId); // removes assigned users from tasks
+            taskService.deleteTasksForProject(projectId); // removes tasks
+            userService.removeUsersFromProject(projectId); // removes users from project
+            projectService.deleteProject(projectId); // deletes the sub project
+            return "redirect:/" + username + "/overview";
         }
         return "redirect:/login";
     }

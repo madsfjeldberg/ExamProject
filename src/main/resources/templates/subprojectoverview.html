@@ -51,6 +51,8 @@
                 <li th:if="${project.assignedUsers.size() == 0}">Ingen medlemmer tilføjet.</li>
             </ul>
             <p>Total required hours for subproject: <span th:text="${totalHoursForProject}"></span></p>
+            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Edit subproject</a>
+            <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/deleteSubproject/' + ${project.projectId}}">Delete subproject</a>
 
         </div>
     </div>
