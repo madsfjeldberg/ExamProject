@@ -339,7 +339,7 @@ public class WebController {
         User authenticatedUser = (User) session.getAttribute("user");
         System.out.println("Attempting to edit project with ID: " + projectId + " for user: " + username);
         if (isLoggedIn(session, username)) {
-            Project project = projectService.getProjectById(projectId);
+            Project project = projectService.getProject(projectId);
             if (project != null) {
                 model.addAttribute("project", project);
                 model.addAttribute("user",authenticatedUser);
@@ -357,8 +357,8 @@ public class WebController {
                                 @ModelAttribute("project") Project project, RedirectAttributes redirectAttributes, HttpSession session) {
         if (isLoggedIn(session, username)) {
             project.setProjectId(projectId);
-            boolean updateSuccessful = projectService.updateProject(project);
-            if (updateSuccessful) {
+            int success = projectService.updateProject(project);
+            if (success == 1) {
                 redirectAttributes.addFlashAttribute("successMessage", "Project updated successfully!");
                 return "redirect:/" + username + "/projects";
             } else {
