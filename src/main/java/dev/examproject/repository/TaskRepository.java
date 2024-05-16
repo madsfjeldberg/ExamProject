@@ -27,7 +27,7 @@ public class TaskRepository {
     public TaskRepository() {
     }
 
-    public void addTask(Task task) {
+    public int addTask(Task task) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO tasks (name, description, required_hours, project_id) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -40,7 +40,8 @@ public class TaskRepository {
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     int taskId = rs.getInt(1);
-                    task.setTaskId(taskId); // Set the generated ID in the Task object
+                    task.setTaskId(taskId);// Set the generated ID in the Task object
+                    return taskId;
                 } else {
                     throw new SQLException("Failed to retrieve auto-generated key for task");
                 }
@@ -48,6 +49,7 @@ public class TaskRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return -1;
     }
 
     public List<Task> getProjectTasks(int projectId) {
