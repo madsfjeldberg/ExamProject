@@ -21,13 +21,13 @@
                     <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/overview'}">Overview</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/projects'}">Projects</a>
+                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/projects'}">Projekter</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/tasks'}">Tasks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/members'}">Members</a>
+                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/members'}">Medlemmer</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -102,8 +102,7 @@
                         </td>
                         <td th:if="${selectedProject.admin == user.username}">
                             <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/edittask/' + ${task.taskId}}">Edit</a>
-                            <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/confirmdeletetask/' + ${task.taskId}}">Delete</a>
-                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" th:data-task-id="${task.taskId}" th:data-username="${user.username}">DeleteModal</a>
+                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" th:data-task-id="${task.taskId}" th:data-username="${user.username}">Delete</a>
                             <a href="#" class="btn btn-primary btn-sm assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Assign User</a>
                         </td>
                     </tr>
