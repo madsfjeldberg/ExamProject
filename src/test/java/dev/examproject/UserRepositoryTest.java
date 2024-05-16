@@ -68,7 +68,7 @@ public class UserRepositoryTest {
     @Test
     void setUserToAdmin() {
         // Test that the repository sets the user to admin
-        // "test2" user is not a admin for project 2
+        // "test2" user is not an admin for project 2
         int expected = 1;
         int actual = repository.setUserToAdmin("test2", 2);
         assertEquals(expected, actual);

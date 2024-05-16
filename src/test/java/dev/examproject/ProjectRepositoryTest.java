@@ -3,18 +3,11 @@ package dev.examproject;
 import dev.examproject.model.Project;
 import dev.examproject.model.User;
 import dev.examproject.repository.ProjectRepository;
-import dev.examproject.service.ProjectService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,16 +22,7 @@ public class ProjectRepositoryTest {
     @Autowired
     private ProjectRepository repository;
 
-    @Mock
-    private ProjectRepository projectRepository;
 
-    @InjectMocks
-    private ProjectService projectService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     // Test that the repository adds a project
     // Not sure if it's supposed to be done like this?
