@@ -40,6 +40,7 @@
 </nav>
 
 <div class="container" th:if="${project != null}">
+    <a class="btn btn-primary mb-4" th:href="@{'/' + ${user.username} + '/overview'}">Return to Overview</a>
     <h3 class="bold-and-cursive">Subprojekt Overview</h3>
     <div class="card">
         <div class="card-body">
@@ -110,7 +111,6 @@
                     </tr>
                     </tbody>
                 </table>
-                <a class="btn btn-primary" th:href="@{'/' + ${user.username} + '/overview'}">Return to Overview</a>
             </div>
         </div>
     </div>

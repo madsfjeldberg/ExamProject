@@ -64,7 +64,7 @@ public class TaskRepository {
                         rs.getString("name"),
                         rs.getString("description"),
                         rs.getInt("required_hours"),
-                        new ArrayList<>()
+                        getAssignedUsers(rs.getInt("id"))
                 );
                 tasks.add(task);
             }
@@ -131,7 +131,7 @@ public class TaskRepository {
                         rs.getString("name"),
                         rs.getString("description"),
                         rs.getInt("required_hours"),
-                        new ArrayList<>()
+                        getAssignedUsers(rs.getInt("id"))
                 );
                 return task;
             }
@@ -202,6 +202,6 @@ public class TaskRepository {
             logger.error("Error updating task object: {}", task, e);
             return -1;
         }
-
     }
+
 }

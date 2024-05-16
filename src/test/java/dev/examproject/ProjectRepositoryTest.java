@@ -100,8 +100,5 @@ public class ProjectRepositoryTest {
         int actual = repository.getTotalRequiredHoursForAllSubProjects(1);
         assertEquals(expected, actual);
     }
-
-
-
-    }
+}
 
