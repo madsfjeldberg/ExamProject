@@ -461,7 +461,7 @@ public class WebController {
     }
 
 
-    @PostMapping("/{username}/deleteSubproject/{projectId}")
+    @PostMapping("/{username}/deletesubproject/{projectId}")
     public String deleteSubProject(@PathVariable("username") String username,
                                    @PathVariable("projectId") int projectId, HttpSession session) {
         if (isLoggedIn(session, username)) {

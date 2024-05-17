@@ -10,7 +10,7 @@
 <body>
 
 <div th:include="common/NAVBAR2"></div>
-</nav>
+
 
 <div class="container" th:if="${project != null}">
     <a class="btn btn-primary mb-4" th:href="@{'/' + ${user.username} + '/overview'}">Return to Overview</a>
@@ -170,7 +170,7 @@
         $('[data-bs-toggle="modal"]').click(function() {
             let projectid = $(this).data('project-id');
             let username = $(this).data('username');
-            $('#deletesubprojectForm').attr('action', '/' + username + '/deleteSubproject/' + projectid);
+            $('#deletesubprojectForm').attr('action', '/' + username + '/deletesubproject/' + projectid);
         });
     });
 </script>
