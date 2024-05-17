@@ -354,15 +354,19 @@ public class WebController {
     @PostMapping("/{username}/updateproject/{projectId}")
     public String updateProject(@PathVariable("username") String username,
                                 @PathVariable("projectId") int projectId,
-                                @ModelAttribute("project") Project project, RedirectAttributes redirectAttributes, HttpSession session) {
+                                @ModelAttribute("project") Project project, HttpSession session) {
         if (isLoggedIn(session, username)) {
-            project.setProjectId(projectId);
             int success = projectService.updateProject(project);
             if (success == 1) {
-                redirectAttributes.addFlashAttribute("successMessage", "Project updated successfully!");
-                return "redirect:/" + username + "/projects";
+                Project updatedProject = projectService.getProject(projectId);
+                if (project.getParentProjectID() == 0) {
+                    session.setAttribute("selectedProject", updatedProject);
+                    return "redirect:/" + username + "/projects";
+                } else {
+                    session.setAttribute("selectedSubProject", updatedProject);
+                    return "redirect:/" + username + "/subprojectoverview";
+                }
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Failed to update project");
                 return "redirect:/" + username + "/editproject" + projectId;
             }
         }
