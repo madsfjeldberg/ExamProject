@@ -306,7 +306,7 @@ public class WebController {
             System.out.println(authenticatedUser);
             // check at bruger er medlem af main project og subprojekt
             if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))
-                && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))) {
+                    && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))) {
                 taskService.assignSelfToTask(taskId, userId);
             } else log.info("User not assigned to project.");
             return "redirect:/" + username + "/subprojectoverview";
@@ -325,7 +325,7 @@ public class WebController {
             int userId = userService.getUserId(assignedUsername);
             // check at bruger er medlem af main project og subprojekt
             if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(assignedUsername))
-                && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(assignedUsername))) {
+                    && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(assignedUsername))) {
                 taskService.assignUserToTask(taskId, userId);
             } else log.info("User not assigned to project.");
             return "redirect:/" + username + "/subprojectoverview";
@@ -342,7 +342,7 @@ public class WebController {
             Project project = projectService.getProject(projectId);
             if (project != null) {
                 model.addAttribute("project", project);
-                model.addAttribute("user",authenticatedUser);
+                model.addAttribute("user", authenticatedUser);
                 return "editproject";
             } else {
                 return "redirect:/" + username + "/projects";
@@ -376,7 +376,7 @@ public class WebController {
             Task task = taskService.getTask(taskId);
             if (task != null) {
                 model.addAttribute("task", task);
-                model.addAttribute("user",authenticatedUser);
+                model.addAttribute("user", authenticatedUser);
                 return "edittask";
             } else {
                 return "redirect:/" + username + "/subprojectoverview";
@@ -423,15 +423,32 @@ public class WebController {
         }
         return "redirect:/login";
     }
+    @GetMapping("/{username}/confirmdeleteproject/{projectId}")
+    public String confirmDeleteProject(@PathVariable("username") String username, @PathVariable("projectId") int projectId, Model model, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (isLoggedIn(session, username)) {
+            Project project = projectService.getProject(projectId);
+            if (project != null) {
+                model.addAttribute("project", project);
+                model.addAttribute("user", authenticatedUser);
+                if (project.getParentProjectID() > 0) {
+                    return "confirmdeleteproject";
+                } else {
+                    return "confirmdeletesubproject";
+                }
+            }
+        }
+        return "redirect:/login";
+
+    }
 
     // måske ikke den mest optimale måde at gøre det her på. ikke helt sikker.
     // men tænker ikke det er så tit man sletter et projekt, så hvis det tager et sekund
     // eller to længere er det nok ikke det største performance hit.
     // /mads
-    @GetMapping("/{username}/deleteproject/{projectId}")
+    @PostMapping("/{username}/deleteproject/{projectId}")
     public String deleteProject(@PathVariable("username") String username,
                                 @PathVariable("projectId") int projectId, HttpSession session) {
-        // User authenticatedUser = (User) session.getAttribute("user");
         if (isLoggedIn(session, username)) {
             taskService.removeTaskUsersForProject(projectId); // removes assigned users from tasks
             taskService.deleteTasksForProject(projectId); // removes tasks
@@ -443,7 +460,8 @@ public class WebController {
         return "redirect:/login";
     }
 
-    @GetMapping("/{username}/deleteSubproject/{projectId}")
+
+    @PostMapping("/{username}/deletesubproject/{projectId}")
     public String deleteSubProject(@PathVariable("username") String username,
                                    @PathVariable("projectId") int projectId, HttpSession session) {
         if (isLoggedIn(session, username)) {
@@ -456,5 +474,8 @@ public class WebController {
         return "redirect:/login";
     }
 
+
 }
+
+
 
