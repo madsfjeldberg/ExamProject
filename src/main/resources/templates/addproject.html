@@ -11,22 +11,22 @@
 <div th:include="NAVBAR2"></div>
 
 <div class="container">
-    <h3 class="bold-and-cursive">Create Project</h3>
+    <h3 class="bold-and-cursive">Opret projekter</h3>
     <form th:action="@{'/' + ${user.username} + '/addproject'}" th:object="${project}" method="post">
         <div class="mb-3">
-            <label for="projectName" class="form-label">Project Name</label>
+            <label for="projectName" class="form-label">Projekt navn</label>
             <input th:field="*{name}" type="text" class="form-control" id="projectName" name="projectName">
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
+            <label for="description" class="form-label">Beskrivelse</label>
             <input th:field="*{description}" type="text" class="form-control" id="description" name="description">
         </div>
         <div class="mb-3">
             <label for="admin" class="form-label">Projektleder</label>
             <input type="text" class="form-control" id="admin" name="admin" th:value="${user.username}" readonly>
         </div>
-        <button class="btn btn-primary" type="submit">Add</button>
-        <a class="btn btn-secondary" type="button" onclick="history.back()" >Cancel</a>
+        <button class="btn btn-primary" type="submit">Tilføj</button>
+        <a class="btn btn-secondary" type="button" onclick="history.back()" >Tilbage</a>
     </form>
 </div>
 

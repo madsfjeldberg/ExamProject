@@ -11,21 +11,21 @@
 <div th:include="NAVBAR2"></div>
 
 <div class="container">
-    <h3 class="bold-and-cursive">Add Task</h3>
+    <h3 class="bold-and-cursive">Tilføj Task</h3>
     <form action="#" th:action="@{'/' + ${user.username} + '/addtask'}" th:object="${task}" method="post" class="mt-4">
         <div class="mb-3">
-            <label for="taskName" class="form-label">Task Name:</label>
+            <label for="taskName" class="form-label">Task Navn:</label>
             <input type="text" id="taskName" name="taskName" th:field="*{taskName}" class="form-control" required>
         </div>
         <div class="mb-3">
-            <label for="taskDescription" class="form-label">Task Description:</label>
+            <label for="taskDescription" class="form-label">Task Beskrivelse:</label>
             <textarea id="taskDescription" name="taskDescription" th:field="*{taskDescription}" class="form-control" required></textarea>
         </div>
         <div class="mb-3">
-            <label for="requiredHours" class="form-label">Required Hours:</label>
+            <label for="requiredHours" class="form-label">Påkrævet Timer:</label>
             <input type="number" id="requiredHours" name="requiredHours" th:field="*{requiredHours}" class="form-control" required>
         </div>
-        <button type="submit" class="btn btn-primary">Add Task</button>
+        <button type="submit" class="btn btn-primary">Tilføj Task</button>
     </form>
 </div>
 

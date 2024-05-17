@@ -11,20 +11,20 @@
 <div th:include="NAVBAR2"></div>
 
 <div class="container">
-    <h3 class="bold-and-cursive">Edit Project</h3>
+    <h3 class="bold-and-cursive">Redigere Projektet</h3>
     <form th:action="@{'/' + ${user.username} + '/updateproject/' + ${project.projectId}}" th:object="${project}" method="post">
        <!-- <input type="hidden" th:field="*{projectId}"> -->
         <div class="mb-3">
-            <label for="name" class="form-label">Project Name</label>
+            <label for="name" class="form-label">Projekt Navn</label>
             <input type="text" class="form-control" id="name" th:field="*{name}" required>
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
+            <label for="description" class="form-label">Beskrivelse</label>
             <textarea class="form-control" id="description" th:field="*{description}" required></textarea>
         </div>
         <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Update</button>
-            <a class="btn btn-secondary" href="../projects">Cancel</a>
+            <button type="submit" class="btn btn-primary">Opdatere</button>
+            <a class="btn btn-secondary" href="../projects">Tilbage</a>
         </div>
     </form>
 </div>

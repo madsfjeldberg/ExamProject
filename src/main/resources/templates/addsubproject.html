@@ -11,17 +11,17 @@
 <div th:include="NAVBAR2"></div>
 
 <div class="container">
-    <h3 class="bold-and-cursive">Add Sub-Project</h3>
+    <h3 class="bold-and-cursive">Tilføj Sub-projekt</h3>
     <form th:action="@{'/' + ${user.username} + '/addsubproject'}" th:object="${subProject}" method="post">
         <div class="mb-3">
-            <label for="name" class="form-label">Project Name</label>
+            <label for="name" class="form-label">Projekt Navn</label>
             <input type="text" class="form-control" id="name" th:field="*{name}" required>
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Project Description</label>
+            <label for="description" class="form-label">Projekt Beskrivelse</label>
             <textarea class="form-control" id="description" th:field="*{description}" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Add Sub-Project</button>
+        <button type="submit" class="btn btn-primary">Tilføj Sub-projekt</button>
     </form>
 </div>
 </body>

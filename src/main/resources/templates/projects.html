@@ -19,7 +19,7 @@
             <th>Beskrivelse</th>
             <th>Projektleder</th>
             <th>Medlemmer</th>
-            <th>Action</th>
+            <th>Handling</th>
         </tr>
         </thead>
         <tbody>
@@ -32,8 +32,8 @@
             <td th:text="${project.assignedUsers.size()}"></td>
             <td>
                 <div class="btn-group" role="group">
-                    <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Edit</a>
-                    <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/deleteproject/' + ${project.projectId}}">Delete</a>
+                    <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Rediger</a>
+                    <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/deleteproject/' + ${project.projectId}}">Slet</a>
                 </div>
             </td>
         </tr>

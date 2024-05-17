@@ -11,13 +11,13 @@
 <div th:include="NAVBAR2"></div>
 
 <div class="container">
-    <h3 class="bold-and-cursive">Confirm Delete Task</h3>
-    <p>Are you sure you want to delete the following task?</p>
+    <h3 class="bold-and-cursive">Bekræft sletning af task</h3>
+    <p>Er du sikker på, at du vil slette den følgende task?</p>
     <p th:text="${task.taskName}"></p>
     <form th:action="@{'/' + ${user.username} + '/deletetask/' + ${task.taskId}}" method="post">
         <input type="hidden" name="_method" value="delete" />
-        <button type="submit" class="btn btn-danger">Delete</button>
-        <a class="btn btn-secondary" th:href="'/' + ${user.username} + '/subprojectoverview'">Cancel</a>
+        <button type="submit" class="btn btn-danger">Slet</button>
+        <a class="btn btn-secondary" th:href="'/' + ${user.username} + '/subprojectoverview'">Fortryd</a>
     </form>
 </div>
 </body>
