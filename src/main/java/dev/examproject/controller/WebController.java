@@ -442,7 +442,20 @@ public class WebController {
         }
         return "redirect:/login";
     }
-    @GetMapping("/{username}/deleteSubproject/{projectId}")
+    @GetMapping ("/{username}/confirmdeleteproject/{projectId}")
+    public String confirmDeleteProject(@PathVariable("username") String username, @PathVariable("projectId") int projectId, Model model, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (isLoggedIn(session, username)) {
+            Project project = projectService.getProject(projectId);
+            if (project != null) {
+                model.addAttribute("project", project);
+                model.addAttribute("user", authenticatedUser);
+                return "confirmdeletesubproject";
+            }
+        }
+        return "redirect:/login";
+    }
+    @PostMapping("/{username}/deleteSubproject/{projectId}")
     public String deleteSubProject(@PathVariable("username") String username,
                                    @PathVariable("projectId") int projectId, HttpSession session) {
         if (isLoggedIn(session, username)) {
@@ -455,5 +468,8 @@ public class WebController {
         return "redirect:/login";
     }
 
-}
+
+    }
+
+
 
