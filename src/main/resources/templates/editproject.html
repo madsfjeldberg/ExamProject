@@ -20,7 +20,10 @@
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
             <textarea class="form-control" id="description" th:field="*{description}" required></textarea>
-            <!-- form should also pass parentprojectid -->
+        </div>
+        <!-- form should also pass parentprojectid as hidden -->
+        <div class="mb-3">
+            <input type="hidden" th:field="*{parentProjectID}" th:value="*{parentProjectID}">
         </div>
         <div class="mb-3">
             <button type="submit" class="btn btn-primary">Update</button>

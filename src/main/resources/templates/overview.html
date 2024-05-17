@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="col-md-4" th:if="${project.admin == user.username}">
-            <form th:action="@{'/' + ${user.username} + '/assignusertosubproject'}" method="post">
+            <form th:action="@{'/' + ${user.username} + '/assignusertoproject'}" method="post">
                 <div>
                     <h4 class="bold-and-cursive">Tilføj medlem</h4>
                     <label for="username" class="form-label">Brugernavn</label>
