@@ -11,13 +11,13 @@
 <div th:include="common/NAVBAR2"></div>
 
 <div class="container">
-    <h3 class="bold-and-cursive">Confirm Delete subproject</h3>
+    <h3 class="bold-and-cursive">Confirm Delete project</h3>
     <p>Are you sure you want to delete the following project?</p>
     <p th:text="${project.name}"></p>
-    <form th:action="@{'/' + ${user.username} + '/deleteSubproject/' + ${project.projectId}}" method="post">
+    <form th:action="@{'/' + ${user.username} + '/deleteproject/' + ${project.projectId}}" method="post">
         <input type="hidden" name="_method" value="delete" />
         <button type="submit" class="btn btn-danger">Delete</button>
-        <a class="btn btn-secondary" th:href="'/' + ${user.username} + '/subprojectoverview'">Cancel</a>
+        <a class="btn btn-secondary" th:href="'/' + ${user.username} + '/projects'">Cancel</a>
     </form>
 </div>
 
