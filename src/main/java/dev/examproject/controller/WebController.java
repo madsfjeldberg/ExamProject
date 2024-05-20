@@ -91,6 +91,17 @@ public class WebController {
         return "register";
     }
 
+    @GetMapping(path = "/{username}/deleteProject/{projectID}")
+    public String deleteProjekt(@PathVariable("username") String userName, @PathVariable("projectID") int projectID, HttpSession session) {
+        User authenticatedUser = (User) session.getAttribute("user");
+        if (authenticatedUser != null && authenticatedUser.getUsername().equals(userName)) {
+            projectService.deleteProjekt(projectID);
+            return "redirect:/" + userName + "/projects";
+        }
+        return "redirect:/login";
+    }
+
+
     @PostMapping(path = "register")
     public String register(@ModelAttribute("user") User user, HttpSession session, RedirectAttributes attributes) {
         User existingUser = userService.getUser(user.getUsername());

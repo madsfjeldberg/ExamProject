@@ -60,3 +60,13 @@ INSERT INTO project_users (user_id, project_id, is_admin) VALUES
     (1, 1, 1),
     (2, 2, 0),
     (1, 3, 1);
+
+INSERT INTO tasks (name, description, required_hours) VALUES
+    ('test 1', 'test 1', 1),
+    ('test 2', 'test 2', 2),
+    ('test 3', 'test 3', 3);
+
+INSERT INTO task_users (user_id, task_id) VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3);
