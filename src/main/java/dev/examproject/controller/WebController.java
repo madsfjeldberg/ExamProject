@@ -150,7 +150,6 @@ public class WebController {
                 return "redirect:/login";
             }
             userService.addUserToProject(user, selectedProject.getProjectId());
-            log.info("User added to " + type.toLowerCase() + ": " + user);
 
             // Hent opdateret projekt eller subprojekt
             if ("Project".equalsIgnoreCase(type)) {
@@ -302,8 +301,6 @@ public class WebController {
         User authenticatedUser = (User) session.getAttribute("user");
         if (isLoggedIn(session, username)) {
             int userId = userService.getUserId(user.getUsername());
-            System.out.println(mainProject);
-            System.out.println(authenticatedUser);
             // check at bruger er medlem af main project og subprojekt
             if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))
                     && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))) {
@@ -472,7 +469,7 @@ public class WebController {
             taskService.removeTaskUsersForProject(projectId); // removes assigned users from tasks
             taskService.deleteTasksForProject(projectId); // removes tasks
             userService.removeUsersFromProject(projectId); // removes users from project
-            projectService.deleteProject(projectId); // deletes the sub project
+            projectService.deleteProject(projectId); // deletes the subproject
             return "redirect:/" + username + "/overview";
         }
         return "redirect:/login";
