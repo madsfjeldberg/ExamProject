@@ -26,6 +26,7 @@ public class ProjectRepository {
     public ProjectRepository() {
     }
 
+    // adds a project to the database
     public int addProject(Project project) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO PROJECTS (name, description, parent_project_id) VALUES (?, ?, ?)";
@@ -54,6 +55,8 @@ public class ProjectRepository {
         return -1;
     }
 
+    // gets the id for a project
+    // only used for a test in ProjectRepositoryTest
     public int getId(String projectName) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "SELECT id FROM PROJECTS WHERE name = ?";
@@ -69,11 +72,16 @@ public class ProjectRepository {
         return -1;
     }
 
+    // gets admin for a project
     public String getAdminForProject(int project_id) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT users.username FROM users " +
-                "JOIN project_users ON users.id = project_users.user_id " +
-                "WHERE project_users.project_id = ? AND project_users.is_admin = 1";
+        String sql = """
+                SELECT users.username
+                FROM users
+                JOIN project_users ON users.id = project_users.user_id
+                WHERE project_users.project_id = ?
+                AND project_users.is_admin = 1
+                """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, project_id);
             ResultSet rs = ps.executeQuery();
@@ -86,6 +94,7 @@ public class ProjectRepository {
         return null;
     }
 
+    // deletes a project
     public int deleteProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "DELETE FROM PROJECTS WHERE id = ?";
@@ -98,6 +107,7 @@ public class ProjectRepository {
         return -1;
     }
 
+    // deletes subprojects for parent project
     public void deleteSubProjects(int parentProjectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "DELETE FROM PROJECTS WHERE parent_project_id = ?";
@@ -120,7 +130,7 @@ public class ProjectRepository {
             if (rs.next()) {
                 Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
                 project.setAdmin(getAdminForProject(projectId));
-                project.setAssignedUsers(getAssignedUsers(rs.getInt("id")));
+                project.setAssignedUsers(getAssignedUsers(projectId));
                 int parentProjectId = rs.getInt("parent_project_id");
                 if (!rs.wasNull()) {
                     project.setParentProjectID(parentProjectId);
@@ -134,11 +144,16 @@ public class ProjectRepository {
         return null;
     }
 
+    // gets all projects for a user
+    // only gets top level projects, no subprojects
     public List<Project> getProjectsForUser(int userId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT PROJECTS.*, project_users.is_admin FROM PROJECTS " +
-                "JOIN project_users ON PROJECTS.id = project_users.project_id " +
-                "WHERE project_users.user_id = ? AND PROJECTS.parent_project_id IS NULL";
+        String sql = """
+                SELECT PROJECTS.*, project_users.is_admin
+                FROM PROJECTS
+                JOIN project_users ON PROJECTS.id = project_users.project_id
+                WHERE project_users.user_id = ? AND PROJECTS.parent_project_id IS NULL
+                """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -147,25 +162,27 @@ public class ProjectRepository {
                 Project project = new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
                 project.setAssignedUsers(getAssignedUsers(rs.getInt("id")));
                 if (project.getAssignedUsers() == null) {
-                    project.setAssignedUsers(new ArrayList<>());
+                    project.setAssignedUsers(new ArrayList<>()); // Set empty list if no users are assigned
                 }
 
                 String adminUsername = getAdminForProject(project.getProjectId());
                 project.setAdmin(adminUsername);
-
                 projects.add(project);
             }
             return projects;
         } catch (SQLException e) {
             log.error("Error getting projects for userId: " + userId, e);
         }
-        System.out.println("not returning anything");
         return null;
     }
 
     public List<User> getAssignedUsers(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT * FROM users WHERE id IN (SELECT user_id FROM project_users WHERE project_id = ?)";
+        String sql = """
+                SELECT * FROM users
+                WHERE id IN
+                (SELECT user_id FROM project_users WHERE project_id = ?)
+                """;
         List<User> users = new ArrayList<>();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
@@ -180,8 +197,8 @@ public class ProjectRepository {
     }
 
     public List<Project> getSubProjectsForProject(int projectId) {
-        List<Project> projects = new ArrayList<>();
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        List<Project> projects = new ArrayList<>();
         String sql = "SELECT * FROM projects WHERE parent_project_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
@@ -215,9 +232,12 @@ public class ProjectRepository {
     }
 
     public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
-        int totalHours = 0;
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT SUM(required_hours) FROM tasks WHERE project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
+        int totalHours = 0;
+        String sql = """
+                SELECT SUM(required_hours)
+                FROM tasks
+                WHERE project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)""";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, parentProjectId);
             ResultSet rs = ps.executeQuery();
@@ -229,8 +249,6 @@ public class ProjectRepository {
         }
         return totalHours;
     }
-
-
 
 }
 

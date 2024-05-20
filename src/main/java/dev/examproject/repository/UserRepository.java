@@ -70,7 +70,7 @@ public class UserRepository {
         return -1;
     }
 
-    public int addUserToProject(User user, int projectId) {
+    public int addUserToProject( User user, int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO project_users (user_id, project_id, is_admin) VALUES (?, ?, false)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -85,7 +85,11 @@ public class UserRepository {
 
     public void removeUsersFromProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "DELETE FROM project_users WHERE project_id = ? OR project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
+        String sql = """
+                DELETE FROM project_users
+                WHERE project_id = ?
+                OR project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)
+                """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
             ps.setInt(2, projectId);

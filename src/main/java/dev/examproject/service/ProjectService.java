@@ -23,9 +23,12 @@ public class ProjectService {
         return repository.getProject(projectId);
     }
 
-    public void deleteProjekt(int projectID){
-        repository.deleteProject(projectID);
+    /*
+    public void deleteProjekt(int projectId){
+        repository.deleteProject(projectId);
     }
+
+     */
 
     public List<Project> getProjectsForUser(int userId) {
         return repository.getProjectsForUser(userId);

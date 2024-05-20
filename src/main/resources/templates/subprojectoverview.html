@@ -53,53 +53,54 @@
     </div>
 </div>
 
-    <div class="container">
-        <h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
-            <a th:href="@{'/' + ${user.username} + '/addtask'}" class="btn btn-primary">Add Task</a>
-        </h3>
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">Task Navn</th>
-                        <th scope="col">Beskrivelse</th>
-                        <th scope="col">Timer</th>
-                        <th scope="col">Medlemmer</th>
-                        <th scope="col">Actions</th>
-                        <th th:if="${selectedProject.admin == user.username}" scope="col">Admin</th>
-                    </tr>
-                    </thead>
-                    <tbody th:each="task : ${tasks}">
-                    <tr>
-                        <th>
-                            <a class="project-link" th:text="${task.taskName}" th:href="'#taskModal'" data-bs-toggle="modal" th:data-task-id="${task.taskId}"></a>
-                        </th>
-                        <td th:text="${task.taskDescription}"></td>
-                        <td th:text="${task.requiredHours}"></td>
-                        <td th:text="${task.assignedUsers.size()}"></td>
-                        <!-- Hidden columns to store task information for modal-->
-                        <td style="display: none;" th:id="'taskName-' + ${task.taskId}" th:text="${task.taskName}"></td>
-                        <td style="display: none;" th:id="'taskDescription-' + ${task.taskId}" th:text="${task.taskDescription}"></td>
-                        <td style="display: none;" th:id="'requiredHours-' + ${task.taskId}" th:text="${task.requiredHours}"></td>
-                        <td style="display: none;" th:id="'assignedUsers-' + ${task.taskId}">
-                            <span th:each="user : ${task.assignedUsers}" th:text="${user.username + ', '}" th:remove="tag"></span> <!-- not pretty, but it works -->
-                        </td>
+<div class="container">
+    <h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
+        <a th:href="@{'/' + ${user.username} + '/addtask'}" class="btn btn-primary">Add Task</a>
+    </h3>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Task Navn</th>
+                    <th scope="col">Beskrivelse</th>
+                    <th scope="col">Timer</th>
+                    <th scope="col">Medlemmer</th>
+                    <th scope="col">Actions</th>
+                    <th th:if="${selectedProject.admin == user.username}" scope="col">Admin</th>
+                </tr>
+                </thead>
+                <tbody th:each="task : ${tasks}">
+                <tr>
+                    <th>
+                        <a class="project-link" th:text="${task.taskName}" th:href="'#taskModal'" data-bs-toggle="modal" th:data-task-id="${task.taskId}"></a>
+                    </th>
+                    <td th:text="${task.taskDescription}"></td>
+                    <td th:text="${task.requiredHours}"></td>
+                    <td th:text="${task.assignedUsers.size()}"></td>
+                    <!-- Hidden columns to store task information for modal-->
+                    <td style="display: none;" th:id="'taskName-' + ${task.taskId}" th:text="${task.taskName}"></td>
+                    <td style="display: none;" th:id="'taskDescription-' + ${task.taskId}" th:text="${task.taskDescription}"></td>
+                    <td style="display: none;" th:id="'requiredHours-' + ${task.taskId}" th:text="${task.requiredHours}"></td>
+                    <td style="display: none;" th:id="'assignedUsers-' + ${task.taskId}">
+                        <span th:each="user : ${task.assignedUsers}" th:text="${user.username + ', '}" th:remove="tag"></span> <!-- not pretty, but it works -->
+                    </td>
 
-                        <td class="btn-group" role="group">
-                            <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignselftotask/' + ${task.taskId}}">Påtag opgaven</a>
-                        </td>
-                        <td th:if="${selectedProject.admin == user.username}">
-                            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/edittask/' + ${task.taskId}}">Edit</a>
-                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" th:data-task-id="${task.taskId}" th:data-username="${user.username}">Delete</a>
-                            <a href="#" class="btn btn-primary btn-sm assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Tildel til bruger</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+                    <td class="btn-group" role="group">
+                        <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignselftotask/' + ${task.taskId}}">Påtag opgaven</a>
+                    </td>
+                    <td th:if="${selectedProject.admin == user.username}">
+                        <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/edittask/' + ${task.taskId}}">Edit</a>
+                        <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" th:data-task-id="${task.taskId}" th:data-username="${user.username}">Delete</a>
+                        <a href="#" class="btn btn-primary btn-sm assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Tildel til bruger</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
+</div>
+
 
 <div class="modal fade" id="assignUserModal" tabindex="-1" aria-labelledby="assignUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">

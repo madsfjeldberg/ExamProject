@@ -33,8 +33,7 @@ public class WebController {
 
     // checker at der er en bruger logget ind og at det er den rigtige bruger.
     public boolean isLoggedIn(HttpSession session, String username) {
-        return session.getAttribute("user") != null
-                && ((User) session.getAttribute("user")).getUsername().equals(username);
+        return session.getAttribute("user") != null && ((User) session.getAttribute("user")).getUsername().equals(username);
     }
 
     @GetMapping
@@ -90,17 +89,6 @@ public class WebController {
         model.addAttribute("user", new User());
         return "register";
     }
-
-    @GetMapping(path = "/{username}/deleteProject/{projectID}")
-    public String deleteProjekt(@PathVariable("username") String userName, @PathVariable("projectID") int projectID, HttpSession session) {
-        User authenticatedUser = (User) session.getAttribute("user");
-        if (authenticatedUser != null && authenticatedUser.getUsername().equals(userName)) {
-            projectService.deleteProjekt(projectID);
-            return "redirect:/" + userName + "/projects";
-        }
-        return "redirect:/login";
-    }
-
 
     @PostMapping(path = "register")
     public String register(@ModelAttribute("user") User user, HttpSession session, RedirectAttributes attributes) {
@@ -416,8 +404,10 @@ public class WebController {
     }
 
     //-----------------------------------------------------------------Delete--------------------------
+    /*
     @GetMapping("/{username}/confirmdeletetask/{taskId}")
-    public String confirmDeleteTask(@PathVariable("username") String username, @PathVariable("taskId") int taskId, Model model, HttpSession session) {
+    public String confirmDeleteTask(@PathVariable("username") String username,
+                                    @PathVariable("taskId") int taskId, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
         if (isLoggedIn(session, username)) {
             Task task = taskService.getTask(taskId);
@@ -429,15 +419,19 @@ public class WebController {
         }
         return "redirect:/login";
     }
+    */
 
     @PostMapping("/{username}/deletetask/{taskId}")
     public String deleteTask(@PathVariable("username") String username, @PathVariable("taskId") int taskId, HttpSession session) {
         if (isLoggedIn(session, username)) {
+            taskService.removeTaskUsers(taskId);
             taskService.deleteTask(taskId);
             return "redirect:/" + username + "/subprojectoverview";
         }
         return "redirect:/login";
     }
+
+    /*
     @GetMapping("/{username}/confirmdeleteproject/{projectId}")
     public String confirmDeleteProject(@PathVariable("username") String username, @PathVariable("projectId") int projectId, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
@@ -454,8 +448,10 @@ public class WebController {
             }
         }
         return "redirect:/login";
-
     }
+
+     */
+
 
     // måske ikke den mest optimale måde at gøre det her på. ikke helt sikker.
     // men tænker ikke det er så tit man sletter et projekt, så hvis det tager et sekund
@@ -475,8 +471,20 @@ public class WebController {
         return "redirect:/login";
     }
 
+    /*
+    @GetMapping(path = "/{username}/deleteProject/{projectID}")
+    public String deleteProjekt(@PathVariable("username") String username,
+                                @PathVariable("projectID") int projectID, HttpSession session) {
+        if (isLoggedIn(session, username)) {
+            projectService.deleteProjekt(projectID);
+            return "redirect:/" + username + "/projects";
+        }
+        return "redirect:/login";
+    }
+    */
 
-    @PostMapping("/{username}/deletesubproject/{projectId}")
+    // har ændret den her til at være get i stedet for post
+    @GetMapping("/{username}/deletesubproject/{projectId}")
     public String deleteSubProject(@PathVariable("username") String username,
                                    @PathVariable("projectId") int projectId, HttpSession session) {
         if (isLoggedIn(session, username)) {
@@ -488,7 +496,6 @@ public class WebController {
         }
         return "redirect:/login";
     }
-
 
 }
 
