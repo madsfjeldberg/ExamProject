@@ -3,8 +3,7 @@ package dev.examproject.repository;
 import dev.examproject.model.Project;
 import dev.examproject.model.User;
 import dev.examproject.repository.util.ConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.examproject.repository.util.TurboLogger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +14,7 @@ import java.util.List;
 @Repository
 public class ProjectRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProjectRepository.class);
+    private static final TurboLogger log = new TurboLogger(ProjectRepository.class);
 
     @Value("${spring.datasource.url}")
     private String dbUrl;
@@ -50,7 +49,7 @@ public class ProjectRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error adding project", e);
+            log.error("Error adding project", e);
         }
         return -1;
     }
@@ -65,7 +64,7 @@ public class ProjectRepository {
                 return rs.getInt("id");
             }
         } catch (SQLException e) {
-            logger.error("Error getting project id", e);
+            log.error("Error getting project id", e);
         }
         return -1;
     }
@@ -82,7 +81,7 @@ public class ProjectRepository {
                 return rs.getString("username");
             }
         } catch (SQLException e) {
-            logger.error("Error getting project admin for projectId: " + project_id, e);
+            log.error("Error getting project admin for projectId: " + project_id, e);
         }
         return null;
     }
@@ -94,7 +93,7 @@ public class ProjectRepository {
             ps.setInt(1, projectId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error deleting project with ID: " + projectId, e);
+            log.error("Error deleting project with ID: " + projectId, e);
         }
         return -1;
     }
@@ -106,7 +105,7 @@ public class ProjectRepository {
             ps.setInt(1, parentProjectId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error deleting sub-projects for project with ID: " + parentProjectId, e);
+            log.error("Error deleting sub-projects for project with ID: " + parentProjectId, e);
         }
     }
 
@@ -126,11 +125,11 @@ public class ProjectRepository {
                 if (!rs.wasNull()) {
                     project.setParentProjectID(parentProjectId);
                 }
-                logger.info("Project found: " + project.getName() + " with ID: " + project.getProjectId() + " and parent project ID: " + project.getParentProjectID());
+                log.info("Project found: " + project.getName() + " with ID: " + project.getProjectId() + " and parent project ID: " + project.getParentProjectID());
                 return project;
             }
         } catch (SQLException e) {
-            logger.error("Error getting project: " + projectId, e);
+            log.error("Error getting project: " + projectId, e);
         }
         return null;
     }
@@ -158,7 +157,7 @@ public class ProjectRepository {
             }
             return projects;
         } catch (SQLException e) {
-            logger.error("Error getting projects for userId: " + userId, e);
+            log.error("Error getting projects for userId: " + userId, e);
         }
         System.out.println("not returning anything");
         return null;
@@ -175,7 +174,7 @@ public class ProjectRepository {
                 users.add(new User(rs.getString("username"), rs.getString("password"), rs.getString("email")));
             }
         } catch (SQLException e) {
-            logger.error("Error getting users for project", e);
+            log.error("Error getting users for project", e);
         }
         return users;
     }
@@ -196,7 +195,7 @@ public class ProjectRepository {
             }
             return projects;
         } catch (SQLException e) {
-            logger.error("Error getting sub-projects for project with ID: " + projectId, e);
+            log.error("Error getting sub-projects for project with ID: " + projectId, e);
         }
         return null;
     }
@@ -210,28 +209,10 @@ public class ProjectRepository {
             ps.setInt(3, project.getProjectId());
             return ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error updating project", e);
+            log.error("Error updating project", e);
             return -1;
         }
     }
-
-    /*
-    public Project getProjectById(int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT * FROM PROJECTS WHERE id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, projectId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return new Project(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
-            }
-        } catch (SQLException e) {
-            logger.error("Error getting project with ID: " + projectId, e);
-        }
-        return null;
-    }
-
-     */
 
     public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
         int totalHours = 0;
@@ -244,7 +225,7 @@ public class ProjectRepository {
                 totalHours = rs.getInt(1);
             }
         } catch (SQLException e) {
-            logger.error("Error getting total required hours for all sub-projects", e);
+            log.error("Error getting total required hours for all sub-projects", e);
         }
         return totalHours;
     }

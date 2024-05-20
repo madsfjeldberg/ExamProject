@@ -2,8 +2,7 @@ package dev.examproject.repository;
 
 import dev.examproject.model.User;
 import dev.examproject.repository.util.ConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.examproject.repository.util.TurboLogger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +14,7 @@ import java.sql.SQLException;
 @Repository
 public class UserRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserRepository.class);
+    private static final TurboLogger log = new TurboLogger(UserRepository.class);
 
     @Value("${spring.datasource.url}")
     private String dbUrl;
@@ -37,7 +36,7 @@ public class UserRepository {
                 return new User(rs.getString("username"), rs.getString("password"), rs.getString("email"));
             }
         } catch (SQLException e) {
-            logger.error("Error while authenticating user", e);
+            log.error("Error while authenticating user", e);
         }
         return null;
     }
@@ -52,7 +51,7 @@ public class UserRepository {
                 return rs.getInt("id");
             }
         } catch (SQLException e) {
-            logger.error("Error while getting user id", e);
+            log.error("Error while getting user id", e);
         }
         return -1;
     }
@@ -66,7 +65,7 @@ public class UserRepository {
             ps.setString(3, user.getPassword());
             return ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error while adding user", e);
+            log.error("Error while adding user", e);
         }
         return -1;
     }
@@ -79,7 +78,7 @@ public class UserRepository {
             ps.setInt(2, projectId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error while adding user to project", e);
+            log.error("Error while adding user to project:", e);
         }
         return -1;
     }
@@ -92,7 +91,7 @@ public class UserRepository {
             ps.setInt(2, projectId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error while removing users from project", e);
+            log.error("Error while removing users from project", e);
         }
     }
 
@@ -104,7 +103,7 @@ public class UserRepository {
             ps.setInt(2, projectId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error while setting user to admin", e);
+            log.error("Error while setting user to admin", e);
         }
         return -1;
     }
@@ -119,7 +118,7 @@ public class UserRepository {
                 return rs.getString("username");
             }
         } catch (SQLException e) {
-            logger.error("Error while getting username", e);
+            log.error("Error while getting username", e);
         }
         return null;
     }
@@ -134,7 +133,7 @@ public class UserRepository {
                 return new User(rs.getString("username"), rs.getString("password"), rs.getString("email"));
             }
         } catch (SQLException e) {
-            logger.error("Error while getting user", e);
+            log.error("Error while getting user", e);
         }
         return null;
     }
