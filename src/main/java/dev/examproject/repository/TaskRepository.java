@@ -38,7 +38,7 @@ public class TaskRepository {
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     int taskId = rs.getInt(1);
-                    task.setTaskId(taskId);// Set the generated ID in the Task object
+                    task.setTaskId(taskId);
                     return taskId;
                 } else {
                     throw new SQLException("Failed to retrieve auto-generated key for task");
@@ -92,7 +92,11 @@ public class TaskRepository {
     public List<User> getAssignedUsers(int taskId) {
         List<User> users = new ArrayList<>();
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "SELECT * FROM users WHERE id IN (SELECT user_id FROM task_users WHERE task_id = ?)";
+        String sql = """
+                SELECT * FROM users
+                WHERE id IN (SELECT user_id 
+                FROM task_users WHERE task_id = ?)
+                """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, taskId);
             ResultSet rs = ps.executeQuery();
@@ -165,8 +169,12 @@ public class TaskRepository {
 
     public void removeTaskUsersForProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "DELETE FROM task_users WHERE " +
-                     "task_id IN (SELECT id FROM tasks WHERE project_id IN (SELECT id FROM projects WHERE parent_project_id = ?))";
+        String sql = """
+                DELETE FROM task_users
+                WHERE task_id IN
+                (SELECT id FROM tasks WHERE project_id IN
+                (SELECT id FROM projects WHERE parent_project_id = ?))
+                """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
             ps.executeUpdate();
@@ -177,7 +185,11 @@ public class TaskRepository {
 
     public void deleteTasksForProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "DELETE FROM tasks WHERE project_id = ? OR project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
+        String sql = """
+                DELETE FROM tasks
+                WHERE project_id = ? OR project_id IN
+                (SELECT id FROM projects WHERE parent_project_id = ?)
+                """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
             ps.setInt(2, projectId);

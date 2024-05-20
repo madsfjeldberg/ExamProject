@@ -52,83 +52,44 @@
         </div>
     </div>
 </div>
-<!--
-<div class="container" th:if="${project != null}">
-    <a class="btn btn-primary mb-4" th:href="@{'/' + ${user.username} + '/overview'}">Return to Overview</a>
-    <h3 class="bold-and-cursive">Subprojekt Overview</h3>
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title" th:text="${project.name}"></h5>
-            <p class="card-text" th:text="${project.description}"></p>
-            <h6 class="card-subtitle mb-2 text-muted">Medlemmer:</h6>
-            <ul>
-                <li th:each="user : ${project.assignedUsers}" th:if="${user.username != project.admin}" th:text="${user.username}"></li>
-                <li th:if="${project.assignedUsers.size() == 0}">Ingen medlemmer tilføjet.</li>
-            </ul>
-            <p>Total required hours for subproject: <span th:text="${totalHoursForProject}"></span></p>
-            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Edit subproject</a>
-            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletesubprojectModal" th:data-project-id="${project.projectId}" th:data-username="${user.username}">Delete</a>
 
-
+<div class="container">
+    <h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
+        <a th:href="@{'/' + ${user.username} + '/addtask'}" class="btn btn-primary">Add Task</a>
+    </h3>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Task Navn</th>
+                    <th scope="col">Beskrivelse</th>
+                    <th scope="col">Timer</th>
+                    <th scope="col">Medlemmer</th>
+                    <th th:if="${selectedProject.admin != user.username}" scope="col">Actions</th>
+                    <th th:if="${selectedProject.admin == user.username}" scope="col">Admin</th>
+                </tr>
+                </thead>
+                <tbody th:each="task : ${tasks}">
+                <tr>
+                    <td th:text="${task.taskName}"></td>
+                    <td th:text="${task.taskDescription}"></td>
+                    <td th:text="${task.requiredHours}"></td>
+                    <td th:text="${task.assignedUsers.size()}"></td>
+                    <td th:if="${selectedProject.admin != user.username}" class="btn-group" role="group">
+                        <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignselftotask/' + ${task.taskId}}">Påtag opgaven</a>
+                    </td>
+                    <td th:if="${selectedProject.admin == user.username}">
+                        <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/edittask/' + ${task.taskId}}">Edit</a>
+                        <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" th:data-task-id="${task.taskId}" th:data-username="${user.username}">Delete</a>
+                        <a href="#" class="btn btn-primary btn-sm assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Tildel til bruger</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-
-
-<div class="container" th:if="${selectedProject.admin == user.username}">
-    <div class="row justify-content-left">
-        <div class="col-4">
-            <form th:action="@{'/' + ${user.username} + '/assignusertosubproject'}" method="post">
-                <div class="mb-3">
-                    <h4 class="bold-and-cursive">Tilføj medlem</h4>
-                    <label for="username" class="form-label">Brugernavn</label>
-                    <input type="text" class="form-control" id="username" name="username">
-                </div>
-                <button type="submit" class="btn btn-primary">Tilføj</button>
-            </form>
-        </div>
-    </div>
-</div>
--->
-
-
-    <div class="container">
-        <h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
-            <a th:href="@{'/' + ${user.username} + '/addtask'}" class="btn btn-primary">Add Task</a>
-        </h3>
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">Task Navn</th>
-                        <th scope="col">Beskrivelse</th>
-                        <th scope="col">Timer</th>
-                        <th scope="col">Medlemmer</th>
-                        <th scope="col">Actions</th>
-                        <th th:if="${selectedProject.admin == user.username}" scope="col">Admin</th>
-                    </tr>
-                    </thead>
-                    <tbody th:each="task : ${tasks}">
-                    <tr>
-                        <td th:text="${task.taskName}"></td>
-                        <td th:text="${task.taskDescription}"></td>
-                        <td th:text="${task.requiredHours}"></td>
-                        <td th:text="${task.assignedUsers.size()}"></td>
-                        <td class="btn-group" role="group">
-                            <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignselftotask/' + ${task.taskId}}">Påtag opgaven</a>
-                        </td>
-                        <td th:if="${selectedProject.admin == user.username}">
-                            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/edittask/' + ${task.taskId}}">Edit</a>
-                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" th:data-task-id="${task.taskId}" th:data-username="${user.username}">Delete</a>
-                            <a href="#" class="btn btn-primary btn-sm assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Tildel til bruger</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 
 <div class="modal fade" id="assignUserModal" tabindex="-1" aria-labelledby="assignUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
