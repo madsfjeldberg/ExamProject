@@ -24,8 +24,10 @@
                             <h5 class="card-title" th:text="${project.name}"></h5>
                             <p class="card-text" th:text="${project.description}"></p>
                             <p>Total required hours for project: <span th:text="${totalHoursForProject}"></span></p>
-                            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Edit subproject</a>
-                            <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/deletesubproject/' + ${project.projectId}}">Delete subproject</a>
+                            <div th:if="${selectedProject.admin == user.username}">
+                                <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Edit subproject</a>
+                                <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/deletesubproject/' + ${project.projectId}}">Delete subproject</a>
+                            </div>
                         </div>
                         <div class="col-md-4">
                             <h6 class="card-subtitle mb-2 text-muted">Medlemmer</h6>

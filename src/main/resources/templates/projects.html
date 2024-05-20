@@ -20,7 +20,7 @@
             <th>Beskrivelse</th>
             <th>Projektleder</th>
             <th>Medlemmer</th>
-            <th>Action</th>
+            <th th:if="${isAdmin}">Action</th>
         </tr>
         </thead>
         <tbody>
@@ -32,7 +32,7 @@
             <td th:text="${project.description}"></td>
             <td th:text="${project.admin}"></td>
             <td th:text="${project.assignedUsers.size()}"></td>
-            <td>
+            <td th:if="${project.admin == user.username}">
                 <div class="btn-group" role="group">
                     <a class="btn btn-warning btn-sm"
                        th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Edit</a>
