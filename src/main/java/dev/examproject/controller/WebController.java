@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping(path = "")
 public class WebController {
 
-    TurboLogger log = new TurboLogger(WebController.class);
+    private static final TurboLogger log = new TurboLogger(WebController.class);
 
     private final UserService userService;
     private final ProjectService projectService;

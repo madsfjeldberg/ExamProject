@@ -14,7 +14,7 @@ public class TurboLogger {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    private Logger logger;
+    private final Logger logger;
 
     public TurboLogger(Class<?> clazz) {
         this.logger = LoggerFactory.getLogger(clazz);
