@@ -52,45 +52,6 @@
         </div>
     </div>
 </div>
-<!--
-<div class="container" th:if="${project != null}">
-    <a class="btn btn-primary mb-4" th:href="@{'/' + ${user.username} + '/overview'}">Return to Overview</a>
-    <h3 class="bold-and-cursive">Subprojekt Overview</h3>
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title" th:text="${project.name}"></h5>
-            <p class="card-text" th:text="${project.description}"></p>
-            <h6 class="card-subtitle mb-2 text-muted">Medlemmer:</h6>
-            <ul>
-                <li th:each="user : ${project.assignedUsers}" th:if="${user.username != project.admin}" th:text="${user.username}"></li>
-                <li th:if="${project.assignedUsers.size() == 0}">Ingen medlemmer tilføjet.</li>
-            </ul>
-            <p>Total required hours for subproject: <span th:text="${totalHoursForProject}"></span></p>
-            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Edit subproject</a>
-            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletesubprojectModal" th:data-project-id="${project.projectId}" th:data-username="${user.username}">Delete</a>
-
-
-        </div>
-    </div>
-</div>
-
-
-<div class="container" th:if="${selectedProject.admin == user.username}">
-    <div class="row justify-content-left">
-        <div class="col-4">
-            <form th:action="@{'/' + ${user.username} + '/assignusertosubproject'}" method="post">
-                <div class="mb-3">
-                    <h4 class="bold-and-cursive">Tilføj medlem</h4>
-                    <label for="username" class="form-label">Brugernavn</label>
-                    <input type="text" class="form-control" id="username" name="username">
-                </div>
-                <button type="submit" class="btn btn-primary">Tilføj</button>
-            </form>
-        </div>
-    </div>
-</div>
--->
-
 
     <div class="container">
         <h3 class="bold-and-cursive mt-2 justify-content-left">Tasks
@@ -111,10 +72,20 @@
                     </thead>
                     <tbody th:each="task : ${tasks}">
                     <tr>
-                        <td th:text="${task.taskName}"></td>
+                        <th>
+                            <a class="project-link" th:text="${task.taskName}" th:href="'#taskModal'" data-bs-toggle="modal" th:data-task-id="${task.taskId}"></a>
+                        </th>
                         <td th:text="${task.taskDescription}"></td>
                         <td th:text="${task.requiredHours}"></td>
                         <td th:text="${task.assignedUsers.size()}"></td>
+                        <!-- Hidden columns to store task information for modal-->
+                        <td style="display: none;" th:id="'taskName-' + ${task.taskId}" th:text="${task.taskName}"></td>
+                        <td style="display: none;" th:id="'taskDescription-' + ${task.taskId}" th:text="${task.taskDescription}"></td>
+                        <td style="display: none;" th:id="'requiredHours-' + ${task.taskId}" th:text="${task.requiredHours}"></td>
+                        <td style="display: none;" th:id="'assignedUsers-' + ${task.taskId}">
+                            <span th:each="user : ${task.assignedUsers}" th:text="${user.username + ', '}" th:remove="tag"></span> <!-- not pretty, but it works -->
+                        </td>
+
                         <td class="btn-group" role="group">
                             <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignselftotask/' + ${task.taskId}}">Påtag opgaven</a>
                         </td>
@@ -186,6 +157,26 @@
     </div>
 </div>
 
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskModalLabel">Opgave</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modalTaskName"></p>
+                <p id="modalTaskDescription"></p>
+                <p id="modalRequiredHours"></p>
+                <p id="modalAssignedUsers"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container" th:unless="${selectedProject != null}">
     <h3 class="bold-and-cursive">No subproject selected.</h3>
 </div>
@@ -212,6 +203,23 @@
             let projectid = $(this).data('project-id');
             let username = $(this).data('username');
             $('#deletesubprojectForm').attr('action', '/' + username + '/deletesubproject/' + projectid);
+        });
+    });
+    $(document).ready(function() {
+        $('[data-bs-toggle="modal"]').click(function() {
+            let taskId = $(this).data('task-id');
+
+            // Fetch the task information
+            let taskName = document.getElementById('taskName-' + taskId).textContent;
+            let taskDescription = document.getElementById('taskDescription-' + taskId).textContent;
+            let requiredHours = document.getElementById('requiredHours-' + taskId).textContent;
+            let assignedUsers = document.getElementById('assignedUsers-' + taskId).textContent;
+
+            // Update the modal's content
+            document.getElementById('modalTaskName').textContent = 'Opgave: ' + taskName;
+            document.getElementById('modalTaskDescription').textContent = 'Beskrivelse: ' + taskDescription;
+            document.getElementById('modalRequiredHours').textContent = 'Timer: ' + requiredHours;
+            document.getElementById('modalAssignedUsers').textContent = 'Medlemmer: ' + assignedUsers;
         });
     });
 </script>
