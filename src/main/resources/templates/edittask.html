@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Task</title>
+    <title>Rediger opgave</title>
 </head>
 <body>
 <div th:include="NAVBAR2"></div>
 
-<h1>Edit Task</h1>
+<h1>Rediger opgave</h1>
 <form th:action="@{'/' + ${user.username} + '/updatetask/' + ${task.taskId}}" method="post">
-    <label for="taskName">Task Name:</label><br>
+    <label for="taskName">Opgave Navn:</label><br>
     <input type="text" id="taskName" name="taskName" th:value="${task.taskName}"><br>
-    <label for="taskDescription">Task Description:</label><br>
+    <label for="taskDescription">Opgave Beskrivelse:</label><br>
     <input type="text" id="taskDescription" name="taskDescription" th:value="${task.taskDescription}"><br>
-    <label for="requiredHours">Required Hours:</label><br>
+    <label for="requiredHours">Påkrævede timer:</label><br>
     <input type="number" id="requiredHours" name="requiredHours" th:value="${task.requiredHours}"><br>
     <input type="submit" value="Update Task">
 </form>
