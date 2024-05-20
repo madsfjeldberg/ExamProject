@@ -9,37 +9,50 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary shadow">
-    <div class="container-fluid">
-        <a class="navbar-brand bold-and-cursive" href="../home">AlphaPlan</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/overview'}">Overview</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/projects'}">Projects</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/tasks'}">Tasks</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{'/' + ${user.username} + '/members'}">Members</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="../logout">Logout</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div th:include="common/NAVBAR2"></div>
+
 
 <div class="container" th:if="${project != null}">
+    <a class="btn btn-primary mb-4" th:href="@{'/' + ${user.username} + '/overview'}">Return to Overview</a>
+    <div class="row">
+        <h3 class="bold-and-cursive">Nuværende Subprojekt</h3>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="card-title" th:text="${project.name}"></h5>
+                            <p class="card-text" th:text="${project.description}"></p>
+                            <p>Total required hours for project: <span th:text="${totalHoursForProject}"></span></p>
+                            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Edit subproject</a>
+                            <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/deletesubproject/' + ${project.projectId}}">Delete subproject</a>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="card-subtitle mb-2 text-muted">Medlemmer</h6>
+                            <ul>
+                                <li th:each="user : ${project.assignedUsers}" th:if="${user.username != project.admin}" th:text="${user.username}"></li>
+                                <li th:if="${project.assignedUsers.size() == 0}">Ingen medlemmer tilføjet.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" th:if="${selectedProject.admin == user.username}">
+            <form th:action="@{'/' + ${user.username} + '/assignusertosubproject'}" method="post">
+                <div>
+                    <h4 class="bold-and-cursive">Tilføj medlem</h4>
+                    <label for="username" class="form-label">Brugernavn</label>
+                    <input type="text" class="form-control" id="username" name="username">
+                    <button type="submit" class="btn btn-primary">Tilføj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--
+<div class="container" th:if="${project != null}">
+    <a class="btn btn-primary mb-4" th:href="@{'/' + ${user.username} + '/overview'}">Return to Overview</a>
     <h3 class="bold-and-cursive">Subprojekt Overview</h3>
     <div class="card">
         <div class="card-body">
@@ -51,6 +64,9 @@
                 <li th:if="${project.assignedUsers.size() == 0}">Ingen medlemmer tilføjet.</li>
             </ul>
             <p>Total required hours for subproject: <span th:text="${totalHoursForProject}"></span></p>
+            <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/editproject/' + ${project.projectId}}">Edit subproject</a>
+            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletesubprojectModal" th:data-project-id="${project.projectId}" th:data-username="${user.username}">Delete</a>
+
 
         </div>
     </div>
@@ -71,7 +87,7 @@
         </div>
     </div>
 </div>
-
+-->
 
 
     <div class="container">
@@ -88,7 +104,7 @@
                         <th scope="col">Timer</th>
                         <th scope="col">Medlemmer</th>
                         <th scope="col">Actions</th>
-                        <th scope="col">Admin</th>
+                        <th th:if="${selectedProject.admin == user.username}" scope="col">Admin</th>
                     </tr>
                     </thead>
                     <tbody th:each="task : ${tasks}">
@@ -98,18 +114,16 @@
                         <td th:text="${task.requiredHours}"></td>
                         <td th:text="${task.assignedUsers.size()}"></td>
                         <td class="btn-group" role="group">
-                            <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignselftotask/' + ${task.taskId}}">Assign</a>
+                            <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignselftotask/' + ${task.taskId}}">Påtag opgaven</a>
                         </td>
                         <td th:if="${selectedProject.admin == user.username}">
                             <a class="btn btn-warning btn-sm" th:href="@{'/' + ${user.username} + '/edittask/' + ${task.taskId}}">Edit</a>
-                            <a class="btn btn-danger btn-sm" th:href="@{'/' + ${user.username} + '/confirmdeletetask/' + ${task.taskId}}">Delete</a>
-                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" th:data-task-id="${task.taskId}" th:data-username="${user.username}">DeleteModal</a>
-                            <a href="#" class="btn btn-primary btn-sm assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Assign User</a>
+                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" th:data-task-id="${task.taskId}" th:data-username="${user.username}">Delete</a>
+                            <a href="#" class="btn btn-primary btn-sm assign-user-btn" data-bs-toggle="modal" data-bs-target="#assignUserModal" th:data-username="${user.username}" th:data-task-id="${task.taskId}">Tildel til bruger</a>
                         </td>
                     </tr>
                     </tbody>
                 </table>
-                <a class="btn btn-primary" th:href="@{'/' + ${user.username} + '/overview'}">Return to Overview</a>
             </div>
         </div>
     </div>
@@ -152,6 +166,24 @@
     </div>
 </div>
 
+<div class="modal fade" id="deletesubprojectModal" tabindex="-1" aria-labelledby="deletesubprojectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletesubprojectModalLabel">Delete subproject</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this subproject?
+                <form id="deletesubprojectForm" method="post">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container" th:unless="${selectedProject != null}">
     <h3 class="bold-and-cursive">No subproject selected.</h3>
 </div>
@@ -173,6 +205,15 @@
             $('#deleteTaskForm').attr('action', '/' + username + '/deletetask/' + taskId);
         });
     });
+    $(document).ready(function() {
+        $('[data-bs-toggle="modal"]').click(function() {
+            let projectid = $(this).data('project-id');
+            let username = $(this).data('username');
+            $('#deletesubprojectForm').attr('action', '/' + username + '/deletesubproject/' + projectid);
+        });
+    });
 </script>
+
+<div th:include="common/FOOTER"></div>
 </body>
 </html>

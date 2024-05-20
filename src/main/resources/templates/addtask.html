@@ -8,11 +8,11 @@
     <link rel="icon" type="image/x-icon" href="../img/favicon.ico">
 </head>
 <body>
-<div th:include="NAVBAR2"></div>
+<div th:include="common/NAVBAR2"></div>
 
 <div class="container">
     <h3 class="bold-and-cursive">Add Task</h3>
-    <form action="#" th:action="@{'/' + ${user.username} + '/addtask'}" th:object="${task}" method="post" class="mt-4">
+    <form th:action="@{'/' + ${user.username} + '/addtask'}" th:object="${task}" method="post" class="mt-4">
         <div class="mb-3">
             <label for="taskName" class="form-label">Task Name:</label>
             <input type="text" id="taskName" name="taskName" th:field="*{taskName}" class="form-control" required>
@@ -29,5 +29,6 @@
     </form>
 </div>
 
+<div th:include="common/FOOTER"></div>
 </body>
 </html>

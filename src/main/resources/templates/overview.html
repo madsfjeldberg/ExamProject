@@ -9,7 +9,7 @@
 
 </head>
 <body>
-<div th:include="NAVBAR2"></div>
+<div th:include="common/NAVBAR2"></div>
 
 <div class="jumbotron-container">
     <div class="jumbotron text-center">
@@ -17,6 +17,44 @@
     </div>
 </div>
 
+<div class="container" th:if="${project != null}">
+    <a class="btn btn-primary mb-4" th:href="@{'/' + ${user.username} + '/overview'}">Tilbage</a>
+    <div class="row">
+        <h3 class="bold-and-cursive">Nuværende Projekt</h3>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="card-title" th:text="${project.name}"></h5>
+                            <p class="card-text" th:text="${project.description}"></p>
+                            <p>Total required hours for project: <span th:text="${totalHoursForProject}"></span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="card-subtitle mb-2 text-muted">Medlemmer</h6>
+                            <ul>
+                                <li th:each="user : ${project.assignedUsers}" th:if="${user.username != project.admin}" th:text="${user.username}"></li>
+                                <li th:if="${project.assignedUsers.size() == 0}">Ingen medlemmer tilføjet.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" th:if="${project.admin == user.username}">
+            <form th:action="@{'/' + ${user.username} + '/assignusertoproject'}" method="post">
+                <div>
+                    <h4 class="bold-and-cursive">Tilføj medlem</h4>
+                    <label for="username" class="form-label">Brugernavn</label>
+                    <input type="text" class="form-control" id="username" name="username">
+                    <button type="submit" class="btn btn-primary">Tilføj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--
 <div class="container" th:if="${project != null}">
     <h3 class="bold-and-cursive">Nuværende Projekt</h3>
     <div class="card">
@@ -34,6 +72,7 @@
     </div>
 </div>
 
+
 <div class="container" th:if="${project != null && project.admin == user.username}">
     <div class="row justify-content-left">
         <div class="col-4">
@@ -48,6 +87,7 @@
         </div>
     </div>
 </div>
+-->
 
 <div class="container" th:if="${project != null}">
     <h3 class="bold-and-cursive mt-4">Sub-Projects
@@ -69,10 +109,13 @@
     </div>
 </div>
 
+
 <div class="container" th:unless="${project != null}">
     <div class="alert alert-info" role="alert">
         <h4 class="alert-heading">No project selected.</h4>
     </div>
 </div>
+
+<div th:include="common/FOOTER"></div>
 </body>
 </html>

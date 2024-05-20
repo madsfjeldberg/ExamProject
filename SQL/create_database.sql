@@ -37,6 +37,7 @@ CREATE TABLE project_users (
     user_id INT,
     project_id INT,
     is_admin TINYINT,
+    daily_hours INT,
     PRIMARY KEY (user_id, project_id),
     FOREIGN KEY (project_id) REFERENCES projects(id),
     FOREIGN KEY (user_id) REFERENCES users(id)

@@ -87,15 +87,16 @@ public class ProjectRepository {
         return null;
     }
 
-    public void deleteProject(int projectId) {
+    public int deleteProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "DELETE FROM PROJECTS WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException e) {
             logger.error("Error deleting project with ID: " + projectId, e);
         }
+        return -1;
     }
 
     public void deleteSubProjects(int parentProjectId) {
@@ -134,7 +135,7 @@ public class ProjectRepository {
         return null;
     }
 
-    public List<Project> getProjectsForUser(int userId, String username) {
+    public List<Project> getProjectsForUser(int userId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "SELECT PROJECTS.*, project_users.is_admin FROM PROJECTS " +
                 "JOIN project_users ON PROJECTS.id = project_users.project_id " +
@@ -149,21 +150,21 @@ public class ProjectRepository {
                 if (project.getAssignedUsers() == null) {
                     project.setAssignedUsers(new ArrayList<>());
                 }
-                if (rs.getBoolean("is_admin")) {
-                    project.setAdmin(username);
-                }
+
+                String adminUsername = getAdminForProject(project.getProjectId());
+                project.setAdmin(adminUsername);
+
                 projects.add(project);
             }
-            System.out.println(projects);
             return projects;
         } catch (SQLException e) {
-            logger.error("Error getting projects for user: " + username + "userId: " + userId, e);
+            logger.error("Error getting projects for userId: " + userId, e);
         }
         System.out.println("not returning anything");
         return null;
     }
 
-    private List<User> getAssignedUsers(int projectId) {
+    public List<User> getAssignedUsers(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "SELECT * FROM users WHERE id IN (SELECT user_id FROM project_users WHERE project_id = ?)";
         List<User> users = new ArrayList<>();
@@ -200,20 +201,21 @@ public class ProjectRepository {
         return null;
     }
 
-    public boolean updateProject(Project project) {
+    public int updateProject(Project project) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "UPDATE PROJECTS SET name = ?, description = ? WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, project.getName());
             ps.setString(2, project.getDescription());
             ps.setInt(3, project.getProjectId());
-            int affectedRows = ps.executeUpdate();
-            return affectedRows > 0;
+            return ps.executeUpdate();
         } catch (SQLException e) {
             logger.error("Error updating project", e);
-            return false;
+            return -1;
         }
     }
+
+    /*
     public Project getProjectById(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "SELECT * FROM PROJECTS WHERE id = ?";
@@ -228,6 +230,8 @@ public class ProjectRepository {
         }
         return null;
     }
+
+     */
 
     public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
         int totalHours = 0;
