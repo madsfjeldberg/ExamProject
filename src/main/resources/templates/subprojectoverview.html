@@ -66,17 +66,27 @@
                     <th scope="col">Beskrivelse</th>
                     <th scope="col">Timer</th>
                     <th scope="col">Medlemmer</th>
-                    <th th:if="${selectedProject.admin != user.username}" scope="col">Actions</th>
+                    <th scope="col">Actions</th>
                     <th th:if="${selectedProject.admin == user.username}" scope="col">Admin</th>
                 </tr>
                 </thead>
                 <tbody th:each="task : ${tasks}">
                 <tr>
-                    <td th:text="${task.taskName}"></td>
+                    <th>
+                        <a class="project-link" th:text="${task.taskName}" th:href="'#taskModal'" data-bs-toggle="modal" th:data-task-id="${task.taskId}"></a>
+                    </th>
                     <td th:text="${task.taskDescription}"></td>
                     <td th:text="${task.requiredHours}"></td>
                     <td th:text="${task.assignedUsers.size()}"></td>
-                    <td th:if="${selectedProject.admin != user.username}" class="btn-group" role="group">
+                    <!-- Hidden columns to store task information for modal-->
+                    <td style="display: none;" th:id="'taskName-' + ${task.taskId}" th:text="${task.taskName}"></td>
+                    <td style="display: none;" th:id="'taskDescription-' + ${task.taskId}" th:text="${task.taskDescription}"></td>
+                    <td style="display: none;" th:id="'requiredHours-' + ${task.taskId}" th:text="${task.requiredHours}"></td>
+                    <td style="display: none;" th:id="'assignedUsers-' + ${task.taskId}">
+                        <span th:each="user : ${task.assignedUsers}" th:text="${user.username + ', '}" th:remove="tag"></span> <!-- not pretty, but it works -->
+                    </td>
+
+                    <td class="btn-group" role="group">
                         <a class="btn btn-primary btn-sm" th:href="@{'/' + ${user.username} + '/assignselftotask/' + ${task.taskId}}">Påtag opgaven</a>
                     </td>
                     <td th:if="${selectedProject.admin == user.username}">
@@ -90,6 +100,7 @@
         </div>
     </div>
 </div>
+
 
 <div class="modal fade" id="assignUserModal" tabindex="-1" aria-labelledby="assignUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -147,6 +158,26 @@
     </div>
 </div>
 
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskModalLabel">Opgave</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modalTaskName"></p>
+                <p id="modalTaskDescription"></p>
+                <p id="modalRequiredHours"></p>
+                <p id="modalAssignedUsers"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container" th:unless="${selectedProject != null}">
     <h3 class="bold-and-cursive">No subproject selected.</h3>
 </div>
@@ -173,6 +204,23 @@
             let projectid = $(this).data('project-id');
             let username = $(this).data('username');
             $('#deletesubprojectForm').attr('action', '/' + username + '/deletesubproject/' + projectid);
+        });
+    });
+    $(document).ready(function() {
+        $('[data-bs-toggle="modal"]').click(function() {
+            let taskId = $(this).data('task-id');
+
+            // Fetch the task information
+            let taskName = document.getElementById('taskName-' + taskId).textContent;
+            let taskDescription = document.getElementById('taskDescription-' + taskId).textContent;
+            let requiredHours = document.getElementById('requiredHours-' + taskId).textContent;
+            let assignedUsers = document.getElementById('assignedUsers-' + taskId).textContent;
+
+            // Update the modal's content
+            document.getElementById('modalTaskName').textContent = 'Opgave: ' + taskName;
+            document.getElementById('modalTaskDescription').textContent = 'Beskrivelse: ' + taskDescription;
+            document.getElementById('modalRequiredHours').textContent = 'Timer: ' + requiredHours;
+            document.getElementById('modalAssignedUsers').textContent = 'Medlemmer: ' + assignedUsers;
         });
     });
 </script>
