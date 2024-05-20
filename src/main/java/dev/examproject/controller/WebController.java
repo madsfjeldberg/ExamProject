@@ -207,10 +207,13 @@ public class WebController {
     @GetMapping(path = "/{username}/projects")
     public String projects(@PathVariable("username") String username, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
+        int userId = userService.getUserId(username);
+        List<Project> projects = projectService.getProjectsForUser(userId);
+        boolean isAdmin = projects.stream().anyMatch(p -> p.getAdmin().equals(username));
         if (isLoggedIn(session, username)) {
             model.addAttribute("user", authenticatedUser);
-            int userId = userService.getUserId(username);
-            model.addAttribute("projects", projectService.getProjectsForUser(userId));
+            model.addAttribute("projects", projects);
+            model.addAttribute("isAdmin", isAdmin);
             return "projects";
         }
         return "redirect:/login";
