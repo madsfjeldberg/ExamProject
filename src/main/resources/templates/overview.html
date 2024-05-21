@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Overview</title>
+    <title>Overblik</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link href="../styles.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../img/favicon.ico">
@@ -13,7 +13,7 @@
 
 <div class="jumbotron-container">
     <div class="jumbotron text-center">
-        <h1 class="bold-and-cursive">Overview</h1>
+        <h1 class="bold-and-cursive">Overblik</h1>
     </div>
 </div>
 
@@ -28,7 +28,7 @@
                         <div class="col-md-8">
                             <h5 class="card-title" th:text="${project.name}"></h5>
                             <p class="card-text" th:text="${project.description}"></p>
-                            <p>Total required hours for project: <span th:text="${totalHoursForProject}"></span></p>
+                            <p>Samlet antal timer for projekt: <span th:text="${totalHoursForProject}"></span></p>
                         </div>
                         <div class="col-md-4">
                             <h6 class="card-subtitle mb-2 text-muted">Medlemmer</h6>
@@ -43,8 +43,8 @@
         </div>
         <div class="col-md-4" th:if="${project.admin == user.username}">
             <form th:action="@{'/' + ${user.username} + '/assignusertoproject'}" method="post">
-                <div>
-                    <h4 class="bold-and-cursive">Tilføj medlem</h4>
+                <div class="mb-3">
+                    <h4 class="bold-and-cursive">Tilføj Medlem</h4>
                     <label for="username" class="form-label">Brugernavn</label>
                     <input type="text" class="form-control" id="username" name="username">
                     <button type="submit" class="btn btn-primary">Tilføj</button>
@@ -55,7 +55,7 @@
 </div>
 
 <div class="container" th:if="${project != null}">
-    <h3 class="bold-and-cursive mt-4">Sub-Projects
+    <h3 class="bold-and-cursive mt-4">Sub-Projekter
         <a th:href="@{'/' + ${user.username} + '/addsubproject'}" class="btn btn-primary btn-sm">Add</a>
     </h3>
     <div class="row">
@@ -74,10 +74,9 @@
     </div>
 </div>
 
-
 <div class="container" th:unless="${project != null}">
     <div class="alert alert-info" role="alert">
-        <h4 class="alert-heading">No project selected.</h4>
+        <h4 class="alert-heading">Intet projekt valgt.</h4>
     </div>
 </div>
 
