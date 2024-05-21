@@ -107,16 +107,17 @@ public class TaskRepository {
         return users;
     }
 
-    public void assignUserToTask(int taskId, int userId) {
+    public int assignUserToTask(int taskId, int userId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "INSERT INTO task_users (task_id, user_id) VALUES (?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, taskId);
             ps.setInt(2, userId);
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return -1;
     }
 
     public Task getTask(int taskId) {
@@ -141,15 +142,16 @@ public class TaskRepository {
         return null;
     }
 
-    public void removeTaskUsers(int taskId) {
+    public int removeTaskUsers(int taskId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "DELETE FROM task_users WHERE task_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, taskId);
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException e) {
             logger.error("Error removing users from task with ID: " + taskId, e);
         }
+        return -1;
     }
 
     public int deleteTask(int taskId) {
@@ -176,15 +178,16 @@ public class TaskRepository {
         }
     }
 
-    public void deleteTasksForProject(int projectId) {
+    public int deleteTasksForProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
         String sql = "DELETE FROM tasks WHERE project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException e) {
             logger.error("Error deleting tasks for project with ID: " + projectId, e);
         }
+        return -1;
     }
 
     public int updateTask(Task task) {
