@@ -132,23 +132,36 @@ public class WebController {
     @PostMapping(path = "/{username}/assignuserto{type}")
     public String addUserToProject(@PathVariable("username") String username,
                                    @PathVariable("type") String type,
-                                   @ModelAttribute("user") User user, HttpSession session) {
+                                   @ModelAttribute("user") User user, HttpSession session,
+                                   RedirectAttributes attributes) {
         if (isLoggedIn(session, username)) {
             Project selectedProject;
             // check hvilken "type" der er valgt
             if ("Project".equalsIgnoreCase(type)) {
                 selectedProject = (Project) session.getAttribute("selectedProject");
+                if (userService.getUser(user.getUsername()) == null) {
+                    attributes.addFlashAttribute("errorMessage", "Brugeren eksisterer ikke.");
+                    return "redirect:/" + username + "/overview";
+                }
+                if (selectedProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
+                    attributes.addFlashAttribute("errorMessage", "Brugeren er allerede en del af projektet.");
+                    return "redirect:/" + username + "/overview";
+                }
             } else if ("SubProject".equalsIgnoreCase(type)) {
                 selectedProject = (Project) session.getAttribute("selectedSubProject");
                 Project parentProject = projectService.getProject(selectedProject.getParentProjectID());
                 if (parentProject.getAssignedUsers().stream().noneMatch(u -> u.getUsername().equals(user.getUsername()))) { // check om bruger er medlem af main project
-                    log.info("User is not a member of main project.");
+                    attributes.addFlashAttribute("errorMessage", "Brugeren er ikke en del af hoved-projektet.");
+                    return "redirect:/" + username + "/subprojectoverview";
+                } if (selectedProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
+                    attributes.addFlashAttribute("errorMessage", "Brugeren er allerede en del af projektet.");
                     return "redirect:/" + username + "/subprojectoverview";
                 }
             } else {
-                return "redirect:/login";
+                return "redirect:/" + username + (type.equalsIgnoreCase("Project") ? "/overview" : "/subprojectoverview");
             }
             userService.addUserToProject(user, selectedProject.getProjectId());
+            attributes.addFlashAttribute("successMessage", "Brugeren er blevet tilføjet til projektet.");
 
             // Hent opdateret projekt eller subprojekt
             if ("Project".equalsIgnoreCase(type)) {
@@ -297,7 +310,8 @@ public class WebController {
     @GetMapping(path = "/{username}/assignselftotask/{taskId}")
     public String assignSelfToTask(@PathVariable("username") String username,
                                    @PathVariable("taskId") int taskId,
-                                   @ModelAttribute("user") User user, HttpSession session) {
+                                   @ModelAttribute("user") User user,
+                                   HttpSession session, RedirectAttributes attributes) {
         Project mainProject = (Project) session.getAttribute("selectedProject");
         Project subProject = (Project) session.getAttribute("selectedSubProject");
         User authenticatedUser = (User) session.getAttribute("user");
@@ -306,8 +320,16 @@ public class WebController {
             // check at bruger er medlem af main project og subprojekt
             if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))
                     && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))) {
+                // check at bruger ikke allerede er assigned til tasken.
+                Task task = taskService.getTask(taskId);
+                if (task.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(authenticatedUser.getUsername()))) {
+                    attributes.addFlashAttribute("errorMessage", "Brugeren er allerede tildelt opgaven.");
+                    return "redirect:/" + username + "/subprojectoverview";
+                }
                 taskService.assignSelfToTask(taskId, userId);
-            } else log.info("User not assigned to project.");
+            } else {
+                attributes.addFlashAttribute("errorMessage", "Brugeren er ikke en del af projektet.");
+            }
             return "redirect:/" + username + "/subprojectoverview";
         }
         return "redirect:/login";
@@ -317,19 +339,31 @@ public class WebController {
     public String assignUserToTask(@PathVariable("username") String username,
                                    @PathVariable("taskId") int taskId,
                                    @ModelAttribute("user") User user,
-                                   @RequestParam("assignedUsername") String assignedUsername, HttpSession session) {
+                                   @RequestParam("assignedUsername") String assignedUsername, HttpSession session,
+                                   RedirectAttributes attributes) {
         Project mainProject = (Project) session.getAttribute("selectedProject");
         Project subProject = (Project) session.getAttribute("selectedSubProject");
-        if (isLoggedIn(session, username)) {
+        if (!isLoggedIn(session, username)) {
+            return "redirect:/login";
+        }
             int userId = userService.getUserId(assignedUsername);
             // check at bruger er medlem af main project og subprojekt
             if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(assignedUsername))
                     && subProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(assignedUsername))) {
+                // check at bruger ikke allerede er assigned til tasken.
+                Task task = taskService.getTask(taskId);
+                if (task.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(assignedUsername))) {
+                    attributes.addFlashAttribute("errorMessage", "Brugeren er allerede tildelt opgaven.");
+                    return "redirect:/" + username + "/subprojectoverview";
+                }
                 taskService.assignUserToTask(taskId, userId);
-            } else log.info("User not assigned to project.");
-            return "redirect:/" + username + "/subprojectoverview";
-        }
-        return "redirect:/login";
+                attributes.addFlashAttribute("successMessage", "Brugeren er blevet tildelt opgaven.");
+                return "redirect:/" + username + "/subprojectoverview";
+            } else {
+                attributes.addFlashAttribute("errorMessage", "Brugeren er ikke en del af projektet.");
+            }
+        attributes.addFlashAttribute("errorMessage", "Brugeren er ikke en del af projektet.");
+        return "redirect:/" + username + "/subprojectoverview";
     }
 
     @GetMapping("/{username}/editproject/{projectId}")
