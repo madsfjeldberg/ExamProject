@@ -142,18 +142,26 @@ public class WebController {
                 if (userService.getUser(user.getUsername()) == null) {
                     attributes.addFlashAttribute("errorMessage", "Brugeren eksisterer ikke.");
                     return "redirect:/" + username + "/overview";
-                    }
+                }
+                if (selectedProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
+                    attributes.addFlashAttribute("errorMessage", "Brugeren er allerede en del af projektet.");
+                    return "redirect:/" + username + "/overview";
+                }
             } else if ("SubProject".equalsIgnoreCase(type)) {
                 selectedProject = (Project) session.getAttribute("selectedSubProject");
                 Project parentProject = projectService.getProject(selectedProject.getParentProjectID());
                 if (parentProject.getAssignedUsers().stream().noneMatch(u -> u.getUsername().equals(user.getUsername()))) { // check om bruger er medlem af main project
-                    attributes.addFlashAttribute("errorMessage", "Brugeren er ikke en del af projektet.");
+                    attributes.addFlashAttribute("errorMessage", "Brugeren er ikke en del af hoved-projektet.");
+                    return "redirect:/" + username + "/subprojectoverview";
+                } if (selectedProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
+                    attributes.addFlashAttribute("errorMessage", "Brugeren er allerede en del af projektet.");
                     return "redirect:/" + username + "/subprojectoverview";
                 }
             } else {
-                return "redirect:/login";
+                return "redirect:/" + username + (type.equalsIgnoreCase("Project") ? "/overview" : "/subprojectoverview");
             }
             userService.addUserToProject(user, selectedProject.getProjectId());
+            attributes.addFlashAttribute("successMessage", "Brugeren er blevet tilføjet til projektet.");
 
             // Hent opdateret projekt eller subprojekt
             if ("Project".equalsIgnoreCase(type)) {
@@ -335,7 +343,9 @@ public class WebController {
                                    RedirectAttributes attributes) {
         Project mainProject = (Project) session.getAttribute("selectedProject");
         Project subProject = (Project) session.getAttribute("selectedSubProject");
-        if (isLoggedIn(session, username)) {
+        if (!isLoggedIn(session, username)) {
+            return "redirect:/login";
+        }
             int userId = userService.getUserId(assignedUsername);
             // check at bruger er medlem af main project og subprojekt
             if (mainProject.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(assignedUsername))
@@ -347,11 +357,13 @@ public class WebController {
                     return "redirect:/" + username + "/subprojectoverview";
                 }
                 taskService.assignUserToTask(taskId, userId);
+                attributes.addFlashAttribute("successMessage", "Brugeren er blevet tildelt opgaven.");
+                return "redirect:/" + username + "/subprojectoverview";
             } else {
                 attributes.addFlashAttribute("errorMessage", "Brugeren er ikke en del af projektet.");
             }
-        }
-        return "redirect:/login";
+        attributes.addFlashAttribute("errorMessage", "Brugeren er ikke en del af projektet.");
+        return "redirect:/" + username + "/subprojectoverview";
     }
 
     @GetMapping("/{username}/editproject/{projectId}")
