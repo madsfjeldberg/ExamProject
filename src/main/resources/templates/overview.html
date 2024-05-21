@@ -56,7 +56,7 @@
 
 <div class="container" th:if="${project != null}">
     <h3 class="bold-and-cursive mt-4">Sub-Projekter
-        <a th:href="@{'/' + ${user.username} + '/addsubproject'}" class="btn btn-primary btn-sm">Add</a>
+        <a th:href="@{'/' + ${user.username} + '/addsubproject'}" class="btn btn-primary btn-sm">Tilføj</a>
     </h3>
     <div class="row">
         <div class="col-md-4 col-lg-4" th:each="subProject : ${subProjects}">
