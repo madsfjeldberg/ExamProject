@@ -43,13 +43,17 @@ public class TaskService {
     }
 
     public void deleteTask(int taskId) {
-        repository.removeTaskUsers(taskId);
         repository.deleteTask(taskId);
+    }
+
+    public void removeTaskUsers(int taskId) {
+        repository.removeTaskUsers(taskId);
     }
 
     public Task getTask(int taskId) {
         return repository.getTask(taskId);
     }
+
     public int updateTask(Task task) {
         return repository.updateTask(task);
     }

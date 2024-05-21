@@ -23,12 +23,16 @@ public class ProjectService {
         return repository.getProject(projectId);
     }
 
-    public void deleteProjekt(int projectID){
-        repository.deleteProject(projectID);
+    /*
+    public void deleteProjekt(int projectId){
+        repository.deleteProject(projectId);
     }
 
-    public List<Project> getProjectsForUser(int userId, String username) {
-        return repository.getProjectsForUser(userId, username);
+     */
+
+    public List<Project> getProjectsForUser(int userId) {
+        return repository.getProjectsForUser(userId);
+
     }
 
     public List<Project> getSubProjectsForProject(int projectId) {
@@ -47,11 +51,7 @@ public class ProjectService {
         return repository.getTotalRequiredHoursForAllSubProjects(parentProjectId);
     }
 
-    public Project getProjectById(int projectId) {
-        return repository.getProjectById(projectId);
-    }
-
-    public boolean updateProject(Project project) {
+    public int updateProject(Project project) {
         return repository.updateProject(project);
     }
 

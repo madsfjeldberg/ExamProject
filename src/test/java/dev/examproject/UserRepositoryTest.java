@@ -5,12 +5,14 @@ import dev.examproject.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("h2")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD) // resetter databasen før hver test
 public class UserRepositoryTest {
 
     @Autowired
@@ -66,7 +68,7 @@ public class UserRepositoryTest {
     @Test
     void setUserToAdmin() {
         // Test that the repository sets the user to admin
-        // "test2" user is not a admin for project 2
+        // "test2" user is not an admin for project 2
         int expected = 1;
         int actual = repository.setUserToAdmin("test2", 2);
         assertEquals(expected, actual);
