@@ -21,7 +21,6 @@ import java.util.List;
     public Project(int projectId, String name, String description, String admin, int parentProjectId, List<User> assignedUsers, List<Task> tasks) {
         this.name = name;
         this.description = description;
-        this.assignedUsers = new ArrayList<>();
         this.projectId = projectId;
         this.admin = admin;
         this.parentProjectID = parentProjectId;
