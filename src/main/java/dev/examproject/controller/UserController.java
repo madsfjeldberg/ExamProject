@@ -2,6 +2,7 @@ package dev.examproject.controller;
 
 import dev.examproject.model.Project;
 import dev.examproject.model.User;
+import dev.examproject.repository.util.TurboLogger;
 import dev.examproject.service.ProjectService;
 import dev.examproject.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -13,6 +14,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(path = "")
 public class UserController {
+
+    private static final TurboLogger log = new TurboLogger(UserController.class);
 
     private final UserService userService;
     private final ProjectService projectService;
@@ -60,7 +63,7 @@ public class UserController {
         User authenticatedUser = userService.authenticateUser(user.getUsername(), user.getPassword());
         if (authenticatedUser != null) {
             session.setAttribute("user", authenticatedUser);
-            System.out.println(authenticatedUser);
+            log.info("User logged in: " + user);
             return "redirect:/" + authenticatedUser.getUsername() + "/projects";
         } else {
             attributes.addFlashAttribute("errorMessage", "Incorrect username or password");
@@ -136,6 +139,8 @@ public class UserController {
             //tilføj bruger til projekt eller subprojekt
             userService.addUserToProject(user, selectedProject.getProjectId());
             attributes.addFlashAttribute("successMessage", "Brugeren er blevet tilføjet til projektet.");
+
+            
 
             // Hent opdateret projekt eller subprojekt
             if ("Project".equalsIgnoreCase(type)) {
