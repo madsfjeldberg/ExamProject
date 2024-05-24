@@ -136,9 +136,9 @@ public class TaskController {
             task.setTaskId(taskId);
             int updateResult = taskService.updateTask(task);
             if (updateResult == 1) {
-                redirectAttributes.addFlashAttribute("successMessage", "Task updated successfully");
+                redirectAttributes.addFlashAttribute("successMessage", "Opgave opdateret succesfuldt");
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Error updating task");
+                redirectAttributes.addFlashAttribute("errorMessage", "Fejl ved opdatering af opgave");
             }
             return "redirect:/" + username + "/subprojectoverview";
         }

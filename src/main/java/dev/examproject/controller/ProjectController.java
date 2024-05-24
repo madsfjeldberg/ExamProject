@@ -152,7 +152,7 @@ public class ProjectController {
     public String showEditProjectForm(@PathVariable("username") String username,
                                       @PathVariable("projectId") int projectId, Model model, HttpSession session) {
         User authenticatedUser = (User) session.getAttribute("user");
-        System.out.println("Attempting to edit project with ID: " + projectId + " for user: " + username);
+        System.out.println("Forsøger at redigere projekt med ID: " + projectId + " For bruger " + username);
         if (isLoggedIn(session, username)) {
             Project project = projectService.getProject(projectId);
             if (project != null) {

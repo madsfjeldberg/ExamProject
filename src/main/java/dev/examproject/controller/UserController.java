@@ -66,7 +66,7 @@ public class UserController {
             log.info("User logged in: " + user);
             return "redirect:/" + authenticatedUser.getUsername() + "/projects";
         } else {
-            attributes.addFlashAttribute("errorMessage", "Incorrect username or password");
+            attributes.addFlashAttribute("errorMessage", "Forkert brugernavn eller adgangskode");
             return "redirect:/login";
         }
     }
@@ -87,12 +87,12 @@ public class UserController {
     public String register(@ModelAttribute("user") User user, HttpSession session, RedirectAttributes attributes) {
         User existingUser = userService.getUser(user.getUsername());
         if (existingUser != null) {
-            attributes.addFlashAttribute("errorMessage", "Username already exists");
+            attributes.addFlashAttribute("errorMessage", "Brugernavn findes allerede");
             return "redirect:/register";
         } else {
             userService.addUser(user);
             session.setAttribute("user", user);
-            attributes.addFlashAttribute("successMessage", "User registered successfully");
+            attributes.addFlashAttribute("successMessage", "Brugeren er blevet registreret succesfuldt");
             return "redirect:/" + user.getUsername() + "/overview";
         }
     }
