@@ -28,6 +28,7 @@
                         <div class="col-md-8">
                             <h5 class="card-title" th:text="${project.name}"></h5>
                             <p class="card-text" th:text="${project.description}"></p>
+                            <p class="card-text" th:text="'Projektleder: ' + ${project.admin}"></p>
                             <p>Samlet antal timer for projekt: <span th:text="${totalHoursForProject}"></span></p>
                         </div>
                         <div class="col-md-4">
