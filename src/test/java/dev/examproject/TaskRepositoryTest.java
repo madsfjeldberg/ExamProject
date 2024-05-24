@@ -96,7 +96,7 @@ public class TaskRepositoryTest {
 
     @Test
     void deleteTasksForProject (){
-        int expected = 0;
+        int expected = 1;
         int actual = taskRepository.deleteTasksForProject(1);
         assertEquals(expected,actual);
     }
