@@ -40,11 +40,10 @@ jobs:
         with:
           name: jacoco-report
           path: target/site/jacoco
-      - name: Move JaCoCo report to Qodana results path
-        run: mkdir -p qodana/results && cp -r target/site/jacoco qodana/results/
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2023.3.1
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
         with:
-          args: . qodana/results
+          args: ". /data/results"
+          pr-mode: false
