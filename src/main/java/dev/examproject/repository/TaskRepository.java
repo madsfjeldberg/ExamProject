@@ -169,10 +169,12 @@ public class TaskRepository {
 
     public void removeTaskUsersForProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "DELETE FROM task_users WHERE " +
-                "task_id IN (SELECT id FROM tasks WHERE project_id IN (SELECT id FROM projects WHERE parent_project_id = ?))";
+        String sql = """
+                   DELETE FROM task_users
+                   WHERE task_id IN (SELECT id FROM tasks WHERE project_id = ?) OR task_id IN (SELECT id FROM projects WHERE parent_project_id = ?)""";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
+            ps.setInt(2, projectId);
             ps.executeUpdate();
         } catch (SQLException e) {
             log.error("Error removing users from tasks for project with ID: " + projectId, e);

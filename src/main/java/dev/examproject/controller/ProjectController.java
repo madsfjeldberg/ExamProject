@@ -207,7 +207,7 @@ public class ProjectController {
     }
 
     // har ændret den her til at være get i stedet for post
-    @GetMapping("/{username}/deletesubproject/{projectId}")
+    @PostMapping("/{username}/deletesubproject/{projectId}")
     public String deleteSubProject(@PathVariable("username") String username,
                                    @PathVariable("projectId") int projectId, HttpSession session) {
         if (isLoggedIn(session, username)) {
