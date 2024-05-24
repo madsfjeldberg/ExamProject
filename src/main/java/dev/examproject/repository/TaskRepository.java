@@ -3,8 +3,7 @@ package dev.examproject.repository;
 import dev.examproject.model.Task;
 import dev.examproject.model.User;
 import dev.examproject.repository.util.ConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.examproject.repository.util.TurboLogger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +14,9 @@ import java.util.List;
 @Repository
 public class TaskRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(TaskRepository.class);
+    private static final TurboLogger log = new TurboLogger(TaskRepository.class);
+
+
 
     @Value("${spring.datasource.url}")
     private String dbUrl;
@@ -47,7 +48,7 @@ public class TaskRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error adding task", e);
         }
         return -1;
     }
@@ -70,7 +71,7 @@ public class TaskRepository {
                 tasks.add(task);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error getting tasks for project with ID: " + projectId, e);
         }
         return tasks;
     }
@@ -85,7 +86,7 @@ public class TaskRepository {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
-            logger.error("Error getting total required hours for project", e);
+            log.error("Error getting total required hours for project", e);
         }
         return 0;
     }
@@ -102,7 +103,7 @@ public class TaskRepository {
                 users.add(user);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error getting assigned users for task with ID: " + taskId, e);
         }
         return users;
     }
@@ -115,7 +116,7 @@ public class TaskRepository {
             ps.setInt(2, userId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error assigning user to task with ID: " + taskId, e);
         }
         return -1;
     }
@@ -137,7 +138,7 @@ public class TaskRepository {
                 return task;
             }
         } catch (SQLException e) {
-            logger.error("Error getting task with ID: " + taskId, e);
+            log.error("Error getting task with ID: " + taskId, e);
         }
         return null;
     }
@@ -149,7 +150,7 @@ public class TaskRepository {
             ps.setInt(1, taskId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error removing users from task with ID: " + taskId, e);
+            log.error("Error removing users from task with ID: " + taskId, e);
         }
         return -1;
     }
@@ -161,7 +162,7 @@ public class TaskRepository {
             ps.setInt(1, taskId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error deleting task with ID: " + taskId, e);
+            log.error("Error deleting task with ID: " + taskId, e);
         }
         return -1;
     }
@@ -174,18 +175,19 @@ public class TaskRepository {
             ps.setInt(1, projectId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error removing users from tasks for project with ID: " + projectId, e);
+            log.error("Error removing users from tasks for project with ID: " + projectId, e);
         }
     }
 
     public int deleteTasksForProject(int projectId) {
         Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
-        String sql = "DELETE FROM tasks WHERE project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
+        String sql = "DELETE FROM tasks WHERE project_id = ? OR project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
+            ps.setInt(2, projectId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error deleting tasks for project with ID: " + projectId, e);
+            log.error("Error deleting tasks for project with ID: " + projectId, e);
         }
         return -1;
     }
@@ -201,7 +203,7 @@ public class TaskRepository {
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0 ? 1 : -1;
         } catch (SQLException e) {
-            logger.error("Error updating task", e);
+            log.error("Error updating task", e);
             return -1;
         }
 
