@@ -16,8 +16,6 @@ public class TaskRepository {
 
     private static final TurboLogger log = new TurboLogger(TaskRepository.class);
 
-
-
     @Value("${spring.datasource.url}")
     private String dbUrl;
     @Value("${spring.datasource.username}")

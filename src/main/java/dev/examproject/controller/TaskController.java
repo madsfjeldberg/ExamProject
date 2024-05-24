@@ -101,16 +101,16 @@ public class TaskController {
             // check at bruger ikke allerede er assigned til tasken.
             Task task = taskService.getTask(taskId);
             if (task.getAssignedUsers().stream().anyMatch(u -> u.getUsername().equals(assignedUsername))) {
-                attributes.addFlashAttribute("errorMessage", "Brugeren er allerede tildelt opgaven.");
+                attributes.addFlashAttribute("taskErrorMessage", "Brugeren er allerede tildelt opgaven.");
                 return "redirect:/" + username + "/subprojectoverview";
             }
             taskService.assignUserToTask(taskId, userId);
             attributes.addFlashAttribute("successMessage", "Brugeren er blevet tildelt opgaven.");
             return "redirect:/" + username + "/subprojectoverview";
         } else {
-            attributes.addFlashAttribute("errorMessage", "Brugeren er ikke en del af projektet.");
+            attributes.addFlashAttribute("taskErrorMessage", "Brugeren er ikke en del af projektet.");
         }
-        attributes.addFlashAttribute("errorMessage", "Brugeren er ikke en del af projektet.");
+        attributes.addFlashAttribute("taskErrorMessage", "Brugeren er ikke en del af projektet.");
         return "redirect:/" + username + "/subprojectoverview";
     }
 

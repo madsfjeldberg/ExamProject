@@ -49,6 +49,9 @@
                     <label for="username" class="form-label">Brugernavn</label>
                     <input type="text" class="form-control" id="username" name="username">
                     <button type="submit" class="btn btn-primary">Tilføj</button>
+                    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                        <p th:text="${errorMessage}"></p>
+                    </div>
                 </div>
             </form>
         </div>
@@ -99,6 +102,9 @@
                 </tr>
                 </tbody>
             </table>
+            <div th:if="${taskErrorMessage}" class="alert alert-danger" role="alert">
+                <p th:text="${taskErrorMessage}"></p>
+            </div>
         </div>
     </div>
 </div>
@@ -226,9 +232,6 @@
         });
     });
 </script>
-<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-    <p th:text="${errorMessage}"></p>
-</div>
 <div th:if="${successMessage}" class="alert alert-success" role="alert">
     <p th:text="${successMessage}"></p>
 </div>
