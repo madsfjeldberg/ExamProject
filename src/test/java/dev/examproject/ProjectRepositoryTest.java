@@ -22,8 +22,6 @@ public class ProjectRepositoryTest {
     @Autowired
     private ProjectRepository repository;
 
-
-
     // Test that the repository adds a project
     // Not sure if it's supposed to be done like this?
     // basically only checks if it added *something*.

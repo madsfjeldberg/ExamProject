@@ -27,7 +27,7 @@ public class TaskRepository {
     }
 
     public int addTask(Task task) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "INSERT INTO tasks (name, description, required_hours, project_id) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, task.getTaskName());
@@ -53,7 +53,7 @@ public class TaskRepository {
 
     public List<Task> getProjectTasks(int projectId) {
         List<Task> tasks = new ArrayList<>();
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "SELECT * FROM tasks WHERE project_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
@@ -75,7 +75,7 @@ public class TaskRepository {
     }
 
     public int getTotalRequiredHoursForSubproject(int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "SELECT SUM(required_hours) FROM tasks WHERE project_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
@@ -91,7 +91,7 @@ public class TaskRepository {
 
     public List<User> getAssignedUsers(int taskId) {
         List<User> users = new ArrayList<>();
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "SELECT * FROM users WHERE id IN (SELECT user_id FROM task_users WHERE task_id = ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, taskId);
@@ -107,7 +107,7 @@ public class TaskRepository {
     }
 
     public int assignUserToTask(int taskId, int userId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "INSERT INTO task_users (task_id, user_id) VALUES (?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, taskId);
@@ -120,7 +120,7 @@ public class TaskRepository {
     }
 
     public Task getTask(int taskId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "SELECT * FROM tasks WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, taskId);
@@ -142,7 +142,7 @@ public class TaskRepository {
     }
 
     public int removeTaskUsers(int taskId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "DELETE FROM task_users WHERE task_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, taskId);
@@ -154,7 +154,7 @@ public class TaskRepository {
     }
 
     public int deleteTask(int taskId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "DELETE FROM tasks WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, taskId);
@@ -166,7 +166,7 @@ public class TaskRepository {
     }
 
     public void removeTaskUsersForProject(int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = """
                    DELETE FROM task_users
                    WHERE task_id IN (SELECT id FROM tasks WHERE project_id = ?) OR task_id IN (SELECT id FROM projects WHERE parent_project_id = ?)""";
@@ -180,7 +180,7 @@ public class TaskRepository {
     }
 
     public int deleteTasksForProject(int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "DELETE FROM tasks WHERE project_id = ? OR project_id IN (SELECT id FROM projects WHERE parent_project_id = ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
@@ -193,7 +193,7 @@ public class TaskRepository {
     }
 
     public int updateTask(Task task) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "UPDATE tasks SET name = ?, description = ?, required_hours = ? WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, task.getTaskName());

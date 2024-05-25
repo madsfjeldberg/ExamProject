@@ -28,7 +28,7 @@ public class ProjectRepository {
 
     // adds a project to the database
     public int addProject(Project project) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "INSERT INTO PROJECTS (name, description, parent_project_id) VALUES (?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, project.getName());
@@ -58,7 +58,7 @@ public class ProjectRepository {
     // gets the id for a project
     // only used for a test in ProjectRepositoryTest
     public int getId(String projectName) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "SELECT id FROM PROJECTS WHERE name = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, projectName);
@@ -74,7 +74,7 @@ public class ProjectRepository {
 
     // gets admin for a project
     public String getAdminForProject(int project_id) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = """
                 SELECT users.username
                 FROM users
@@ -96,7 +96,7 @@ public class ProjectRepository {
 
     // deletes a project
     public int deleteProject(int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "DELETE FROM PROJECTS WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
@@ -109,7 +109,7 @@ public class ProjectRepository {
 
     // deletes subprojects for parent project
     public void deleteSubProjects(int parentProjectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "DELETE FROM PROJECTS WHERE parent_project_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, parentProjectId);
@@ -122,7 +122,7 @@ public class ProjectRepository {
     // henter både subproject og project
     // /mads
     public Project getProject(int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "SELECT * FROM PROJECTS WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, projectId);
@@ -147,7 +147,7 @@ public class ProjectRepository {
     // gets all projects for a user
     // only gets top level projects, no subprojects
     public List<Project> getProjectsForUser(int userId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = """
                 SELECT PROJECTS.*, project_users.is_admin
                 FROM PROJECTS
@@ -177,7 +177,7 @@ public class ProjectRepository {
     }
 
     public List<User> getAssignedUsers(int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = """
                 SELECT * FROM users
                 WHERE id IN
@@ -197,7 +197,7 @@ public class ProjectRepository {
     }
 
     public List<Project> getSubProjectsForProject(int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         List<Project> projects = new ArrayList<>();
         String sql = "SELECT * FROM projects WHERE parent_project_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -218,7 +218,7 @@ public class ProjectRepository {
     }
 
     public int updateProject(Project project) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "UPDATE PROJECTS SET name = ?, description = ? WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, project.getName());
@@ -232,7 +232,7 @@ public class ProjectRepository {
     }
 
     public int getTotalRequiredHoursForAllSubProjects(int parentProjectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         int totalHours = 0;
         String sql = """
                 SELECT SUM(required_hours)

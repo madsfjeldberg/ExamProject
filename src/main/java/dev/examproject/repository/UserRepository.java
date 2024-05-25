@@ -26,7 +26,7 @@ public class UserRepository {
     public UserRepository() {}
 
     public User authenticateUser(String username, String password) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "SELECT * FROM USERS WHERE username = ? AND password = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
@@ -42,7 +42,7 @@ public class UserRepository {
     }
 
     public int getUserId(String username) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "SELECT id FROM USERS WHERE username = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
@@ -57,7 +57,7 @@ public class UserRepository {
     }
 
     public int addUser(User user) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "INSERT INTO USERS (username, email, password) VALUES (?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.getUsername());
@@ -71,7 +71,7 @@ public class UserRepository {
     }
 
     public int addUserToProject( User user, int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "INSERT INTO project_users (user_id, project_id, is_admin) VALUES (?, ?, false)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, getUserId(user.getUsername()));
@@ -84,7 +84,7 @@ public class UserRepository {
     }
 
     public void removeUsersFromProject(int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = """
                 DELETE FROM project_users
                 WHERE project_id = ?
@@ -100,7 +100,7 @@ public class UserRepository {
     }
 
     public int setUserToAdmin(String username, int projectId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "UPDATE project_users SET is_admin = true WHERE user_id = ? AND project_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, getUserId(username));
@@ -113,7 +113,7 @@ public class UserRepository {
     }
 
     public String getUsername(int userId) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "SELECT username FROM USERS WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
@@ -128,7 +128,7 @@ public class UserRepository {
     }
 
     public User getUser(String username) {
-        Connection conn = ConnectionManager.getConnection(dbUrl, dbUsername, dbPassword);
+        Connection conn = ConnectionManager.getConnection();
         String sql = "SELECT * FROM USERS WHERE username = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
