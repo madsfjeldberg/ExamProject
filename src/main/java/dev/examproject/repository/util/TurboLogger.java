@@ -14,10 +14,18 @@ public class TurboLogger {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
+    private static TurboLogger instance;
     private final Logger logger;
 
-    public TurboLogger(Class<?> clazz) {
-        this.logger = LoggerFactory.getLogger(clazz);
+    private TurboLogger(Class<?> cls) {
+        this.logger = LoggerFactory.getLogger(cls);
+    }
+
+    public static synchronized TurboLogger getInstance(Class<?> cls) {
+        if (instance == null) {
+            instance = new TurboLogger(cls);
+        }
+        return instance;
     }
 
     public void info(String message, Exception e) {

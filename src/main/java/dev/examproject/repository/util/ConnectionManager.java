@@ -10,12 +10,13 @@ import java.sql.SQLException;
 @Component
 public class ConnectionManager {
 
-    private static final TurboLogger log = new TurboLogger(ConnectionManager.class);
+    private static final TurboLogger log = TurboLogger.getInstance(ConnectionManager.class);
 
     private static String URL;
     private static String UID;
     private static String PWD;
     private static Connection conn;
+
 
 
     @Value("${spring.datasource.url}")
@@ -46,3 +47,7 @@ public class ConnectionManager {
         return conn;
     }
 }
+
+
+
+

@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(path = "")
 public class UserController {
 
-    private static final TurboLogger log = new TurboLogger(UserController.class);
+    private static final TurboLogger log = TurboLogger.getInstance(UserController.class);
 
     private final UserService userService;
     private final ProjectService projectService;

@@ -4,7 +4,6 @@ import dev.examproject.model.Task;
 import dev.examproject.model.User;
 import dev.examproject.repository.util.ConnectionManager;
 import dev.examproject.repository.util.TurboLogger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -14,14 +13,7 @@ import java.util.List;
 @Repository
 public class TaskRepository {
 
-    private static final TurboLogger log = new TurboLogger(TaskRepository.class);
-
-    @Value("${spring.datasource.url}")
-    private String dbUrl;
-    @Value("${spring.datasource.username}")
-    private String dbUsername;
-    @Value("${spring.datasource.password}")
-    private String dbPassword;
+    private static final TurboLogger log = TurboLogger.getInstance(TaskRepository.class);
 
     public TaskRepository() {
     }

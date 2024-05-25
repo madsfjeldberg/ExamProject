@@ -3,7 +3,6 @@ package dev.examproject.repository;
 import dev.examproject.model.User;
 import dev.examproject.repository.util.ConnectionManager;
 import dev.examproject.repository.util.TurboLogger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -14,14 +13,7 @@ import java.sql.SQLException;
 @Repository
 public class UserRepository {
 
-    private static final TurboLogger log = new TurboLogger(UserRepository.class);
-
-    @Value("${spring.datasource.url}")
-    private String dbUrl;
-    @Value("${spring.datasource.username}")
-    private String dbUsername;
-    @Value("${spring.datasource.password}")
-    private String dbPassword;
+    private static final TurboLogger log = TurboLogger.getInstance(UserRepository.class);
 
     public UserRepository() {}
 
