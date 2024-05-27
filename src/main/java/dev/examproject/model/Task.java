@@ -23,13 +23,4 @@ import java.util.List;
         this.taskDescription = taskDescription;
         this.requiredHours = requiredHours;
     }
-
-    public Task(int projectId, int taskId, String taskName, String taskDescription, int requiredHours, List<User> assignedUsers) {
-        this.projectId = projectId;
-        this.taskId = taskId;
-        this.taskName = taskName;
-        this.taskDescription = taskDescription;
-        this.requiredHours = requiredHours;
-        this.assignedUsers = assignedUsers;
-    }
 }
