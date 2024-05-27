@@ -87,8 +87,7 @@ public class TaskController {
     public String assignUserToTask(@PathVariable("username") String username,
                                    @PathVariable("taskId") int taskId,
                                    @ModelAttribute("user") User user,
-                                   @RequestParam("assignedUsername") String assignedUsername, HttpSession session,
-                                   RedirectAttributes attributes) {
+                                   @RequestParam("assignedUsername") String assignedUsername, HttpSession session, RedirectAttributes attributes) {
         Project mainProject = (Project) session.getAttribute("selectedProject");
         Project subProject = (Project) session.getAttribute("selectedSubProject");
         if (!isLoggedIn(session, username)) {

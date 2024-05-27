@@ -140,8 +140,6 @@ public class UserController {
             userService.addUserToProject(user, selectedProject.getProjectId());
             attributes.addFlashAttribute("successMessage", "Brugeren er blevet tilføjet til projektet.");
 
-            
-
             // Hent opdateret projekt eller subprojekt
             if ("Project".equalsIgnoreCase(type)) {
                 selectedProject = projectService.getProject(selectedProject.getProjectId());
