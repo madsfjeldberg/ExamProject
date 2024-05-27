@@ -18,13 +18,6 @@ This section guides you through submitting an enhancement suggestion for AlphaPl
 - Use a clear and descriptive title for the issue to identify the suggestion.
 - Provide a step-by-step description of the suggested enhancement in as many details as possible.
 
-### Your First Code Contribution
-
-Unsure where to begin contributing to AlphaPlan? You can start by looking through these `beginner` and `help-wanted` issues:
-
-- Beginner issues - issues which should only require a few lines of code, and a test or two.
-- Help wanted issues - issues which should be a bit more involved than `beginner` issues.
-
 ### Pull Requests
 
 The process described here has several goals:
@@ -38,8 +31,6 @@ Please follow these steps to have your contribution considered by the maintainer
 
 1. Follow all instructions in the template
 2. After you submit your pull request, verify that all status checks are passing
-
-## Styleguides
 
 ### Git Commit Messages
 
