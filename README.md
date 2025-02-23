@@ -22,6 +22,7 @@ a MySQL database.
 
 ## Technologies Used
 
+
 This project is built using the following technologies:
 
 - **Java**: The main programming language used for developing the project.
